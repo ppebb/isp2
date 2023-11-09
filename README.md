@@ -37,7 +37,7 @@ Turn Based combat
 Different Starting class and race
 Projectiles
 Color text
-(Nerd Font)[https://www.nerdfonts.com/]
+[Nerd Font](https://www.nerdfonts.com/)
 Area Bosses
 Final Boss
 Experience system / Leveling System
