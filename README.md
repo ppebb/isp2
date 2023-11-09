@@ -17,9 +17,9 @@ Saves will be handled using a json format to allow players to pause and resume w
 Ensure that all code is tested before committing, and ensure you have a proper formatter run based on the configuration files in the repository
 
 ## Setting
-Medieval Fantasy
-Magic
-No Guns or real advanced Tech
+- Medieval Fantasy
+- Magic
+- No Guns or real advanced Tech
 
 ## Features
 - Main Menu
