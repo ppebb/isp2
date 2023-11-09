@@ -1,4 +1,4 @@
-# Placeholder name
+﻿# Placeholder name
 
 ## Architecture Design Document
 The architecture of this project centers around a single-threaded game loop synchronized at 60 ticks per second. There will be a separate thread to poll for input, and a separate thread for drawing text to the screen.
@@ -13,16 +13,35 @@ World generation will be implemented in a chunking system, with each chunk being
 
 Saves will be handled using a json format to allow players to pause and resume without just leaving the game open.
 
-## State Transition Diagrams
-
 ## Coding standards and guidelines
 Ensure that all code is tested before committing, and ensure you have a proper formatter run based on the configuration files in the repository
 
-## Feature Listing
-Add later
+## Setting
+Medieval Fantasy
+Magic
+No Guns or real advanced Tech
 
-## UI Mockups
-Link later
+## Features
+Main Menu
+Health Bar
+Mana Bar
+Sprint Bar
+Different biomes
+Different enemies
+Status Conditions / Window
+Real time Movement
+Perma Death
+Upgrades to Equipment
+Adjustable stats
+Turn Based combat
+Different Starting class and race
+Projectiles
+Color text
+(Nerd Font)[https://www.nerdfonts.com/]
+Area Bosses
+Final Boss
+Experience system / Leveling System
+Global scoreboard
 
 ## Databases
 The global database for the leaderboards will be interfaced with from a simple json api that will return global scores as well as an endpoint to upload scores. The database will be a simple postgresql table with columns for score, playtime, % completion, etc.
