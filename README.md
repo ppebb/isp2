@@ -22,26 +22,26 @@ Magic
 No Guns or real advanced Tech
 
 ## Features
-Main Menu
-Health Bar
-Mana Bar
-Sprint Bar
-Different biomes
-Different enemies
-Status Conditions / Window
-Real time Movement
-Perma Death
-Upgrades to Equipment
-Adjustable stats
-Turn Based combat
-Different Starting class and race
-Projectiles
-Color text
-[Nerd Font](https://www.nerdfonts.com/)
-Area Bosses
-Final Boss
-Experience system / Leveling System
-Global scoreboard
+- Main Menu
+- Health Bar
+- Mana Bar
+- Sprint Bar
+- Different biomes
+- Different enemies
+- Status Conditions / Window
+- Real time Movement
+- Perma Death
+- Upgrades to Equipment
+- Adjustable stats
+- Turn Based combat
+- Different Starting class and race
+- Projectiles
+- Color text
+- [Nerd Font](https://www.nerdfonts.com/)
+- Area Bosses
+- Final Boss
+- Experience system / Leveling System
+- Global scoreboard
 
 ## Databases
 The global database for the leaderboards will be interfaced with from a simple json api that will return global scores as well as an endpoint to upload scores. The database will be a simple postgresql table with columns for score, playtime, % completion, etc.
