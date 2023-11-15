@@ -1,6 +1,8 @@
 ﻿# Blackguard
 Blackguard is a rougue-inspired, 2d ascii adventure game. It will be set in a fantasy environment with a mix of premade and randomly-generated environments. The player will be able to explore and complete quests, defeat bosses, and interact with ingame characters.
 
+### For instructions on how to setup the programming environment, look [here](https://github.com/ppebb/isp2/blob/main/docs/setup.md)
+
 ## Architecture Design Document
 The architecture of this project centers around a single-threaded game loop synchronized at 60 ticks per second. There will be a separate thread to poll for input, and a separate thread for drawing text to the screen.
 
