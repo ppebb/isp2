@@ -18,12 +18,13 @@ This document contains instructions for setting up the repository on any windows
 ![c#](https://github.com/ppebb/isp2/assets/36719558/e3954c63-aabc-45f6-8e16-f207604dbb68)
 
 ## Cloning the repository
-1. In VS Code, navigate to the explorer tab and click 'Clone Repository' and then 'Clone From Github'
-2. VS Code will ask you to sign in to Github and authorize VS Code.
-3. Select isp2 from the list of available repositories and clone it.
-4. Authorize git-ecosystem to clone it.
-5. Select to open the project, and select that you trust the author.
-6. VS Code will complain about not having the .NET SDK, select no if you are on a computer where you do not have administrator access (such as a school computer), otherwise select yes.
+1. Make sure Firefox is your default browser, it breaks otherwise
+2. In VS Code, navigate to the explorer tab and click 'Clone Repository' and then 'Clone From Github'
+3. VS Code will ask you to sign in to Github and authorize VS Code.
+4. Select isp2 from the list of available repositories and clone it.
+5. Authorize git-ecosystem to clone it.
+6. Select to open the project, and select that you trust the author.
+7. VS Code will complain about not having the .NET SDK, close the popup if you are on a computer where you do not have administrator access (such as a school computer), otherwise select yes.
 
 ## Installing .NET SDK without administrator access
 1. Go to the .NET download page [here](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
