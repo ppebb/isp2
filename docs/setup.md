@@ -5,7 +5,7 @@ This document contains instructions for setting up the repository on any windows
 1. Download git for windows from [here](https://git-scm.com/download/win)
 2. Find the installer in your Downloads folder and run it
 3. Make sure to select notepad as your default editor.
-   
+
 ![gitscreenshot](https://github.com/ppebb/isp2/assets/36719558/45242652-99e1-488b-b989-7a5fa32b436c)
 
 4. The remaining settings should all be default. Keep clicking next.
@@ -23,9 +23,9 @@ This document contains instructions for setting up the repository on any windows
 3. Select isp2 from the list of available repositories and clone it.
 4. Authorize git-ecosystem to clone it.
 5. Select to open the project, and select that you trust the author.
-6. VS Code will complain about not having the .NET SDK, select no.
+6. VS Code will complain about not having the .NET SDK, select no if you are on a computer where you do not have administrator access (such as a school computer), otherwise select yes.
 
-## Installing .NET Sdk
+## Installing .NET SDK without administrator access
 1. Go to the .NET download page [here](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 2. Select Windows x64
 3. Go to downloads and extract the files.
