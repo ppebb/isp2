@@ -1,3 +1,4 @@
 ﻿bin/
 obj/
+dotnet/
 scripts/run.bat
