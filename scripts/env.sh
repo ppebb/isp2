@@ -1,7 +1,15 @@
-﻿#!/usr/bin/env bash
-
-cd "$(dirname "$0")" || exit
+﻿cd "$(dirname "$0")" || exit
 cd .. || exit
 
-alias dotnet "$(pwd)/dotnet/dotnet.exe"
-export PATH=$PATH:"$(pwd)/dotnet"
+wdlin=$(pwd)
+wdwin=$(cmd //c cd)
+
+echo -e "setlocal
+
+SET PATH=%PATH%;$wdwin\\dotnet
+
+code
+
+endlocal" >> scripts/run.bat
+
+echo "alias dotnet='$wdlin/dotnet/dotnet.exe'" >> ~/.bashrc

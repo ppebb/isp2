@@ -30,4 +30,8 @@ This document contains instructions for setting up the repository on any windows
 2. Select Windows x64
 3. Go to downloads and extract the files.
 4. Move the resulting folder to the repository, and rename it to dotnet
-5. Run scripts/env.sh to set your path, and now you can run dotnet
+5. Run scripts/env.sh to set your path, restart git bash, and now you can run dotnet.
+
+## Launching Visual Studio Code without administrator access
+1. Navigate to your repository in git bash
+2. Run scripts/run.bat to launch Visual Studio Code

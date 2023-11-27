@@ -1,2 +1,3 @@
-bin/
+﻿bin/
 obj/
+scripts/run.bat
