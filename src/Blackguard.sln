@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blackguard", "Blackguard.csproj", "{5ED6B993-9BD7-450D-A2EF-04D7AA01ADA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blackguard", "./Blackguard/Blackguard.csproj", "{5ED6B993-9BD7-450D-A2EF-04D7AA01ADA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
