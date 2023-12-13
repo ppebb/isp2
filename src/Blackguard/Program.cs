@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Security.Principal;
 using Blackguard.Utils;
 using Mindmagma.Curses;
 
@@ -22,15 +20,22 @@ public static class Program {
         Platform = Platform.GetPlatform();
     }
 
+
     public static void Main(string[] args) {
         // Any arg parsing we eventually implement should be here, before any initialization
 
-        // Initialize console window
-        nint screen = NCurses.InitScreen();
-        NCurses.NoDelay(screen, true);
-        NCurses.NoEcho();
+        Console.CancelKeyPress += Handler; // Register this so that NCurses can uninitialize if ctrl-c is pressed
 
-        // Finish the program
+        NCurses.InitScreen();
+        /* NCurses.Refresh(); */
+
+        // Control is passed off to the game
+        new Game().Run();
+
+        NCurses.EndWin();
+    }
+
+    private static void Handler(object? sender, ConsoleCancelEventArgs e) {
         NCurses.EndWin();
     }
 }
