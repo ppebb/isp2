@@ -22,6 +22,8 @@ public class Game {
     private static readonly TimeSpan maxElapsedTime = TimeSpan.FromMilliseconds(500);
 
     public Game() {
+        // TODO: Mock console setup so we can test ncurses output
+#if !DEBUG
         if (!NCurses.HasColors() || !NCurses.CanChangeColor()) {
             NCurses.AddString("Your console does not support true-color, please enable it before running Blackguard");
             NCurses.EndWin();
@@ -31,6 +33,7 @@ public class Game {
         NCurses.NoEcho();
 
         scene = new MainMenuScene();
+#endif
     }
 
     private static readonly List<int> input = new();
@@ -58,7 +61,8 @@ public class Game {
             shouldExit = !scene.RunTick();
             scene.Render();
 
-            Tick();
+            if (!shouldExit)
+                Tick();
         }
 
         // Exit the game
@@ -132,7 +136,7 @@ public class Game {
     }
 
     public void SwitchScene(Scene nextScene) {
-        scene.Finish();
+        scene?.Finish();
 
         scene = nextScene;
     }
