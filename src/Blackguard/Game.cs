@@ -31,9 +31,9 @@ public class Game {
         }
 
         NCurses.NoEcho();
+#endif
 
         scene = new MainMenuScene();
-#endif
     }
 
     private static readonly List<int> input = new();
