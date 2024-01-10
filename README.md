@@ -5,6 +5,13 @@ Welcome to Blackguard :D
 ## Vision Statement 
 Blackguard is a roguelike, 2D ASCII adventure game. Blackguard will be a fantasy environment with a mix of premade and randomly generated levels and biomes. The player can explore and complete quests assigned by NPCs, defeat bosses unique to each biome, and interact with in-game characters and shopkeepers. The setting will be fantasy but have friends and foes from fantasy worlds and exotic mythos. Each biome will have unique enemies that provide the player with a difficult challenge. The player will be expected to die repeatedly before challenging the final boss.
 
+## Members
+Landon Beert - Product Manager, [LandonLeo](https://github.com/LandonLeo), [Digital Portfolio](https://codermerlin.academy/users/landon-beert/Digital%20Portfolio/index.html)
+Aidan Williams - Project Manager, [ppebb](https://github.com/ppebb), [Digital Portfolio](https://codermerlin.academy/users/aidan-williams/Digital%20Portfolio/index.html)
+Dinesh Sayana - Release Manager, [Derate11](https://github.com/Derate11), [Digital Portfolio](https://codermerlin.academy/users/dinesh-sayana/Digital%20Portfolio/index.html)
+Anuva Signh - QA Analyst, [anuvasingh](https://github.com/anuvasingh), [Digital Portfolio](https://codermerlin.academy/users/anuva-singh/Digital%20Portfolio/index.html)
+Nathan Goldman - UI/UX Designer, [Nathan-Goldman](https://github.com/Nathan-Goldman), [Digital Portfolio](https://codermerlin.academy/users/nathan-goldman/Digital%20Portfolio/index.html)
+
 ### For instructions on how to set up the programming environment, look [here](https://github.com/ppebb/isp2/blob/main/docs/setup.md)
 
 ## Architecture Design Document
