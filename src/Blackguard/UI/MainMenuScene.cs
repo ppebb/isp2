@@ -10,7 +10,7 @@ public class MainMenuScene : Scene {
         CurrentWin = CursesUtils.FullScreenWindow();
     }
 
-    int tick = 0
+    int tick = 0;
     public override bool RunTick() {
         tick++;
         return true;
