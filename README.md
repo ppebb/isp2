@@ -12,6 +12,15 @@ Dinesh Sayana - Release Manager, [Derate11](https://github.com/Derate11), [Digit
 Anuva Signh - QA Analyst, [anuvasingh](https://github.com/anuvasingh), [Digital Portfolio](https://codermerlin.academy/users/anuva-singh/Digital%20Portfolio/index.html)  
 Nathan Goldman - UI/UX Designer, [Nathan-Goldman](https://github.com/Nathan-Goldman), [Digital Portfolio](https://codermerlin.academy/users/nathan-goldman/Digital%20Portfolio/index.html)  
 
+## Release Schedule 
+Development Branch: It is used for code that is not released yet and that is under development and it allows the team to work on the code without any disruptions.  
+
+Staging Branch: Contains the latest bug fixes and the optimization of the newest features, it is where you can make new edits for quality assurance before releasing the code.  
+
+Main: Code for stable releases.
+
+Stable releases will be made on the first meeting of each month. Features from development will be pushed to the staging branch on the first meeting of each week for testing.
+
 ### For instructions on how to set up the programming environment, look [here](https://github.com/ppebb/isp2/blob/main/docs/setup.md)
 
 ## Architecture Design Document
