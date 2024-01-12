@@ -23,17 +23,18 @@ public class Game {
 
     public Game() {
         // TODO: Mock console setup so we can test ncurses output
-#if !DEBUG
-        if (!NCurses.HasColors() || !NCurses.CanChangeColor()) {
-            NCurses.AddString("Your console does not support true-color, please enable it before running Blackguard");
-            NCurses.EndWin();
-            Environment.Exit(1);
+        // Try catch as a temporary measure to allow tests to run
+        try {
+            if (!NCurses.HasColors() || !NCurses.CanChangeColor()) {
+                NCurses.AddString("Your console does not support true-color, please enable it before running Blackguard");
+                NCurses.EndWin();
+                Environment.Exit(1);
+            }
+
+            NCurses.NoEcho();
+            scene = new MainMenuScene();
         }
-
-        NCurses.NoEcho();
-#endif
-
-        scene = new MainMenuScene();
+        catch { }
     }
 
     private static readonly List<int> input = new();
