@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Blackguard.Utils;
+using Blackguard.Utilities;
 using Mindmagma.Curses;
 
 namespace Blackguard;

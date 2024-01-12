@@ -1,4 +1,4 @@
-﻿using Blackguard.Utils;
+﻿using Blackguard.Utilities;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI;
@@ -6,8 +6,19 @@ namespace Blackguard.UI;
 public class MainMenuScene : Scene {
     public override nint CurrentWin { get; protected set; }
 
+    private static string[] Logo = {
+        "██████╗░██╗░░░░░░█████╗░░█████╗░██╗░░██╗░██████╗░██╗░░░██╗░█████╗░██████╗░██████╗░",
+        "██╔══██╗██║░░░░░██╔══██╗██╔══██╗██║░██╔╝██╔════╝░██║░░░██║██╔══██╗██╔══██╗██╔══██╗",
+        "██████╦╝██║░░░░░███████║██║░░╚═╝█████═╝░██║░░██╗░██║░░░██║███████║██████╔╝██║░░██║",
+        "██╔══██╗██║░░░░░██╔══██║██║░░██╗██╔═██╗░██║░░╚██╗██║░░░██║██╔══██║██╔══██╗██║░░██║",
+        "██████╦╝███████╗██║░░██║╚█████╔╝██║░╚██╗╚██████╔╝╚██████╔╝██║░░██║██║░░██║██████╔╝",
+        "╚═════╝░╚══════╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝░╚═════╝░░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░"
+    };
+
     public MainMenuScene() {
         CurrentWin = CursesUtils.FullScreenWindow();
+        NCurses.GetMaxYX(CurrentWin, out int y, out int x);
+        CursesUtils.WindowAddLines(CurrentWin, Logo);
     }
 
     int tick = 0;
