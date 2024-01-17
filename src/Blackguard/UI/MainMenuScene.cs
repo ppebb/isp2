@@ -18,7 +18,7 @@ public class MainMenuScene : Scene {
     public MainMenuScene() {
         CurrentWin = CursesUtils.FullScreenWindow();
         NCurses.GetMaxYX(CurrentWin, out int y, out int x);
-        CursesUtils.WindowAddLines(CurrentWin, Logo);
+        CursesUtils.WindowAddLines(CurrentWin, Utils.CenterText(Logo, x));
     }
 
     int tick = 0;

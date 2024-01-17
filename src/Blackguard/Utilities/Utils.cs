@@ -21,8 +21,8 @@ public static class Utils {
     public static string[] CenterText(string[] text, int width) {
         string[] ret = new string[text.Length];
         for (int i = 0; i < text.Length; i++) {
-            int padding = (width - text[i].Length) / 2;
-            ret[i] = new string(' ', padding) + text[i];
+            string padding = new string(' ', (width - text[i].Length) / 2);
+            ret[i] = padding + text[i] + padding;
         }
 
         return ret;

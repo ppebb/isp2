@@ -16,17 +16,19 @@ public class LibraryNames : CursesLibraryNames {
 public static class Program {
     public static Platform Platform { get; private set; }
 
+    // Not useful for now, but may be helpful for later
+    public static nint StdScreen { get; private set; }
+
     static Program() {
         Platform = Platform.GetPlatform();
     }
-
 
     public static void Main(string[] args) {
         // Any arg parsing we eventually implement should be here, before any initialization
 
         Console.CancelKeyPress += Handler; // Register this so that NCurses can uninitialize if ctrl-c is pressed
 
-        NCurses.InitScreen();
+        StdScreen = NCurses.InitScreen();
         /* NCurses.Refresh(); */
 
         // Control is passed off to the game

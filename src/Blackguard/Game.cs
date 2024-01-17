@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using Blackguard.UI;
 using Mindmagma.Curses;
 
@@ -25,16 +26,20 @@ public class Game {
         // TODO: Mock console setup so we can test ncurses output
         // Try catch as a temporary measure to allow tests to run
         try {
-            if (!NCurses.HasColors() || !NCurses.CanChangeColor()) {
-                NCurses.AddString("Your console does not support true-color, please enable it before running Blackguard");
+            if (!NCurses.HasColors() /*|| !NCurses.CanChangeColor()*/) { // Can change color is seemingly returning false on windows. We can decide if it's neccessary later
                 NCurses.EndWin();
+                Console.WriteLine("Terminal does not support colors. Please use a terminal that supports colors.");
+                Console.ReadKey();
                 Environment.Exit(1);
             }
 
             NCurses.NoEcho();
             scene = new MainMenuScene();
         }
-        catch { }
+        catch (Exception e) {
+            // For now, a temporary logger is acceptible
+            File.WriteAllText("./log", e.ToString());
+        }
     }
 
     private static readonly List<int> input = new();
