@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace Blackguard.Utils;
+namespace Blackguard.Utilities;
 
 public abstract class Platform {
     public Platform() {
