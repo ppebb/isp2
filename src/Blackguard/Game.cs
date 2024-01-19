@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Blackguard.UI;
+using System.Reflection.Metadata.Ecma335;
+using Blackguard.UI.Scenes;
 using Mindmagma.Curses;
 
 namespace Blackguard;
 
 public class Game {
-    private static Scene scene;
+    private static Scene scene = null!;
 
     private Stopwatch gameTimer = null!;
     private TimeSpan totalElapsedTime = TimeSpan.Zero;
@@ -53,6 +54,8 @@ public class Game {
         }
         catch { } // Empty catch block because WindowGetChar throws if there is not a currently pressed key
     }
+
+    public static bool IsInput() => input?.Count > 0;
 
     public static bool KeyPressed(int keyCode) => input?.Contains(keyCode) ?? false;
 
