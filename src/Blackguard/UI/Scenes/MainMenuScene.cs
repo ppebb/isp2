@@ -1,11 +1,9 @@
 ﻿using Blackguard.Utilities;
 using Mindmagma.Curses;
 
-namespace Blackguard.UI;
+namespace Blackguard.UI.Scenes;
 
 public class MainMenuScene : Scene {
-    public override nint CurrentWin { get; protected set; }
-
     private static string[] Logo = {
         "██████╗░██╗░░░░░░█████╗░░█████╗░██╗░░██╗░██████╗░██╗░░░██╗░█████╗░██████╗░██████╗░",
         "██╔══██╗██║░░░░░██╔══██╗██╔══██╗██║░██╔╝██╔════╝░██║░░░██║██╔══██╗██╔══██╗██╔══██╗",

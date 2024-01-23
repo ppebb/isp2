@@ -1,12 +1,10 @@
 using System.Diagnostics;
-using Blackguard;
-using Blackguard.UI;
+using Blackguard.UI.Scenes;
 
 namespace Blackguard.Tests;
 
 public class GameTests {
     private class TestScene : Scene {
-        public override nint CurrentWin { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
 
         public override void Finish() {
             return;
