@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 namespace Blackguard.Entities;
@@ -44,5 +45,7 @@ public abstract class Entity {
     public abstract int Mana { get; set; }
 
     public abstract int Speed { get; set; }
+
+    public abstract void Movement();
 
 }

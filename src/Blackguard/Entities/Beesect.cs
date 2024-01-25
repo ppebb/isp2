@@ -1,36 +1,34 @@
-// This is an example on how to implement an entities stats in Blackgaurd.
-
 namespace Blackguard.Entities;
 
-public class Slime : Entity {
+public class Beesect : Entity {
     public static new DefaultsStruct Defaults = new() {
-        MaxHealth = 75,
+        MaxHealth = 50,
 
-        MaxMana = 50,
+        MaxMana = 60,
         
-        MaxSpeed = 80,
+        MaxSpeed = 120,
         
-        BluntEffect = .75,
+        BluntEffect = 1.5,
         
         SlashEffect = 1.5,
         
-        PierceEffect = 1.0,
+        PierceEffect = .5,
         
-        MagicEffect = 1.0,
+        MagicEffect = .5,
         
-        BaseEffect = 1.0,
+        BaseEffect = .9,
         
-        FireEffect = .5,
+        FireEffect = 3,
         
-        ElecEffect = 1.25,
+        ElecEffect = 1,
         
-        IceEffect = 1.0,
+        IceEffect = 2,
         
-        WaterEffect = .5,
+        WaterEffect = 1,
         
-        EarthEffect = 1.0,
+        EarthEffect = 1,
         
-        MindEffect = 1.5,
+        MindEffect = 1,
     };
 
     
