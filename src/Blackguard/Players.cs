@@ -21,7 +21,7 @@ public class Player {
 
     public double FireEffect;
 
-    public double ElecEffect;
+    public double ElectricityEffect;
     
     public double IceEffect;
 
@@ -38,6 +38,4 @@ public class Player {
     public int Mana {get; set; }
 
     public int Speed {get; set; }
-    
-    public void Movement();
 }
