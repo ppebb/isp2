@@ -10,6 +10,7 @@ namespace Blackguard;
 
 public class Game {
     private static Scene scene = null!;
+    private static Scene queuedScene = null!;
 
     private Stopwatch gameTimer = null!;
     private TimeSpan totalElapsedTime = TimeSpan.Zero;
@@ -45,7 +46,7 @@ public class Game {
 
     private static readonly List<int> input = new();
 
-    private void PollInput() {
+    private static void PollInput() {
         input.Clear();
         int c;
         try {
@@ -72,6 +73,9 @@ public class Game {
 
             if (!shouldExit)
                 Tick();
+
+            // By switching to the scene at the end, we avoid memory leaks and crashes from killing the scene while it's active.
+            SwitchToQueuedScene();
         }
 
         // Exit the game
@@ -144,9 +148,15 @@ public class Game {
         sleepTimeIndex = (sleepTimeIndex + 1) & SLEEP_TIME_MASK;
     }
 
-    public void SwitchScene(Scene nextScene) {
-        scene?.Finish();
+    public static void SwitchScene(Scene nextScene) {
+        queuedScene = nextScene;
+    }
 
-        scene = nextScene;
+    private void SwitchToQueuedScene() {
+        if (queuedScene == null)
+            return;
+
+        scene?.Finish();
+        scene = queuedScene;
     }
 }

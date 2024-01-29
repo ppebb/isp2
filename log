@@ -1,8 +1,0 @@
-System.ArgumentOutOfRangeException: count ('-1') must be a non-negative value. (Parameter 'count')
-Actual value was -1.
-   at System.ArgumentOutOfRangeException.ThrowNegative[T](T value, String paramName)
-   at System.ArgumentOutOfRangeException.ThrowIfNegative[T](T value, String paramName)
-   at System.String.Ctor(Char c, Int32 count)
-   at Blackguard.Utilities.Utils.CenterText(String[] text, Int32 width) in C:\Users\249274\isp2\src\Blackguard\Utilities\Utils.cs:line 24
-   at Blackguard.UI.MainMenuScene..ctor() in C:\Users\249274\isp2\src\Blackguard\UI\MainMenuScene.cs:line 21
-   at Blackguard.Game..ctor() in C:\Users\249274\isp2\src\Blackguard\Game.cs:line 36
