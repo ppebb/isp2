@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI;
@@ -14,12 +14,15 @@ public class UIButton : UIElement {
 
     public void ChangeLabel(string label) {
         _label = label;
-        Render();
     }
 
     public override void ProcessInput() {
         if (Game.KeyPressed(CursesKey.ENTER)) {
             _onPress();
         }
+    }
+
+    public override (int x, int y) Size() {
+        return (_label.Length, 1);
     }
 }

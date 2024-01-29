@@ -2,8 +2,18 @@
 
 namespace Blackguard.UI.Scenes;
 
-public abstract class Scene {
+public abstract class Scene : IBoundsProvider {
     public nint CurrentWin { get; protected set; }
+
+    public (int, int) GetBounds() {
+        NCurses.GetMaxYX(CurrentWin, out int y, out int x);
+        return (x, y);
+    }
+
+    public (int, int) GetOffset() {
+        NCurses.GetYX(CurrentWin, out int y, out int x);
+        return (x, y);
+    }
 
     // Should be defined in the constructor inheriting Scene. Default container for the Scene where elements should be stored
     private readonly UIContainer container;

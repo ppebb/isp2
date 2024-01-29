@@ -2,9 +2,17 @@
 
 namespace Blackguard.UI;
 
-public class UIContainer : UIElement {
+public class UIContainer : UIElement, IBoundsProvider {
     private readonly List<UIElement> _elements;
-    private int selected;
+    private int selected_element;
+
+    public (int, int) GetBounds() {
+        throw new System.NotImplementedException();
+    }
+
+    public (int, int) GetOffset() {
+        throw new System.NotImplementedException();
+    }
 
     // TODO: Handle sizing dynamically somehow
 
@@ -26,53 +34,53 @@ public class UIContainer : UIElement {
         if (Empty())
             return;
 
-        if (_elements[selected] is UIContainer container) {
+        if (_elements[selected_element] is UIContainer container) {
             if (!container.Bottom()) {
                 container.Next();
                 return;
             }
         }
 
-        _elements[selected].Deselect();
+        _elements[selected_element].Deselect();
 
-        if (++selected >= _elements.Count)
-            selected = 0;
+        if (++selected_element >= _elements.Count)
+            selected_element = 0;
 
-        _elements[selected].Select();
+        _elements[selected_element].Select();
     }
 
     public void Prev() {
         if (Empty())
             return;
 
-        if (_elements[selected] is UIContainer container) {
+        if (_elements[selected_element] is UIContainer container) {
             if (!container.Top()) {
                 container.Prev();
                 return;
             }
         }
 
-        _elements[selected].Deselect();
+        _elements[selected_element].Deselect();
 
-        if (--selected < 0)
-            selected = _elements.Count - 1;
+        if (--selected_element < 0)
+            selected_element = _elements.Count - 1;
 
-        _elements[selected].Select();
+        _elements[selected_element].Select();
     }
 
     public bool Top() {
-        bool top = selected == _elements.Count - 1;
+        bool top = selected_element == _elements.Count - 1;
 
-        if (_elements[selected] is UIContainer container)
+        if (_elements[selected_element] is UIContainer container)
             return top && container.Top();
 
         return top;
     }
 
     public bool Bottom() {
-        bool bottom = selected == _elements.Count - 1;
+        bool bottom = selected_element == _elements.Count - 1;
 
-        if (_elements[selected] is UIContainer container)
+        if (_elements[selected_element] is UIContainer container)
             return bottom && container.Bottom();
 
         return bottom;
@@ -89,6 +97,17 @@ public class UIContainer : UIElement {
             return;
 
         // I don't know if changing scenes within ProcessInput will result in a memory leak. Will have to profile later.
-        _elements[selected].ProcessInput();
+        _elements[selected_element].ProcessInput();
+    }
+
+    public override (int x, int y) Size() {
+        throw new System.NotImplementedException();
+    }
+
+    public override void Render(nint window, int x, int y) {
+        // Handle sizing soon
+
+        foreach (UIElement child in _elements)
+            child.Render(window, 0, 0);
     }
 }
