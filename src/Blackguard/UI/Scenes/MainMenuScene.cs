@@ -1,4 +1,7 @@
-﻿using Blackguard.Utilities;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using Blackguard.Utilities;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
@@ -12,11 +15,48 @@ public class MainMenuScene : Scene {
         "██████╦╝███████╗██║░░██║╚█████╔╝██║░╚██╗╚██████╔╝╚██████╔╝██║░░██║██║░░██║██████╔╝",
         "╚═════╝░╚══════╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝░╚═════╝░░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░"
     };
+    private static string[] Start = {
+        "▄▀▀▀▄ ▀▀█▀▀  ▄█▄  █▀▀▄  ▀▀█▀▀",
+        "▀▄▄▄    █    █ █  █▄▄▀    █  ",
+        "▄   █   █   █▀▀▀█ █  █    █  ",
+        " ▀▀▀    ▀   ▀   ▀ ▀   ▀   ▀  "
+    };
+    private static string[] Settings = {
+        "▄▀▀▀▄ █▀▀▀▀ ▀▀█▀▀ ▀▀█▀▀ ▀▀█▀▀ ██  █ ▄▀▀▀▄ ▄▀▀▀▄",
+        "▀▄▄▄  █▄▄▄    █     █     █   █ █ █ █     ▀▄▄▄ ",
+        "▄   █ █       █     █     █   █ ▀▄█ █  ▀█ ▄   █",
+        " ▀▀▀  ▀▀▀▀▀   ▀     ▀   ▀▀▀▀▀ ▀  ▀▀  ▀▀▀   ▀▀▀ "
+    };
+    private static string[] Credits = {
+        "▄▀▀▀▄ █▀▀▄  █▀▀▀▀ █▀▀▄  ▀▀█▀▀ ▀▀█▀▀ ▄▀▀▀▄",
+        "█     █▄▄▀  █▄▄▄  █   █   █     █   ▀▄▄▄ ",
+        "█   ▄ █  █  █     █  ▄▀   █     █   ▄   █",
+        " ▀▀▀  ▀   ▀ ▀▀▀▀▀ ▀▀▀   ▀▀▀▀▀   ▀    ▀▀▀ "
+    };
+    private static string[] Quit = {
+        "▄▀▀▀▄ █   █ ▀▀█▀▀ ▀▀█▀▀",
+        "█   █ █   █   █     █  ",
+        "█ ▀▄▀ █   █   █     █  ",
+        " ▀▀ ▀  ▀▀▀  ▀▀▀▀▀   ▀  "
+    };
 
     public MainMenuScene() {
-        CurrentWin = CursesUtils.FullScreenWindow();
-        NCurses.GetMaxYX(CurrentWin, out int y, out int x);
-        CursesUtils.WindowAddLines(CurrentWin, Utils.CenterText(Logo, x));
+        UIText logoText = new(Logo);
+        UIButton startButton = new(Start, () => {  });
+        UIButton settingsButton = new(Settings, () => {  });
+        UIButton creditsButton = new(Credits, () => {  });
+        UIButton quitButton = new(Quit, () => {  });
+
+
+        List<UIElement> elements = [logoText, startButton, settingsButton, creditsButton, quitButton];
+        // or should it be like the following?
+        // List<UIElement> elements = [logoText];
+        // List<UIElement> elements = [startButton];
+        // List<UIElement> elements = [settingsButton];
+        // List<UIElement> elements = [creditsButton];
+        // List<UIElement> elements = [quitButton];
+
+        container = new UIContainer(elements);
     }
 
     int tick = 0;

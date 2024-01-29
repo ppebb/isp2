@@ -1,6 +1,7 @@
+using System;
 using System.Numerics;
 
-namespace Blackguard.Players;
+namespace Blackguard;
 public class Player {
     public int MaxMana;
 
@@ -16,10 +17,12 @@ public class Player {
 
     public double MagicEffect;
 
-    public double FireEffect;
-
     public double BaseEffect;
 
+    public double FireEffect;
+
+    public double ElectricityEffect;
+    
     public double IceEffect;
 
     public double WaterEffect;
