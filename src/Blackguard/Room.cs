@@ -1,8 +1,10 @@
+using Blackguard.Entities;
+using Blackguard.Tiles;
+
 namespace Blackguard;
 
 public class Room {
-    public Entity[] Entities;
+    public Entity[]? Entities;
 
-    // Tiles are not implemented yet.
-    //public Tile[][] Tiles;
+    public Entity[]? Tiles;
 }
