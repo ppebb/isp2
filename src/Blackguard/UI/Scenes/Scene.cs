@@ -3,20 +3,18 @@
 namespace Blackguard.UI.Scenes;
 
 public abstract class Scene : ISizeProvider {
-    public nint CurrentWin { get; protected set; }
-
-    public (int, int) GetSize() {
-        NCurses.GetMaxYX(CurrentWin, out int y, out int x);
-        return (x, y);
-    }
-
-    public (int, int) GetOffset() {
-        NCurses.GetYX(CurrentWin, out int y, out int x);
-        return (x, y);
-    }
+    public Window CurrentWin { protected set; get; }
 
     // Should be defined in the constructor inheriting Scene. Default container for the Scene where elements should be stored
     protected UIContainer container;
+
+    public (int, int) GetSize() {
+        return (CurrentWin.w, CurrentWin.h);
+    }
+
+    public (int, int) GetOffset() {
+        return (CurrentWin.x, CurrentWin.y);
+    }
 
     // Returns false to exit the game
     public abstract bool RunTick();

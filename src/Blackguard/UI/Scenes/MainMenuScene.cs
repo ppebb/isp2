@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Blackguard.Utilities;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
@@ -38,6 +38,8 @@ public class MainMenuScene : Scene {
     /* }; */
 
     public MainMenuScene() {
+        CurrentWin = Window.NewFullScreenWindow();
+
         UIText logoText = new(Logo);
         // Support for multiline buttons will come soon!
         UIButton startButton = new("Start", () => {  });
@@ -45,15 +47,7 @@ public class MainMenuScene : Scene {
         UIButton creditsButton = new("Credits", () => {  });
         UIButton quitButton = new("Quit", () => {  });
 
-        List<UIElement> elements = [logoText, startButton, settingsButton, creditsButton, quitButton];
-        // or should it be like the following?
-        // List<UIElement> elements = [logoText];
-        // List<UIElement> elements = [startButton];
-        // List<UIElement> elements = [settingsButton];
-        // List<UIElement> elements = [creditsButton];
-        // List<UIElement> elements = [quitButton];
-
-        container = new UIContainer(elements, Alignment.Center);
+        container = new UIContainer(Alignment.Center, logoText, startButton, settingsButton, creditsButton, quitButton);
     }
 
     int tick = 0;
@@ -64,12 +58,12 @@ public class MainMenuScene : Scene {
 
     public override void Render() {
         if (tick % 60 == 0)
-            NCurses.MoveWindowAddString(CurrentWin, 0, 0, $"ticks {tick}, seconds {tick / 60}");
+            NCurses.MoveWindowAddString(CurrentWin.handle, 0, 0, $"ticks {tick}, seconds {tick / 60}");
 
-        NCurses.WindowRefresh(CurrentWin);
+        container.Render(CurrentWin.handle, 0, 0, CurrentWin.w, CurrentWin.h);
     }
 
     public override void Finish() {
-        NCurses.DeleteWindow(CurrentWin);
+        NCurses.DeleteWindow(CurrentWin.handle);
     }
 }

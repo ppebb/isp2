@@ -9,7 +9,7 @@ public enum Color : short {
 }
 
 public enum ColorPair {
-    Text
+    Text = 1,
 }
 
 public enum Highlight {
@@ -43,7 +43,7 @@ public static class ColorHandler {
         }
 
         for (short i = 0; i < ColorPairDefs.Length; i++) {
-            NCurses.InitPair(i, (short)ColorPairDefs[i][0], (short)ColorPairDefs[i][1]);
+            NCurses.InitPair((short)(i + 1), (short)ColorPairDefs[i][0], (short)ColorPairDefs[i][1]);
         }
     }
 }
