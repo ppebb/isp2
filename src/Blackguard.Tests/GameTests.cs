@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Blackguard.UI.Scenes;
 
 namespace Blackguard.Tests;
@@ -32,7 +32,7 @@ public class GameTests {
     [Test]
     public void TestMainLoop() {
         Game game = new Game();
-        game.SwitchScene(scene);
+        Game.SwitchScene(scene);
 
         Stopwatch stopwatch = Stopwatch.StartNew();
         game.Run();

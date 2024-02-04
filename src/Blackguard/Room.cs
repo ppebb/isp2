@@ -1,3 +1,5 @@
+﻿using Blackguard.Entities;
+
 namespace Blackguard;
 
 public class Room {

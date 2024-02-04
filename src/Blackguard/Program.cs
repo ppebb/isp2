@@ -8,7 +8,7 @@ namespace Blackguard;
 public class LibraryNames : CursesLibraryNames {
     public override bool ReplaceLinuxDefaults => false;
 
-    public override List<string> NamesLinux => new List<string> { "libncursesw.so" };
+    public override List<string> NamesLinux => new() { "libncursesw.so" };
 
     public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
 }
@@ -29,6 +29,8 @@ public static class Program {
         Console.CancelKeyPress += Handler; // Register this so that NCurses can uninitialize if ctrl-c is pressed
 
         StdScreen = NCurses.InitScreen();
+        NCurses.StartColor(); // Starts the color functionality
+        ColorHandler.Init(); // Initialize all of our color pairs and highlights
         /* NCurses.Refresh(); */
 
         // Control is passed off to the game
