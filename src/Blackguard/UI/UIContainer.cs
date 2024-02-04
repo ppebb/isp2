@@ -108,12 +108,12 @@ public class UIContainer : UIElement {
             (int cw, int ch) = child.GetSize();
 
             if (_alignment.HasFlag(Alignment.Center))
-                cx += cw / 2;
+                cx += (maxw - cw) / 2;
             else if (_alignment.HasFlag(Alignment.Right))
                 cx += maxw - cw;
 
-            child.Render(window, x, y, maxw, maxh - cy);
-            y += ch;
+            child.Render(window, cx, cy, maxw, maxh - cy);
+            cy += ch;
         }
     }
 }

@@ -10,7 +10,7 @@ public struct Window {
     public int h; // Height
 
     public Window(int xi, int yi, int wi, int hi) {
-        handle = NCurses.NewWindow(wi, hi, yi, xi);
+        handle = NCurses.NewWindow(hi, wi, yi, xi);
         NCurses.NoDelay(handle, true);
         x = xi;
         y = yi;

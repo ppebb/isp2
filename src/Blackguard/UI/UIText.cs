@@ -20,6 +20,6 @@ public class UIText : UIElement {
     }
 
     public override void Render(nint window, int x, int y, int maxy, int maxh) {
-        CursesUtils.WindowAddLinesWithHighlight(window, _lines.Select(l => (Highlight.Text, x, y, l)).ToArray());
+        CursesUtils.WindowAddLinesWithHighlight(window, _lines.Select((l, i) => (Highlight.Text, x, y + i, l)).ToArray());
     }
 }

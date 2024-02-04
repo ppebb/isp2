@@ -57,8 +57,8 @@ public class MainMenuScene : Scene {
     }
 
     public override void Render() {
-        if (tick % 60 == 0)
-            NCurses.MoveWindowAddString(CurrentWin.handle, 0, 0, $"ticks {tick}, seconds {tick / 60}");
+        /* if (tick % 60 == 0) */
+        /*     NCurses.MoveWindowAddString(CurrentWin.handle, 0, 0, $"ticks {tick}, seconds {tick / 60}"); */
 
         container.Render(CurrentWin.handle, 0, 0, CurrentWin.w, CurrentWin.h);
     }
