@@ -1,27 +1,28 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Blackguard.UI;
 
-public class UIContainer : UIElement, IBoundsProvider {
+public class UIContainer : UIElement {
     private readonly List<UIElement> _elements;
     private int selected_element;
 
-    public (int, int) GetBounds() {
-        throw new System.NotImplementedException();
+    public override (int, int) GetSize() {
+        return (_elements.Select(e => e.GetSize().x).Max(), _elements.Select(e => e.GetSize().y).Sum());
     }
 
-    public (int, int) GetOffset() {
-        throw new System.NotImplementedException();
-    }
-
-    // TODO: Handle sizing dynamically somehow
-
-    public UIContainer(List<UIElement> elements) {
+    public UIContainer(List<UIElement> elements, Alignment alignment) {
         _elements = elements;
+        _alignment = alignment;
+    }
+
+    public UIContainer(Alignment alignment, params UIElement[] elements) {
+        _elements = elements.ToList();
+        _alignment = alignment;
     }
 
     public UIContainer() {
-        _elements = new();
+        _elements = new List<UIElement>();
     }
 
     public void Add(UIElement element) => _elements.Add(element);
@@ -96,18 +97,23 @@ public class UIContainer : UIElement, IBoundsProvider {
         if (Empty())
             return;
 
-        // I don't know if changing scenes within ProcessInput will result in a memory leak. Will have to profile later.
         _elements[selected_element].ProcessInput();
     }
 
-    public override (int x, int y) Size() {
-        throw new System.NotImplementedException();
-    }
+    public override void Render(nint window, int x, int y, int maxw, int maxh) {
+        int cy = y;
 
-    public override void Render(nint window, int x, int y) {
-        // Handle sizing soon
+        foreach (UIElement child in _elements) {
+            int cx = 0;
+            (int cw, int ch) = child.GetSize();
 
-        foreach (UIElement child in _elements)
-            child.Render(window, 0, 0);
+            if (_alignment.HasFlag(Alignment.Center))
+                cx += cw / 2;
+            else if (_alignment.HasFlag(Alignment.Right))
+                cx += maxw - cw;
+
+            child.Render(window, x, y, maxw, maxh - cy);
+            y += ch;
+        }
     }
 }

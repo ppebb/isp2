@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Blackguard.Utilities;
+﻿using System.Collections.Generic;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
@@ -15,38 +12,38 @@ public class MainMenuScene : Scene {
         "██████╦╝███████╗██║░░██║╚█████╔╝██║░╚██╗╚██████╔╝╚██████╔╝██║░░██║██║░░██║██████╔╝",
         "╚═════╝░╚══════╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝░╚═════╝░░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░"
     };
-    private static string[] Start = {
-        "▄▀▀▀▄ ▀▀█▀▀  ▄█▄  █▀▀▄  ▀▀█▀▀",
-        "▀▄▄▄    █    █ █  █▄▄▀    █  ",
-        "▄   █   █   █▀▀▀█ █  █    █  ",
-        " ▀▀▀    ▀   ▀   ▀ ▀   ▀   ▀  "
-    };
-    private static string[] Settings = {
-        "▄▀▀▀▄ █▀▀▀▀ ▀▀█▀▀ ▀▀█▀▀ ▀▀█▀▀ ██  █ ▄▀▀▀▄ ▄▀▀▀▄",
-        "▀▄▄▄  █▄▄▄    █     █     █   █ █ █ █     ▀▄▄▄ ",
-        "▄   █ █       █     █     █   █ ▀▄█ █  ▀█ ▄   █",
-        " ▀▀▀  ▀▀▀▀▀   ▀     ▀   ▀▀▀▀▀ ▀  ▀▀  ▀▀▀   ▀▀▀ "
-    };
-    private static string[] Credits = {
-        "▄▀▀▀▄ █▀▀▄  █▀▀▀▀ █▀▀▄  ▀▀█▀▀ ▀▀█▀▀ ▄▀▀▀▄",
-        "█     █▄▄▀  █▄▄▄  █   █   █     █   ▀▄▄▄ ",
-        "█   ▄ █  █  █     █  ▄▀   █     █   ▄   █",
-        " ▀▀▀  ▀   ▀ ▀▀▀▀▀ ▀▀▀   ▀▀▀▀▀   ▀    ▀▀▀ "
-    };
-    private static string[] Quit = {
-        "▄▀▀▀▄ █   █ ▀▀█▀▀ ▀▀█▀▀",
-        "█   █ █   █   █     █  ",
-        "█ ▀▄▀ █   █   █     █  ",
-        " ▀▀ ▀  ▀▀▀  ▀▀▀▀▀   ▀  "
-    };
+    /* private static string[] Start = { */
+    /*     "▄▀▀▀▄ ▀▀█▀▀  ▄█▄  █▀▀▄  ▀▀█▀▀", */
+    /*     "▀▄▄▄    █    █ █  █▄▄▀    █  ", */
+    /*     "▄   █   █   █▀▀▀█ █  █    █  ", */
+    /*     " ▀▀▀    ▀   ▀   ▀ ▀   ▀   ▀  " */
+    /* }; */
+    /* private static readonly string[] Settings = { */
+    /*     "▄▀▀▀▄ █▀▀▀▀ ▀▀█▀▀ ▀▀█▀▀ ▀▀█▀▀ ██  █ ▄▀▀▀▄ ▄▀▀▀▄", */
+    /*     "▀▄▄▄  █▄▄▄    █     █     █   █ █ █ █     ▀▄▄▄ ", */
+    /*     "▄   █ █       █     █     █   █ ▀▄█ █  ▀█ ▄   █", */
+    /*     " ▀▀▀  ▀▀▀▀▀   ▀     ▀   ▀▀▀▀▀ ▀  ▀▀  ▀▀▀   ▀▀▀ " */
+    /* }; */
+    /* private static string[] Credits = { */
+    /*     "▄▀▀▀▄ █▀▀▄  █▀▀▀▀ █▀▀▄  ▀▀█▀▀ ▀▀█▀▀ ▄▀▀▀▄", */
+    /*     "█     █▄▄▀  █▄▄▄  █   █   █     █   ▀▄▄▄ ", */
+    /*     "█   ▄ █  █  █     █  ▄▀   █     █   ▄   █", */
+    /*     " ▀▀▀  ▀   ▀ ▀▀▀▀▀ ▀▀▀   ▀▀▀▀▀   ▀    ▀▀▀ " */
+    /* }; */
+    /* private static string[] Quit = { */
+    /*     "▄▀▀▀▄ █   █ ▀▀█▀▀ ▀▀█▀▀", */
+    /*     "█   █ █   █   █     █  ", */
+    /*     "█ ▀▄▀ █   █   █     █  ", */
+    /*     " ▀▀ ▀  ▀▀▀  ▀▀▀▀▀   ▀  " */
+    /* }; */
 
     public MainMenuScene() {
         UIText logoText = new(Logo);
-        UIButton startButton = new(Start, () => {  });
-        UIButton settingsButton = new(Settings, () => {  });
-        UIButton creditsButton = new(Credits, () => {  });
-        UIButton quitButton = new(Quit, () => {  });
-
+        // Support for multiline buttons will come soon!
+        UIButton startButton = new("Start", () => {  });
+        UIButton settingsButton = new("Settings", () => {  });
+        UIButton creditsButton = new("Credits", () => {  });
+        UIButton quitButton = new("Quit", () => {  });
 
         List<UIElement> elements = [logoText, startButton, settingsButton, creditsButton, quitButton];
         // or should it be like the following?
@@ -56,7 +53,7 @@ public class MainMenuScene : Scene {
         // List<UIElement> elements = [creditsButton];
         // List<UIElement> elements = [quitButton];
 
-        container = new UIContainer(elements);
+        container = new UIContainer(elements, Alignment.Center);
     }
 
     int tick = 0;
