@@ -18,7 +18,7 @@ public static class CursesUtils {
 
     public static void Mvwchgat(nint window, int x, int y, int len, uint attr, short pair) {
         NCurses.WindowMove(window, x, y);
-        NCurses.WindowChangeAttribute(window, x, y, len, attr, pair, nint.Zero);
+        NCurses.WindowChangeAttribute(window,  len, attr, pair, nint.Zero);
     }
 }
 
