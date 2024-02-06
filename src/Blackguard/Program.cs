@@ -21,6 +21,7 @@ public static class Program {
 
     static Program() {
         Platform = Platform.GetPlatform();
+        Platform.Configure();
     }
 
     public static void Main(string[] args) {
