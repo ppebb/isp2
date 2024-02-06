@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Blackguard.Utilities;
 
@@ -26,11 +27,18 @@ public abstract class Platform {
 
     public abstract string DataPath();
 
+    public abstract void Configure();
+
     public abstract List<string> ExtractNativeDependencies();
 
     public class Linux : Platform {
+        [DllImport("libc", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern void setlocale(int category, string locale);
+
+        private const int LC_ALL = 6;
+
         public override string CachePath() {
-            var xdg = Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+            string? xdg = Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
 
             if (!string.IsNullOrEmpty(xdg))
                 return Path.Combine(xdg, "blackguard");
@@ -38,8 +46,12 @@ public abstract class Platform {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ".cache", "blackguard");
         }
 
+        public override void Configure() {
+            setlocale(LC_ALL, "");
+        }
+
         public override string DataPath() {
-            var xdg = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+            string? xdg = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
 
             if (!string.IsNullOrEmpty(xdg))
                 return Path.Combine(xdg, "blackguard");
@@ -55,6 +67,10 @@ public abstract class Platform {
     public class Windows : Platform {
         public override string CachePath() {
             return Path.Combine(DataPath(), "cache");
+        }
+
+        public override void Configure() {
+            return; // Nothing specific to configure on windows yet.
         }
 
         public override string DataPath() {
