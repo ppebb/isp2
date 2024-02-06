@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
 using Blackguard.UI.Scenes;
 using Mindmagma.Curses;
 
@@ -50,7 +49,7 @@ public class Game {
         input.Clear();
         int c;
         try {
-            while ((c = NCurses.WindowGetChar(scene.CurrentWin)) != -1)
+            while ((c = NCurses.WindowGetChar(scene.CurrentWin.handle)) != -1)
                 input.Add(c);
         }
         catch { } // Empty catch block because WindowGetChar throws if there is not a currently pressed key
@@ -152,7 +151,7 @@ public class Game {
         queuedScene = nextScene;
     }
 
-    private void SwitchToQueuedScene() {
+    private static void SwitchToQueuedScene() {
         if (queuedScene == null)
             return;
 
