@@ -14,9 +14,16 @@ public class MainMenuScene : Scene {
     };
 
     public MainMenuScene() {
-        CurrentWin = CursesUtils.FullScreenWindow();
-        NCurses.GetMaxYX(CurrentWin, out int y, out int x);
-        CursesUtils.WindowAddLines(CurrentWin, Utils.CenterText(Logo, x));
+        UIText logoText = new(Logo);
+        UIButton startButton = new(Start, () => { });
+        UIButton settingsButton = new(Settings, () => { });
+        UIButton creditsButton = new(Credits, () => { });
+        UIButton quitButton = new(Quit, () => { });
+
+
+        List<UIElement> elements = [logoText, startButton, settingsButton, creditsButton, quitButton];
+
+        container = new UIContainer(elements);
     }
 
     int tick = 0;
