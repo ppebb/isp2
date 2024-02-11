@@ -30,6 +30,7 @@ public static class Program {
         Console.CancelKeyPress += Handler; // Register this so that NCurses can uninitialize if ctrl-c is pressed
 
         StdScreen = NCurses.InitScreen();
+        NCurses.SetCursor(0); // Hide the color
         NCurses.StartColor(); // Starts the color functionality
         ColorHandler.Init(); // Initialize all of our color pairs and highlights
         /* NCurses.Refresh(); */
