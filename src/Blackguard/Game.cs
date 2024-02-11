@@ -24,23 +24,7 @@ public class Game {
     private static readonly TimeSpan maxElapsedTime = TimeSpan.FromMilliseconds(500);
 
     public Game() {
-        // TODO: Mock console setup so we can test ncurses output
-        // Try catch as a temporary measure to allow tests to run
-        try {
-            if (!NCurses.HasColors() /*|| !NCurses.CanChangeColor()*/) { // Can change color is seemingly returning false on windows. We can decide if it's neccessary later
-                NCurses.EndWin();
-                Console.WriteLine("Terminal does not support colors. Please use a terminal that supports colors.");
-                Console.ReadKey();
-                Environment.Exit(1);
-            }
-
-            NCurses.NoEcho();
-            scene = new MainMenuScene();
-        }
-        catch (Exception e) {
-            // For now, a temporary logger is acceptible
-            File.WriteAllText("./log", e.ToString());
-        }
+        scene = new MainMenuScene();
     }
 
     private static readonly List<int> input = new();
