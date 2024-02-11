@@ -1,15 +1,28 @@
-namespace Blackguard.UI;
+﻿namespace Blackguard.UI;
 
-public abstract class UIElement {
-    private bool selected;
+public abstract class UIElement : ISizeProvider {
+    protected bool _selected;
+    protected Alignment _alignment;
 
     public void Select() {
-        selected = true;
+        _selected = true;
     }
 
     public void Deselect() {
-        selected = false;
+        _selected = false;
     }
+
+    public void ChangeAlignment(Alignment alignment, bool replace = false) {
+        if (replace)
+            _alignment = alignment;
+        else {
+            Alignment temp = _alignment;
+            temp.UpdateAlignment(alignment);
+            _alignment = temp;
+        }
+    }
+
+    public abstract (int x, int y) GetSize();
 
     public virtual void Tick() { }
 
@@ -17,5 +30,5 @@ public abstract class UIElement {
     public virtual void ProcessInput() { }
 
     // Handle drawing the text in addition to resizing
-    public virtual void Render() { }
+    public abstract void Render(nint window, int x, int y, int maxw, int maxh);
 }

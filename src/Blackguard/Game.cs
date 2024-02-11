@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
 using Blackguard.UI.Scenes;
 using Mindmagma.Curses;
 
@@ -10,6 +9,7 @@ namespace Blackguard;
 
 public class Game {
     private static Scene scene = null!;
+    private static Scene queuedScene = null!;
 
     private Stopwatch gameTimer = null!;
     private TimeSpan totalElapsedTime = TimeSpan.Zero;
@@ -45,11 +45,11 @@ public class Game {
 
     private static readonly List<int> input = new();
 
-    private void PollInput() {
+    private static void PollInput() {
         input.Clear();
         int c;
         try {
-            while ((c = NCurses.WindowGetChar(scene.CurrentWin)) != -1)
+            while ((c = NCurses.WindowGetChar(scene.CurrentWin.handle)) != -1)
                 input.Add(c);
         }
         catch { } // Empty catch block because WindowGetChar throws if there is not a currently pressed key
@@ -72,6 +72,9 @@ public class Game {
 
             if (!shouldExit)
                 Tick();
+
+            // By switching to the scene at the end, we avoid memory leaks and crashes from killing the scene while it's active.
+            SwitchToQueuedScene();
         }
 
         // Exit the game
@@ -144,9 +147,15 @@ public class Game {
         sleepTimeIndex = (sleepTimeIndex + 1) & SLEEP_TIME_MASK;
     }
 
-    public void SwitchScene(Scene nextScene) {
-        scene?.Finish();
+    public static void SwitchScene(Scene nextScene) {
+        queuedScene = nextScene;
+    }
 
-        scene = nextScene;
+    private static void SwitchToQueuedScene() {
+        if (queuedScene == null)
+            return;
+
+        scene?.Finish();
+        scene = queuedScene;
     }
 }
