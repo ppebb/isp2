@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
 
-public class MainMenuScene : Scene {
+public class CharacterCreationScene : Scene {
     private static string[] racesHeader = {
         "█▀▀▄   ▄█▄  ▄▀▀▀▄ █▀▀▀▀ ▄▀▀▀▄",
         "█▄▄▀   █ █  █     █▄▄▄  ▀▄▄▄ ",
@@ -69,21 +68,21 @@ public class MainMenuScene : Scene {
         "█▀▀▄ █▀▀█ █▀█  █▀▀▄ █▀▀█ █▀█   █  █▀▀█ █ ██",
         "▀▀▀  ▀  ▀ ▀  ▀ ▀▀▀  ▀  ▀ ▀  ▀ ▀▀▀ ▀  ▀ ▀  ▀"
     };
-    public MainMenuScene() {
-        UIText racesHeaderText = new(racesHeader);
+
+    public CharacterCreationScene() {
         UIText racesHeaderText = new(racesHeader);
 
-        UIButton humanButton = new(humanRaceText, () => {  });
-        UIButton orkButton = new(orkRaceText, () => {  });
-        UIButton elfButton = new(elfRaceText, () => {  });
-        UIButton dwarfButton = new(dwarfRaceText, () => {  });
-        UIButton demonButton = new(demonRaceText, () => {  });
-        UIButton gnomeButton = new(gnomeRaceText, () => {  });
+        UIButton humanButton = new(humanRaceText, () => { });
+        UIButton orkButton = new(orkRaceText, () => { });
+        UIButton elfButton = new(elfRaceText, () => { });
+        UIButton dwarfButton = new(dwarfRaceText, () => { });
+        UIButton demonButton = new(demonRaceText, () => { });
+        UIButton gnomeButton = new(gnomeRaceText, () => { });
 
-        UIButton knightButton = new(knightClassText, () => {  });
-        UIButton archerButton = new(archerClassText, () => {  });
-        UIButton mageButton = new(mageClassText, () => {  });
-        UIButton barbarianButton = new(barbarianClassText, () => {  });
+        UIButton knightButton = new(knightClassText, () => { });
+        UIButton archerButton = new(archerClassText, () => { });
+        UIButton mageButton = new(mageClassText, () => { });
+        UIButton barbarianButton = new(barbarianClassText, () => { });
 
         List<UIElement> elements = [
             racesHeaderText, racesHeaderText,
@@ -91,7 +90,7 @@ public class MainMenuScene : Scene {
             knightButton, archerButton, mageButton, barbarianButton
         ];
 
-        container = new UIContainer(elements);
+        container = new UIContainer(elements, Alignment.Left);
     }
 
     int tick = 0;
@@ -101,13 +100,13 @@ public class MainMenuScene : Scene {
     }
 
     public override void Render() {
-        if (tick % 60 == 0)
-            NCurses.MoveWindowAddString(CurrentWin, 0, 0, $"ticks {tick}, seconds {tick / 60}");
+        /* if (tick % 60 == 0) */
+        /*     NCurses.MoveWindowAddString(CurrentWin, 0, 0, $"ticks {tick}, seconds {tick / 60}"); */
 
-        NCurses.WindowRefresh(CurrentWin);
+        /* NCurses.WindowRefresh(CurrentWin); */
     }
 
     public override void Finish() {
-        NCurses.DeleteWindow(CurrentWin);
+        NCurses.DeleteWindow(CurrentWin.handle);
     }
 }
