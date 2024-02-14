@@ -12,40 +12,43 @@ public class MainMenuScene : Scene {
         "██████╦╝███████╗██║░░██║╚█████╔╝██║░╚██╗╚██████╔╝╚██████╔╝██║░░██║██║░░██║██████╔╝",
         "╚═════╝░╚══════╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝░╚═════╝░░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░"
     };
-    /* private static string[] Start = { */
-    /*     "▄▀▀▀▄ ▀▀█▀▀  ▄█▄  █▀▀▄  ▀▀█▀▀", */
-    /*     "▀▄▄▄    █    █ █  █▄▄▀    █  ", */
-    /*     "▄   █   █   █▀▀▀█ █  █    █  ", */
-    /*     " ▀▀▀    ▀   ▀   ▀ ▀   ▀   ▀  " */
-    /* }; */
-    /* private static readonly string[] Settings = { */
-    /*     "▄▀▀▀▄ █▀▀▀▀ ▀▀█▀▀ ▀▀█▀▀ ▀▀█▀▀ ██  █ ▄▀▀▀▄ ▄▀▀▀▄", */
-    /*     "▀▄▄▄  █▄▄▄    █     █     █   █ █ █ █     ▀▄▄▄ ", */
-    /*     "▄   █ █       █     █     █   █ ▀▄█ █  ▀█ ▄   █", */
-    /*     " ▀▀▀  ▀▀▀▀▀   ▀     ▀   ▀▀▀▀▀ ▀  ▀▀  ▀▀▀   ▀▀▀ " */
-    /* }; */
-    /* private static string[] Credits = { */
-    /*     "▄▀▀▀▄ █▀▀▄  █▀▀▀▀ █▀▀▄  ▀▀█▀▀ ▀▀█▀▀ ▄▀▀▀▄", */
-    /*     "█     █▄▄▀  █▄▄▄  █   █   █     █   ▀▄▄▄ ", */
-    /*     "█   ▄ █  █  █     █  ▄▀   █     █   ▄   █", */
-    /*     " ▀▀▀  ▀   ▀ ▀▀▀▀▀ ▀▀▀   ▀▀▀▀▀   ▀    ▀▀▀ " */
-    /* }; */
-    /* private static string[] Quit = { */
-    /*     "▄▀▀▀▄ █   █ ▀▀█▀▀ ▀▀█▀▀", */
-    /*     "█   █ █   █   █     █  ", */
-    /*     "█ ▀▄▀ █   █   █     █  ", */
-    /*     " ▀▀ ▀  ▀▀▀  ▀▀▀▀▀   ▀  " */
-    /* }; */
+
+    private static string[] Start = {
+        "▄▀▀▀▄ ▀▀█▀▀  ▄█▄  █▀▀▄  ▀▀█▀▀",
+        "▀▄▄▄    █    █ █  █▄▄▀    █  ",
+        "▄   █   █   █▀▀▀█ █  █    █  ",
+        " ▀▀▀    ▀   ▀   ▀ ▀   ▀   ▀  "
+    };
+
+    private static readonly string[] Settings = {
+        "▄▀▀▀▄ █▀▀▀▀ ▀▀█▀▀ ▀▀█▀▀ ▀▀█▀▀ ██  █ ▄▀▀▀▄ ▄▀▀▀▄",
+        "▀▄▄▄  █▄▄▄    █     █     █   █ █ █ █     ▀▄▄▄ ",
+        "▄   █ █       █     █     █   █ ▀▄█ █  ▀█ ▄   █",
+        " ▀▀▀  ▀▀▀▀▀   ▀     ▀   ▀▀▀▀▀ ▀  ▀▀  ▀▀▀   ▀▀▀ "
+    };
+
+    private static string[] Credits = {
+        "▄▀▀▀▄ █▀▀▄  █▀▀▀▀ █▀▀▄  ▀▀█▀▀ ▀▀█▀▀ ▄▀▀▀▄",
+        "█     █▄▄▀  █▄▄▄  █   █   █     █   ▀▄▄▄ ",
+        "█   ▄ █  █  █     █  ▄▀   █     █   ▄   █",
+        " ▀▀▀  ▀   ▀ ▀▀▀▀▀ ▀▀▀   ▀▀▀▀▀   ▀    ▀▀▀ "
+    };
+
+    private static string[] Quit = {
+        "▄▀▀▀▄ █   █ ▀▀█▀▀ ▀▀█▀▀",
+        "█   █ █   █   █     █  ",
+        "█ ▀▄▀ █   █   █     █  ",
+        " ▀▀ ▀  ▀▀▀  ▀▀▀▀▀   ▀  "
+    };
 
     public MainMenuScene() {
         CurrentWin = Window.NewFullScreenWindow();
 
         UIText logoText = new(Logo);
-        // Support for multiline buttons will come soon!
-        UIButton startButton = new("Start", () => {  });
-        UIButton settingsButton = new("Settings", () => {  });
-        UIButton creditsButton = new("Credits", () => {  });
-        UIButton quitButton = new("Quit", () => {  });
+        UIButton startButton = new(Start, () => { });
+        UIButton settingsButton = new(Settings, () => { });
+        UIButton creditsButton = new(Credits, () => { });
+        UIButton quitButton = new(Quit, () => { });
 
         container = new UIContainer(Alignment.Center, logoText, startButton, settingsButton, creditsButton, quitButton);
     }

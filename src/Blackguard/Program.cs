@@ -27,17 +27,38 @@ public static class Program {
     public static void Main(string[] args) {
         // Any arg parsing we eventually implement should be here, before any initialization
 
-        Console.CancelKeyPress += Handler; // Register this so that NCurses can uninitialize if ctrl-c is pressed
-
         StdScreen = NCurses.InitScreen();
+
+        if (!NCurses.HasColors() /*|| !NCurses.CanChangeColor()*/) { // Can change color is seemingly returning false on windows. We can decide if it's neccessary later
+            NCurses.EndWin();
+
+            Console.WriteLine("Terminal does not support colors. Please use a terminal that supports colors.");
+            Console.ReadKey();
+            Environment.Exit(1);
+        }
+
+        NCurses.SetCursor(0); // Hide the color
+        NCurses.NoEcho();
         NCurses.StartColor(); // Starts the color functionality
         ColorHandler.Init(); // Initialize all of our color pairs and highlights
-        /* NCurses.Refresh(); */
 
+        Console.CancelKeyPress += Handler; // Register this so that NCurses can uninitialize if ctrl-c is pressed
+
+        Exception? exception = null;
         // Control is passed off to the game
-        new Game().Run();
+        try {
+            new Game().Run();
+        }
+        catch (Exception e) {
+            exception = e;
+        }
+        finally {
+            NCurses.EndWin();
 
-        NCurses.EndWin();
+            if (exception != null)
+                Console.WriteLine(exception);
+        }
+
     }
 
     private static void Handler(object? sender, ConsoleCancelEventArgs e) {
