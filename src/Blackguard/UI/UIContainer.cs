@@ -3,9 +3,11 @@ using System.Linq;
 
 namespace Blackguard.UI;
 
-public class UIContainer : UIElement {
+public class UIContainer : UIElement, ISelectable {
     private readonly List<UIElement> _elements;
-    private int selected_element;
+    private int selected_element = 0;
+
+    public bool Selected { get; set; }
 
     public override (int, int) GetSize() {
         return (_elements.Select(e => e.GetSize().x).Max(), _elements.Select(e => e.GetSize().y).Sum());
@@ -14,11 +16,13 @@ public class UIContainer : UIElement {
     public UIContainer(List<UIElement> elements, Alignment alignment) {
         _elements = elements;
         _alignment = alignment;
+        SelectFirstSelectable();
     }
 
     public UIContainer(Alignment alignment, params UIElement[] elements) {
         _elements = elements.ToList();
         _alignment = alignment;
+        SelectFirstSelectable();
     }
 
     public UIContainer() {
@@ -31,42 +35,57 @@ public class UIContainer : UIElement {
 
     public bool Empty() => _elements?.Count == 0;
 
-    public void Next() {
-        if (Empty())
-            return;
+    private bool SelectFirstSelectable() => SelectNextSelectable(0, true);
 
-        if (_elements[selected_element] is UIContainer container) {
-            if (!container.Bottom()) {
-                container.Next();
-                return;
+    private bool SelectNextSelectable(int start, bool forwards) {
+        for (int i = start; i >= 0 && i < _elements.Count; i += forwards ? 1 : -1) {
+            if (_elements[i] is ISelectable selectable) {
+                if (i == selected_element) // Don't select the same element
+                    continue;
+
+                (_elements[selected_element] as ISelectable)?.Deselect();
+                selected_element = i;
+                selectable.Select();
+                return true;
             }
         }
 
-        _elements[selected_element].Deselect();
-
-        if (++selected_element >= _elements.Count)
-            selected_element = 0;
-
-        _elements[selected_element].Select();
+        return false;
     }
 
-    public void Prev() {
+    // Returns true if able to successfully move to the next element, false if not
+    public bool Next(bool wrap) {
         if (Empty())
-            return;
+            return false;
 
-        if (_elements[selected_element] is UIContainer container) {
-            if (!container.Top()) {
-                container.Prev();
-                return;
-            }
-        }
+        if (_elements[selected_element] is UIContainer container)
+            if (container.Next(false)) // If we can move to the next element in the child container, then we're done
+                return true;
 
-        _elements[selected_element].Deselect();
+        // Otherwise, deselect the current element and look for the next one. If we can't find one return false and the parent will handle it!
+        if (SelectNextSelectable(selected_element + 1, true))
+            return true;
+        else if (wrap)
+            return SelectNextSelectable(0, true);
 
-        if (--selected_element < 0)
-            selected_element = _elements.Count - 1;
+        return false;
+    }
 
-        _elements[selected_element].Select();
+    public bool Prev(bool wrap) {
+        if (Empty())
+            return false;
+
+        if (_elements[selected_element] is UIContainer container)
+            if (container.Prev(false)) // If we can move to the previous element in the child container, then we're done
+                return true;
+
+        // Otherwise, deselect the current element and look for the previous one. If we can't find one return false and the parent will handle it!
+        if (SelectNextSelectable(selected_element - 1, false))
+            return true;
+        else if (wrap)
+            return SelectNextSelectable(_elements.Count - 1, false);
+
+        return false;
     }
 
     public bool Top() {
@@ -89,8 +108,7 @@ public class UIContainer : UIElement {
 
     // Called every tick
     public override void Tick() {
-        if (Game.IsInput())
-            ProcessInput();
+        ProcessInput();
     }
 
     public override void ProcessInput() {
@@ -115,5 +133,13 @@ public class UIContainer : UIElement {
             child.Render(window, cx, cy, maxw, maxh - cy);
             cy += ch;
         }
+    }
+
+    public void Select() {
+        throw new System.NotImplementedException();
+    }
+
+    public void Deselect() {
+        throw new System.NotImplementedException();
     }
 }

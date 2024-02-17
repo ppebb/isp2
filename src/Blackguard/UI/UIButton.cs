@@ -5,9 +5,11 @@ using Mindmagma.Curses;
 
 namespace Blackguard.UI;
 
-public class UIButton : UIElement {
+public class UIButton : UIElement, ISelectable {
     private string[] _label;
     private readonly Action _onPress;
+
+    public bool Selected { get; set; }
 
     public UIButton(string[] label, Action onPress) {
         _label = label;
@@ -19,7 +21,7 @@ public class UIButton : UIElement {
     }
 
     public override void ProcessInput() {
-        if (Game.KeyPressed(CursesKey.ENTER)) {
+        if (InputHandler.KeyPressed(CursesKey.ENTER)) {
             _onPress();
         }
     }
@@ -29,6 +31,14 @@ public class UIButton : UIElement {
     }
 
     public override void Render(nint window, int x, int y, int maxy, int maxh) {
-        CursesUtils.WindowAddLinesWithHighlight(window, _label.Select((line, i) => (i == _label.Length - 1 ? Highlight.TextSel : Highlight.Text, x, y + i, _label[i])).ToArray());
+        CursesUtils.WindowAddLinesWithHighlight(window, _label.Select((line, i) => (i == _label.Length - 1 && Selected ? Highlight.TextSel : Highlight.Text, x, y + i, _label[i])).ToArray());
+    }
+
+    public void Select() {
+        Selected = true;
+    }
+
+    public void Deselect() {
+        Selected = false;
     }
 }

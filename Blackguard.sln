@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blackguard", ".\Blackguard\Blackguard.csproj", "{5ED6B993-9BD7-450D-A2EF-04D7AA01ADA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blackguard", ".\src\Blackguard\Blackguard.csproj", "{5ED6B993-9BD7-450D-A2EF-04D7AA01ADA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackguard.Tests", "Blackguard.Tests\Blackguard.Tests.csproj", "{40A1DC96-F6EE-404B-AB2B-8E4DDC6E769E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackguard.Tests", ".\src\Blackguard.Tests\Blackguard.Tests.csproj", "{40A1DC96-F6EE-404B-AB2B-8E4DDC6E769E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
