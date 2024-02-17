@@ -1,5 +1,4 @@
-﻿using Blackguard.Utilities;
-using Mindmagma.Curses;
+﻿using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
 
@@ -50,18 +49,19 @@ public class MainMenuScene : Scene {
         UIButton creditsButton = new(Credits, () => { });
         UIButton quitButton = new(Quit, () => { });
 
-        container = new UIContainer(Alignment.Center, logoText, startButton, settingsButton, creditsButton, quitButton);
+        container = new UIContainer(Alignment.Center, logoText, startButton, settingsButton, creditsButton, quitButton) { Selected = true };
     }
 
     int tick = 0;
     public override bool RunTick() {
+        ProcessInput();
+
         tick++;
         return true;
     }
 
     public override void Render() {
-        /* if (tick % 60 == 0) */
-        /*     NCurses.MoveWindowAddString(CurrentWin.handle, 0, 0, $"ticks {tick}, seconds {tick / 60}"); */
+        NCurses.MoveWindowAddString(CurrentWin.handle, 0, 0, $"ticks {tick}, seconds {tick / 60}");
 
         container.Render(CurrentWin.handle, 0, 0, CurrentWin.w, CurrentWin.h);
     }

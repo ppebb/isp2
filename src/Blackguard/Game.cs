@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Blackguard.UI.Scenes;
 using Mindmagma.Curses;
 
@@ -27,29 +28,13 @@ public class Game {
         scene = new MainMenuScene();
     }
 
-    private static readonly List<int> input = new();
-
-    private static void PollInput() {
-        input.Clear();
-        int c;
-        try {
-            while ((c = NCurses.WindowGetChar(scene.CurrentWin.handle)) != -1)
-                input.Add(c);
-        }
-        catch { } // Empty catch block because WindowGetChar throws if there is not a currently pressed key
-    }
-
-    public static bool IsInput() => input?.Count > 0;
-
-    public static bool KeyPressed(int keyCode) => input?.Contains(keyCode) ?? false;
-
     public void Run() {
         bool shouldExit = false;
 
         while (!shouldExit) {
             gameTimer = Stopwatch.StartNew();
 
-            PollInput();
+            InputHandler.PollInput(scene.CurrentWin.handle);
 
             shouldExit = !scene.RunTick();
             scene.Render();

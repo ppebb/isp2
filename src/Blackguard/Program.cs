@@ -37,8 +37,9 @@ public static class Program {
             Environment.Exit(1);
         }
 
-        NCurses.SetCursor(0); // Hide the color
-        NCurses.NoEcho();
+        NCurses.SetCursor(0); // Hide the cursor
+        NCurses.CBreak(); // Makes input immediately available to the terminal instead of performing line buffering
+        NCurses.NoEcho(); // Stops input from being printed to the screen automatically
         NCurses.StartColor(); // Starts the color functionality
         ColorHandler.Init(); // Initialize all of our color pairs and highlights
 

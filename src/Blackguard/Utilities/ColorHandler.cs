@@ -10,6 +10,7 @@ public enum Color : short {
 
 public enum ColorPair {
     Text = 1,
+    TextSel,
 }
 
 public enum Highlight {
@@ -25,12 +26,13 @@ public static class ColorHandler {
     ];
 
     public static readonly Color[][] ColorPairDefs = [
-        [ Color.TextFg, Color.TextBg ] // It would be nice if it didn't need to specify the Color enum
+        [ Color.TextFg, Color.TextBg ], // It would be nice if it didn't need to specify the Color enum
+        [ Color.TextBg, Color.TextFg ]
     ];
 
     public static readonly Dictionary<Highlight, (ColorPair pair, uint attr)> HighlightDefs = new() {
         { Highlight.Text, (ColorPair.Text, 0) },
-        { Highlight.TextSel, (ColorPair.Text, CursesAttribute.UNDERLINE) }
+        { Highlight.TextSel, (ColorPair.TextSel, CursesAttribute.UNDERLINE) }
     };
 
     public static ColorPair GetPair(this Highlight highlight) => HighlightDefs[highlight].pair;

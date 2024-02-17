@@ -1,16 +1,7 @@
 ﻿namespace Blackguard.UI;
 
 public abstract class UIElement : ISizeProvider {
-    protected bool _selected;
     protected Alignment _alignment;
-
-    public void Select() {
-        _selected = true;
-    }
-
-    public void Deselect() {
-        _selected = false;
-    }
 
     public void ChangeAlignment(Alignment alignment, bool replace = false) {
         if (replace)
