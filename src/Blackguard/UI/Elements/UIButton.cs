@@ -3,7 +3,7 @@ using System.Linq;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
 
-namespace Blackguard.UI;
+namespace Blackguard.UI.Elements;
 
 public class UIButton : UIElement, ISelectable {
     private string[] _label;

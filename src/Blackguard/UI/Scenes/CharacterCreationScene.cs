@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Blackguard.Utilities;
+﻿using System.Collections.Generic;
+using Blackguard.UI.Elements;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;

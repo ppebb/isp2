@@ -1,20 +1,13 @@
-﻿using Mindmagma.Curses;
+﻿using Blackguard.UI.Elements;
+using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
 
-public abstract class Scene : ISizeProvider {
+public abstract class Scene {
     public Window CurrentWin { protected set; get; }
 
     // Should be defined in the constructor inheriting Scene. Default container for the Scene where elements should be stored
     protected UIContainer container;
-
-    public (int, int) GetSize() {
-        return (CurrentWin.w, CurrentWin.h);
-    }
-
-    public (int, int) GetOffset() {
-        return (CurrentWin.x, CurrentWin.y);
-    }
 
     // Returns false to exit the game
     public abstract bool RunTick();

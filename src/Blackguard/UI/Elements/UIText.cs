@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Blackguard.Utilities;
 
-namespace Blackguard.UI;
+namespace Blackguard.UI.Elements;
 
 public class UIText : UIElement {
     private string[] _lines;

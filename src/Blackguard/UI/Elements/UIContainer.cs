@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Blackguard.UI;
+namespace Blackguard.UI.Elements;
 
 public class UIContainer : UIElement, ISelectable {
     private readonly List<UIElement> _elements;

@@ -1,4 +1,4 @@
-﻿namespace Blackguard.UI;
+﻿namespace Blackguard.UI.Elements;
 
 public abstract class UIElement : ISizeProvider {
     protected Alignment _alignment;

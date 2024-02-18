@@ -2,7 +2,7 @@
 
 namespace Blackguard.UI;
 
-public class Window : ISizeProvider {
+public class Window : ISizeProvider, IOffsetProvider {
     public nint handle;
     public int x; // X-pos
     public int y; // Y-pos
@@ -45,7 +45,10 @@ public class Window : ISizeProvider {
     }
 
     public (int x, int y) GetSize() {
-        NCurses.GetMaxYX(handle, out int y, out int x);
+        return (x, y);
+    }
+
+    public (int x, int y) GetOffset() {
         return (x, y);
     }
 }

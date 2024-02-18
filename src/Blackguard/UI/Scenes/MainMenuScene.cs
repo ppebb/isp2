@@ -1,4 +1,5 @@
-﻿using Mindmagma.Curses;
+﻿using Blackguard.UI.Elements;
+using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
 
