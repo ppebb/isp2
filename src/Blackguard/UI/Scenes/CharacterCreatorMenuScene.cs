@@ -100,10 +100,7 @@ public class CharacterCreationScene : Scene {
     }
 
     public override void Render() {
-        /* if (tick % 60 == 0) */
-        /*     NCurses.MoveWindowAddString(CurrentWin, 0, 0, $"ticks {tick}, seconds {tick / 60}"); */
 
-        /* NCurses.WindowRefresh(CurrentWin); */
     }
 
     public override void Finish() {

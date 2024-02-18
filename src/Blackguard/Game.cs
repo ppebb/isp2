@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using Blackguard.UI.Scenes;
 using Mindmagma.Curses;
 
@@ -11,6 +8,8 @@ namespace Blackguard;
 public class Game {
     private static Scene scene = null!;
     private static Scene queuedScene = null!;
+
+    private (int, int) oldSize = (0, 0);
 
     private Stopwatch gameTimer = null!;
     private TimeSpan totalElapsedTime = TimeSpan.Zero;
@@ -26,6 +25,7 @@ public class Game {
 
     public Game() {
         scene = new MainMenuScene();
+        oldSize = (NCurses.Lines, NCurses.Columns);
     }
 
     public void Run() {
@@ -36,6 +36,9 @@ public class Game {
 
             InputHandler.PollInput(scene.CurrentWin.handle);
 
+            if ((NCurses.Lines, NCurses.Columns) != oldSize)
+                scene.CurrentWin.HandleTermResize();
+
             shouldExit = !scene.RunTick();
             scene.Render();
 
@@ -44,6 +47,8 @@ public class Game {
 
             // By switching to the scene at the end, we avoid memory leaks and crashes from killing the scene while it's active.
             SwitchToQueuedScene();
+
+            oldSize = (NCurses.Lines, NCurses.Columns);
         }
 
         // Exit the game

@@ -24,6 +24,7 @@ dotnet_style_namespace_match_folder = true:error
 # Various modern language features
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = false:suggestion
+dotnet_style_prefer_collection_expression = false:suggestion
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_explicit_tuple_names = true:suggestion

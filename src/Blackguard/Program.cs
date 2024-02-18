@@ -43,7 +43,7 @@ public static class Program {
         NCurses.StartColor(); // Starts the color functionality
         ColorHandler.Init(); // Initialize all of our color pairs and highlights
 
-        Console.CancelKeyPress += Handler; // Register this so that NCurses can uninitialize if ctrl-c is pressed
+        Console.CancelKeyPress += SIGINT; // Register this so that NCurses can uninitialize if ctrl-c is pressed
 
         Exception? exception = null;
         // Control is passed off to the game
@@ -62,7 +62,7 @@ public static class Program {
 
     }
 
-    private static void Handler(object? sender, ConsoleCancelEventArgs e) {
+    private static void SIGINT(object? sender, ConsoleCancelEventArgs e) {
         NCurses.EndWin();
     }
 }
