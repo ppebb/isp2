@@ -30,13 +30,13 @@ public class DebugMenu : Menu {
         (Highlight.Text, (state) => $"Seconds (from ticks): {state.ticks / 60}"),
         (Highlight.Text, (state) => $"Elapsed Time: {state.totalElapsedTime}"),
         (Highlight.Text, (state) => $"Seconds (from time): {state.totalElapsedTime.Seconds}"),
-        (Highlight.Text, (state) => FormatIEnumerable("Keycodes: ", InputHandler.HasInputThisTick(), InputHandler.Keycodes())),
-        (Highlight.Text, (state) => FormatIEnumerable("Keynames: ", InputHandler.HasInputThisTick(), InputHandler.Keynames())),
+        (Highlight.Text, (state) => FormatIEnumerable("Keycodes: ", state.Input.HasInputThisTick(), state.Input.Keycodes())),
+        (Highlight.Text, (state) => FormatIEnumerable("Keynames: ", state.Input.HasInputThisTick(), state.Input.Keynames())),
     ];
 
     public DebugMenu() : base("Debug", Highlight.Text, 2, 2, WIDTH, segments.Length + 2) { }
 
-    public override bool RunTick() => true;
+    public override bool RunTick(Game state) => true;
 
     public override void Render(Game state) {
         RenderBorder(Highlight.Text);

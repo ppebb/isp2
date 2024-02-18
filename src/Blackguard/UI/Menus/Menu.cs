@@ -10,7 +10,7 @@ public abstract class Menu : ISizeProvider, IOffsetProvider {
         Panel = new Panel(name, background, x, y, w, h);
     }
 
-    public abstract bool RunTick();
+    public abstract bool RunTick(Game state);
 
     public abstract void Render(Game state);
 

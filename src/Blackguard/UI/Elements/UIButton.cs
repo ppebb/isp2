@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
@@ -20,8 +20,9 @@ public class UIButton : UIElement, ISelectable {
         _label = label;
     }
 
-    public override void ProcessInput() {
-        if (InputHandler.KeyPressed(CursesKey.ENTER)) {
+    public override void ProcessInput(Game state) {
+        // Enter, \n, \r, respectively
+        if (state.Input.KeyPressed(CursesKey.ENTER) || state.Input.KeyPressed(10) || state.Input.KeyPressed(13)) {
             _onPress();
         }
     }
