@@ -42,7 +42,7 @@ public class MainMenuScene : Scene {
     };
 
     public MainMenuScene() {
-        CurrentWin = Window.NewFullScreenWindow();
+        CurrentWin = Window.NewFullScreenWindow("Main Menu");
 
         UIText logoText = new(Logo);
         UIButton startButton = new(Start, () => { });

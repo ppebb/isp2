@@ -11,7 +11,7 @@ public static class CursesUtils {
     }
 
 #pragma warning disable IDE1006 // Shut up naming violation
-    public static void mvwchgat(nint window, int x, int y, int len, uint attr, short pair) {
+    private static void mvwchgat(nint window, int x, int y, int len, uint attr, short pair) {
         NCurses.WindowMove(window, y, x);
         NCurses.WindowChangeAttribute(window, len, attr, pair, nint.Zero);
     }

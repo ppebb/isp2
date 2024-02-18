@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using Blackguard.UI.Menus;
 using Blackguard.UI.Scenes;
 using Mindmagma.Curses;
 
@@ -8,6 +11,7 @@ namespace Blackguard;
 public class Game {
     private static Scene scene = null!;
     private static Scene queuedScene = null!;
+    private static readonly List<Menu> menus = new();
 
     private (int, int) oldSize = (0, 0);
 
@@ -42,6 +46,13 @@ public class Game {
             shouldExit = !scene.RunTick();
             scene.Render();
 
+            foreach (Menu menu in menus) {
+                shouldExit = shouldExit && menu.RunTick();
+                menu.Render();
+            }
+
+            SceneOmnipresentInputHandler();
+
             if (!shouldExit)
                 Tick();
 
@@ -53,6 +64,22 @@ public class Game {
 
         // Exit the game
         scene.Finish();
+    }
+
+    // Handles input independent of any scenes (for things like the debug menu, etc). I thought naming it this would be funny
+    private static void SceneOmnipresentInputHandler() {
+        if (InputHandler.KeyPressed(CursesKey.KEY_F(6))) {
+            Menu? debugMenu = menus.FirstOrDefault((m) => m?.Panel.Name == "Debug", null);
+
+            if (debugMenu != null) {
+                debugMenu.Delete();
+                menus.Remove(debugMenu);
+            }
+            else
+                menus.Add(new DebugMenu());
+
+            NCurses.UpdatePanels();
+        }
     }
 
     // Implementation for fixed step borrowed from FNA

@@ -26,7 +26,7 @@ public class UIButton : UIElement, ISelectable {
         }
     }
 
-    public override (int x, int y) GetSize() {
+    public override (int w, int h) GetSize() {
         return (_label.Select(line => line.Length).Max(), _label.Length);
     }
 
