@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Linq;
 using Mindmagma.Curses;
 
 namespace Blackguard;
@@ -16,6 +17,10 @@ public static class InputHandler {
         }
         catch { } // Empty catch block because WindowGetChar throws if there is not a currently pressed key
     }
+
+    public static IEnumerable<string> Keynames() => keys.Select((k) => NCurses.Keyname(k));
+
+    public static IEnumerable<int> Keycodes() => keys;
 
     public static bool HasInputThisTick() => keys?.Count > 0;
 

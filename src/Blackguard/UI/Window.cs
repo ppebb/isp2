@@ -4,23 +4,31 @@ namespace Blackguard.UI;
 
 public class Window : ISizeProvider, IOffsetProvider {
     public nint handle;
-    public int x; // X-pos
-    public int y; // Y-pos
-    public int w; // Width
-    public int h; // Height
+    public string Name { private set; get; }
+#pragma warning disable IDE1006 // I want lowercase names. Shut up roslyn
+    public int x { private set; get; } // X-pos
+    public int y { private set; get; } // Y-pos
+    public int w { private set; get; } // Width
+    public int h { private set; get; } // Height
+#pragma warning restore IDE1006
 
-    public Window(int xi, int yi, int wi, int hi) {
+    public Window(string name, int xi, int yi, int wi, int hi) {
         handle = NCurses.NewWindow(hi, wi, yi, xi);
         NCurses.NoDelay(handle, true);
         NCurses.Keypad(handle, true);
+        Name = name;
         x = xi;
         y = yi;
         w = wi;
         h = hi;
     }
 
-    public static Window NewFullScreenWindow() {
-        return new Window(0, 0, NCurses.Columns, NCurses.Lines); ;
+    public static Window NewFullScreenWindow(string name) {
+        return new Window(name, 0, 0, NCurses.Columns, NCurses.Lines); ;
+    }
+
+    public void ChangeName(string newName) {
+        Name = newName;
     }
 
     public void Move(int newx, int newy) {
@@ -35,7 +43,7 @@ public class Window : ISizeProvider, IOffsetProvider {
         h = newh;
     }
 
-    public void HandleTermResize() {
+    public virtual void HandleTermResize() {
         Resize(NCurses.Columns, NCurses.Lines);
         Clear();
     }
@@ -44,8 +52,12 @@ public class Window : ISizeProvider, IOffsetProvider {
         NCurses.ClearWindow(handle);
     }
 
-    public (int x, int y) GetSize() {
-        return (x, y);
+    public void Delete() {
+        NCurses.DeleteWindow(handle);
+    }
+
+    public (int w, int h) GetSize() {
+        return (w, h);
     }
 
     public (int x, int y) GetOffset() {

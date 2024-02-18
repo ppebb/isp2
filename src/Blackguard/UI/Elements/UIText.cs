@@ -15,7 +15,7 @@ public class UIText : UIElement {
         _lines = lines;
     }
 
-    public override (int x, int y) GetSize() {
+    public override (int w, int h) GetSize() {
         return (_lines.Select(line => line.Length).Max(), _lines.Length);
     }
 

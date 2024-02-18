@@ -13,7 +13,7 @@ public abstract class UIElement : ISizeProvider {
         }
     }
 
-    public abstract (int x, int y) GetSize();
+    public abstract (int w, int h) GetSize();
 
     public virtual void Tick() { }
 

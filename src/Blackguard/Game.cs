@@ -1,5 +1,8 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using Blackguard.UI.Menus;
 using Blackguard.UI.Scenes;
 using Mindmagma.Curses;
 
@@ -8,11 +11,13 @@ namespace Blackguard;
 public class Game {
     private static Scene scene = null!;
     private static Scene queuedScene = null!;
+    private static readonly List<Menu> menus = new();
 
     private (int, int) oldSize = (0, 0);
+    public uint ticks = 0;
 
     private Stopwatch gameTimer = null!;
-    private TimeSpan totalElapsedTime = TimeSpan.Zero;
+    public TimeSpan totalElapsedTime = TimeSpan.Zero;
     private TimeSpan accumulatedElapsedTime;
     private long previousTicks = 0;
     private readonly TimeSpan targetElapsedTime = TimeSpan.FromTicks(166667); // 60 fps. 1000/60 ms
@@ -33,7 +38,6 @@ public class Game {
 
         while (!shouldExit) {
             gameTimer = Stopwatch.StartNew();
-
             InputHandler.PollInput(scene.CurrentWin.handle);
 
             if ((NCurses.Lines, NCurses.Columns) != oldSize)
@@ -42,6 +46,14 @@ public class Game {
             shouldExit = !scene.RunTick();
             scene.Render();
 
+            foreach (Menu menu in menus) {
+                shouldExit = shouldExit && menu.RunTick();
+                menu.Render(this);
+            }
+            NCurses.UpdatePanels();
+
+            MainInputHandler();
+
             if (!shouldExit)
                 Tick();
 
@@ -49,10 +61,27 @@ public class Game {
             SwitchToQueuedScene();
 
             oldSize = (NCurses.Lines, NCurses.Columns);
+
+            ticks++;
         }
 
         // Exit the game
         scene.Finish();
+    }
+
+    // Handles input independent of any scenes (for things like the debug menu, etc). I thought naming it this would be funny
+    private static void MainInputHandler() {
+        if (InputHandler.KeyPressed(CursesKey.KEY_F(6))) {
+            Menu? debugMenu = menus.FirstOrDefault((m) => m?.Panel.Name == "Debug", null);
+
+            if (debugMenu != null) {
+                debugMenu.Panel.Clear();
+                debugMenu.Delete();
+                menus.Remove(debugMenu);
+            }
+            else
+                menus.Add(new DebugMenu());
+        }
     }
 
     // Implementation for fixed step borrowed from FNA

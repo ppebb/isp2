@@ -69,6 +69,8 @@ public class CharacterCreationScene : Scene {
     };
 
     public CharacterCreationScene() {
+        CurrentWin = Window.NewFullScreenWindow("Character Selection Menu");
+
         UIText racesHeaderText = new(racesHeader);
 
         UIButton humanButton = new(humanRaceText, () => { });

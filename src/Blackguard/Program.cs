@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
 
@@ -10,7 +11,16 @@ public class LibraryNames : CursesLibraryNames {
 
     public override List<string> NamesLinux => new() { "libncursesw.so" };
 
-    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
+    // This sucks. fix later because I shouldn't just be filtering these. Make some other better way to extract the right deps
+    public override List<string> NamesWindows => (List<string>)Program.Platform.ExtractNativeDependencies().Where(s => s.Contains("ncurses"));
+}
+
+public class LibraryNames2 : PanelLibraryNames {
+    public override bool ReplaceLinuxDefaults => false;
+
+    public override List<string> NamesLinux => new() { "libpanelw.so" };
+
+    public override List<string> NamesWindows => (List<string>)Program.Platform.ExtractNativeDependencies().Where(s => s.Contains("panel"));
 }
 
 public static class Program {

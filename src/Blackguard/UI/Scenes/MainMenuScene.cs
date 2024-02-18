@@ -1,4 +1,4 @@
-﻿using Blackguard.UI.Elements;
+using Blackguard.UI.Elements;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
@@ -42,7 +42,7 @@ public class MainMenuScene : Scene {
     };
 
     public MainMenuScene() {
-        CurrentWin = Window.NewFullScreenWindow();
+        CurrentWin = Window.NewFullScreenWindow("Main Menu");
 
         UIText logoText = new(Logo);
         UIButton startButton = new(Start, () => { });
@@ -62,8 +62,6 @@ public class MainMenuScene : Scene {
     }
 
     public override void Render() {
-        NCurses.MoveWindowAddString(CurrentWin.handle, 0, 0, $"ticks {tick}, seconds {tick / 60}");
-
         container.Render(CurrentWin.handle, 0, 0, CurrentWin.w, CurrentWin.h);
     }
 

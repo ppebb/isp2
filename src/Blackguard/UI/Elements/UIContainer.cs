@@ -9,8 +9,8 @@ public class UIContainer : UIElement, ISelectable {
 
     public bool Selected { get; set; }
 
-    public override (int, int) GetSize() {
-        return (_elements.Select(e => e.GetSize().x).Max(), _elements.Select(e => e.GetSize().y).Sum());
+    public override (int w, int h) GetSize() {
+        return (_elements.Select(e => e.GetSize().w).Max(), _elements.Select(e => e.GetSize().h).Sum());
     }
 
     public UIContainer(List<UIElement> elements, Alignment alignment) {
