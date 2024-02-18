@@ -1,4 +1,4 @@
-﻿using Blackguard.UI.Elements;
+using Blackguard.UI.Elements;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
@@ -10,9 +10,9 @@ public abstract class Scene {
     protected UIContainer container;
 
     // Returns false to exit the game
-    public abstract bool RunTick();
+    public abstract bool RunTick(Game state);
 
-    public abstract void Render();
+    public abstract void Render(Game state);
 
     public abstract void Finish();
 
@@ -21,23 +21,24 @@ public abstract class Scene {
     private int debounceTimer = DEBOUNCETICKS + 1; // Just needs a default value above DEBOUNCETICKS
     private int lastKey;
 
-    public virtual void ProcessInput() {
-        container.ProcessInput();
+    public virtual void ProcessInput(Game state) {
+        container.ProcessInput(state);
 
-        if (InputHandler.KeyPressed(CursesKey.DOWN) && debounceTimer > DEBOUNCETICKS) {
+        // TODO: Debounce is kinda broken, only delays the second move and lets the rest happen every tick
+        if (state.Input.KeyPressed(CursesKey.DOWN) && debounceTimer > DEBOUNCETICKS) {
             container.Next(true);
             lastKey = CursesKey.DOWN;
             debounceTimer = 0;
         }
-        else if (!InputHandler.KeyPressed(CursesKey.DOWN) && lastKey == CursesKey.DOWN)
+        else if (!state.Input.KeyPressed(CursesKey.DOWN) && lastKey == CursesKey.DOWN)
             debounceTimer = DEBOUNCETICKS + 1; // Set it to something above DEBOUNCETICKS so that the key can be pressed again if someone is rapidly pressing
 
-        if (InputHandler.KeyPressed(CursesKey.UP) && debounceTimer > DEBOUNCETICKS) {
+        if (state.Input.KeyPressed(CursesKey.UP) && debounceTimer > DEBOUNCETICKS) {
             container.Prev(true);
             lastKey = CursesKey.UP;
             debounceTimer = DEBOUNCETICKS + 1;
         }
-        else if (!InputHandler.KeyPressed(CursesKey.UP) && lastKey == CursesKey.UP)
+        else if (!state.Input.KeyPressed(CursesKey.UP) && lastKey == CursesKey.UP)
             debounceTimer = 100;
 
         // Can add left and right eventually if planning to support more than just vertical menus

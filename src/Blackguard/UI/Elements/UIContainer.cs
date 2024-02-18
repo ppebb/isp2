@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Blackguard.UI.Elements;
@@ -107,15 +107,15 @@ public class UIContainer : UIElement, ISelectable {
     }
 
     // Called every tick
-    public override void Tick() {
-        ProcessInput();
+    public override void RunTick(Game state) {
+        ProcessInput(state);
     }
 
-    public override void ProcessInput() {
+    public override void ProcessInput(Game state) {
         if (Empty())
             return;
 
-        _elements[selected_element].ProcessInput();
+        _elements[selected_element].ProcessInput(state);
     }
 
     public override void Render(nint window, int x, int y, int maxw, int maxh) {

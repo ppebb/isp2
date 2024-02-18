@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Blackguard.UI.Elements;
 using Mindmagma.Curses;
 
@@ -94,14 +94,13 @@ public class CharacterCreationScene : Scene {
         container = new UIContainer(elements, Alignment.Left);
     }
 
-    int tick = 0;
-    public override bool RunTick() {
-        tick++;
+    public override bool RunTick(Game state) {
+        ProcessInput(state);
         return true;
     }
 
-    public override void Render() {
-
+    public override void Render(Game state) {
+        container.Render(CurrentWin.handle, 0, 0, CurrentWin.w, CurrentWin.h);
     }
 
     public override void Finish() {

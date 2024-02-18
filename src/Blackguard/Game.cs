@@ -9,9 +9,11 @@ using Mindmagma.Curses;
 namespace Blackguard;
 
 public class Game {
-    private static Scene scene = null!;
-    private static Scene queuedScene = null!;
-    private static readonly List<Menu> menus = new();
+    private Scene scene = null!;
+    private Scene queuedScene = null!;
+    private readonly List<Menu> menus = new();
+
+    public InputHandler Input { private set; get; }
 
     private (int, int) oldSize = (0, 0);
     public uint ticks = 0;
@@ -29,6 +31,7 @@ public class Game {
     private static readonly TimeSpan maxElapsedTime = TimeSpan.FromMilliseconds(500);
 
     public Game() {
+        Input = new InputHandler();
         scene = new MainMenuScene();
         oldSize = (NCurses.Lines, NCurses.Columns);
     }
@@ -38,16 +41,16 @@ public class Game {
 
         while (!shouldExit) {
             gameTimer = Stopwatch.StartNew();
-            InputHandler.PollInput(scene.CurrentWin.handle);
+            Input.PollInput(scene.CurrentWin.handle);
 
             if ((NCurses.Lines, NCurses.Columns) != oldSize)
                 scene.CurrentWin.HandleTermResize();
 
-            shouldExit = !scene.RunTick();
-            scene.Render();
+            shouldExit = !scene.RunTick(this);
+            scene.Render(this);
 
             foreach (Menu menu in menus) {
-                shouldExit = shouldExit && menu.RunTick();
+                shouldExit = shouldExit && menu.RunTick(this);
                 menu.Render(this);
             }
             NCurses.UpdatePanels();
@@ -70,8 +73,8 @@ public class Game {
     }
 
     // Handles input independent of any scenes (for things like the debug menu, etc). I thought naming it this would be funny
-    private static void MainInputHandler() {
-        if (InputHandler.KeyPressed(CursesKey.KEY_F(6))) {
+    private void MainInputHandler() {
+        if (Input.KeyPressed(CursesKey.KEY_F(6))) {
             Menu? debugMenu = menus.FirstOrDefault((m) => m?.Panel.Name == "Debug", null);
 
             if (debugMenu != null) {
@@ -150,15 +153,38 @@ public class Game {
         sleepTimeIndex = (sleepTimeIndex + 1) & SLEEP_TIME_MASK;
     }
 
-    public static void SwitchScene(Scene nextScene) {
+    public void SwitchScene(Scene nextScene) {
         queuedScene = nextScene;
     }
 
-    private static void SwitchToQueuedScene() {
+    private void SwitchToQueuedScene() {
         if (queuedScene == null)
             return;
 
         scene?.Finish();
         scene = queuedScene;
+    }
+
+    public class InputHandler() {
+        private readonly List<int> keys = new();
+
+        public void PollInput(nint windowHandle) {
+            keys.Clear();
+
+            int c;
+            try {
+                while ((c = NCurses.WindowGetChar(windowHandle)) != -1)
+                    keys.Add(c);
+            }
+            catch { } // Empty catch block because WindowGetChar throws if there is not a currently pressed key
+        }
+
+        public IEnumerable<string> Keynames() => keys.Select((k) => NCurses.Keyname(k));
+
+        public IEnumerable<int> Keycodes() => keys;
+
+        public bool HasInputThisTick() => keys?.Count > 0;
+
+        public bool KeyPressed(int keyCode) => keys?.Contains(keyCode) ?? false;
     }
 }

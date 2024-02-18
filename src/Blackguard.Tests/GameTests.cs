@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Blackguard.UI.Scenes;
 
 namespace Blackguard.Tests;
@@ -10,12 +10,12 @@ public class GameTests {
             return;
         }
 
-        public override void Render() {
+        public override void Render(Game state) {
             return;
         }
 
         int tick = 0;
-        public override bool RunTick() {
+        public override bool RunTick(Game state) {
             tick++;
 
             // Ensures that the loop runs for 10 seconds
@@ -32,7 +32,7 @@ public class GameTests {
     [Test]
     public void TestMainLoop() {
         Game game = new Game();
-        Game.SwitchScene(scene);
+        game.SwitchScene(scene);
 
         Stopwatch stopwatch = Stopwatch.StartNew();
         game.Run();
