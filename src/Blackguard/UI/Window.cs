@@ -2,7 +2,7 @@
 
 namespace Blackguard.UI;
 
-public struct Window {
+public class Window : ISizeProvider {
     public nint handle;
     public int x; // X-pos
     public int y; // Y-pos
@@ -12,10 +12,15 @@ public struct Window {
     public Window(int xi, int yi, int wi, int hi) {
         handle = NCurses.NewWindow(hi, wi, yi, xi);
         NCurses.NoDelay(handle, true);
+        NCurses.Keypad(handle, true);
         x = xi;
         y = yi;
         w = wi;
         h = hi;
+    }
+
+    public static Window NewFullScreenWindow() {
+        return new Window(0, 0, NCurses.Columns, NCurses.Lines); ;
     }
 
     public void Move(int newx, int newy) {
@@ -25,10 +30,22 @@ public struct Window {
     }
 
     public void Resize(int neww, int newh) {
-        throw new System.NotImplementedException();
+        NCurses.WindowResize(handle, newh, neww);
+        w = neww;
+        h = newh;
     }
 
-    public static Window NewFullScreenWindow() {
-        return new Window(0, 0, NCurses.Columns, NCurses.Lines);;
+    public void HandleTermResize() {
+        Resize(NCurses.Columns, NCurses.Lines);
+        Clear();
+    }
+
+    public void Clear() {
+        NCurses.ClearWindow(handle);
+    }
+
+    public (int x, int y) GetSize() {
+        NCurses.GetMaxYX(handle, out int y, out int x);
+        return (x, y);
     }
 }
