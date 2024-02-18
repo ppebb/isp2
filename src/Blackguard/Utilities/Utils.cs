@@ -1,12 +1,15 @@
-﻿using Mindmagma.Curses;
+using Mindmagma.Curses;
 
 namespace Blackguard.Utilities;
 
 public static class CursesUtils {
     public static void WindowAddLinesWithHighlight(nint window, params (Highlight highlight, int x, int y, string text)[] segments) {
         foreach ((Highlight highlight, int x, int y, string text) in segments) {
-            NCurses.MoveWindowAddString(window, y, x, text);
-            mvwchgat(window, x, y, text.Length, highlight.GetAttr(), (short)highlight.GetPair());
+            try {
+                NCurses.MoveWindowAddString(window, y, x, text);
+            }
+            catch { } // If you try to draw to the bottom right corner of the window with scrollok() off, it throws. A check to only catch when this occurs would be better than catching *everything*, but I don't care
+            mvwchgat(window, x, y, text.Length, highlight.GetAttr(), highlight.GetPair());
         }
     }
 

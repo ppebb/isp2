@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Mindmagma.Curses;
 
 namespace Blackguard.Utilities;
@@ -8,7 +8,7 @@ public enum Color : short {
     TextBg,
 }
 
-public enum ColorPair {
+public enum ColorPair : uint {
     Text = 1,
     TextSel,
 }
@@ -35,9 +35,17 @@ public static class ColorHandler {
         { Highlight.TextSel, (ColorPair.TextSel, CursesAttribute.UNDERLINE) }
     };
 
-    public static ColorPair GetPair(this Highlight highlight) => HighlightDefs[highlight].pair;
+    // Gets the pair number
+    public static short GetPair(this Highlight highlight) => (short)HighlightDefs[highlight].pair;
 
+    // Gets the pair attr
+    public static uint GetPairAttr(this Highlight highlight) => NCurses.ColorPair(highlight.GetPair());
+
+    // Gets other attrs (underline, bold, etc)
     public static uint GetAttr(this Highlight highlight) => HighlightDefs[highlight].attr;
+
+    // Combines the color pair attr and the other attrs (underline, bold, etc) into one single uint used by some functions
+    public static uint AsMixedAttr(this Highlight highlight) => highlight.GetPairAttr() | highlight.GetAttr();
 
     public static void Init() {
         for (short i = 0; i < ColorDefs.Length; i++) {
