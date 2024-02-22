@@ -1,5 +1,5 @@
 using Blackguard.UI.Elements;
-using Mindmagma.Curses;
+using Blackguard.Utilities;
 
 namespace Blackguard.UI.Scenes;
 
@@ -44,15 +44,17 @@ public class MainMenuScene : Scene {
     private bool shouldExit = false;
 
     public MainMenuScene() {
-        CurrentWin = Window.NewFullScreenWindow("Main Menu");
+        CurrentWin = Window.NewFullScreenWindow("Main Menu", Highlight.Text);
 
+        UISpace topSpace = new(0, 10);
         UIText logoText = new(Logo);
         UIButton startButton = new(Start, () => { });
         UIButton settingsButton = new(Settings, () => { });
         UIButton creditsButton = new(Credits, () => { });
         UIButton quitButton = new(Quit, () => { shouldExit = true; });
+        UISpace bottomSpace = new(0, 10);
 
-        container = new UIContainer(Alignment.Center, logoText, startButton, settingsButton, creditsButton, quitButton) { Selected = true };
+        container = new UIContainer(Alignment.Center | Alignment.Fill, topSpace, logoText, startButton, settingsButton, creditsButton, quitButton, bottomSpace) { Selected = true };
     }
 
     public override bool RunTick(Game state) {
@@ -61,10 +63,10 @@ public class MainMenuScene : Scene {
     }
 
     public override void Render(Game state) {
-        container.Render(CurrentWin.handle, 0, 0, CurrentWin.w, CurrentWin.h);
+        container.Render(CurrentWin, 0, 0, CurrentWin.w, CurrentWin.h);
     }
 
     public override void Finish() {
-        NCurses.DeleteWindow(CurrentWin.handle);
+        CurrentWin.Dispose();
     }
 }
