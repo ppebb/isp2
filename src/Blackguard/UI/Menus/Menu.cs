@@ -15,13 +15,13 @@ public abstract class Menu : ISizeProvider, IOffsetProvider {
     public abstract void Render(Game state);
 
     protected void RenderBorder(Highlight highlight) {
-        CursesUtils.WindowAddLinesWithHighlight(Panel.WHandle,
+        Panel.AddLinesWithHighlight(
             (highlight, 0, 0, B_LCT + new string(B_T, Panel.w - 2) + B_RCT),
             (highlight, 0, Panel.h - 1, B_LCB + new string(B_B, Panel.w - 2) + B_RCB)
         );
 
         for (int i = 1; i < Panel.h - 1; i++) {
-            CursesUtils.WindowAddLinesWithHighlight(Panel.WHandle,
+            Panel.AddLinesWithHighlight(
                 (highlight, 0, i, new string(B_L, 1)),
                 (highlight, Panel.w - 1, i, new string(B_R, 1))
             );
@@ -29,7 +29,7 @@ public abstract class Menu : ISizeProvider, IOffsetProvider {
     }
 
     public virtual void Delete() {
-        Panel.Delete();
+        Panel.Dispose();
     }
 
     public (int w, int h) GetSize() {

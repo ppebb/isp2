@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Blackguard.UI.Menus;
 using Blackguard.UI.Scenes;
@@ -9,6 +10,8 @@ using Mindmagma.Curses;
 namespace Blackguard;
 
 public class Game {
+    public static string PlayerPath { get; } = Path.Combine(Program.Platform.DataPath(), "Players");
+
     private Scene scene = null!;
     private Scene queuedScene = null!;
     private readonly List<Menu> menus = new();
@@ -41,7 +44,7 @@ public class Game {
 
         while (!shouldExit) {
             gameTimer = Stopwatch.StartNew();
-            Input.PollInput(scene.CurrentWin.handle);
+            Input.PollInput(scene.CurrentWin.WHandle);
 
             if ((NCurses.Lines, NCurses.Columns) != oldSize)
                 scene.CurrentWin.HandleTermResize();

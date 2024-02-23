@@ -31,8 +31,8 @@ public class UIButton : UIElement, ISelectable {
         return (_label.Select(line => line.Length).Max(), _label.Length);
     }
 
-    public override void Render(nint window, int x, int y, int maxy, int maxh) {
-        CursesUtils.WindowAddLinesWithHighlight(window, _label.Select((line, i) => (i == _label.Length - 1 && Selected ? Highlight.TextSel : Highlight.Text, x, y + i, _label[i])).ToArray());
+    public override void Render(Drawable drawable, int x, int y, int maxy, int maxh) {
+        drawable.AddLinesWithHighlight(_label.Select((line, i) => (i == _label.Length - 1 && Selected ? Highlight.TextSel : Highlight.Text, x, y + i, _label[i])).ToArray());
     }
 
     public void Select() {

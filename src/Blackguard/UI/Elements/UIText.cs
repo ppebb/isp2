@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Blackguard.Utilities;
 
 namespace Blackguard.UI.Elements;
@@ -19,7 +19,7 @@ public class UIText : UIElement {
         return (_lines.Select(line => line.Length).Max(), _lines.Length);
     }
 
-    public override void Render(nint window, int x, int y, int maxy, int maxh) {
-        CursesUtils.WindowAddLinesWithHighlight(window, _lines.Select((l, i) => (Highlight.Text, x, y + i, l)).ToArray());
+    public override void Render(Drawable drawable, int x, int y, int maxy, int maxh) {
+        drawable.AddLinesWithHighlight(_lines.Select((l, i) => (Highlight.Text, x, y + i, l)).ToArray());
     }
 }

@@ -1,35 +1,23 @@
+using System;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI;
 
-public class Panel : ISizeProvider, IOffsetProvider {
-    public nint handle;
+public class Panel : Drawable {
     private Window _window;
-    public nint WHandle => _window.handle;
-    public string Name { private set; get; }
-#pragma warning disable IDE1006 // I want lowercase names. Shut up roslyn
-    public int x { private set; get; } // X-pos
-    public int y { private set; get; } // Y-pos
-    public int w { private set; get; } // Width
-    public int h { private set; get; } // Height
-#pragma warning restore IDE1006
 
-    private Highlight _backingBackground;
-    public Highlight Background {
-        get {
-            return _backingBackground;
-        }
-        set {
-            NCurses.WindowBackground(WHandle, value.GetAttr() | value.GetPairAttr());
-            _backingBackground = value;
-        }
+    public override nint WHandle {
+        get => _window.Handle;
     }
 
-    public Panel(string name, Highlight background, int xi, int yi, int wi, int hi) {
-        _window = new Window(name, xi, yi, wi, hi);
-        Background = background;
-        handle = NCurses.NewPanel(_window.handle);
+    public override Highlight Highlight {
+        get => _window.Highlight;
+    }
+
+    public Panel(string name, Highlight highlight, int xi, int yi, int wi, int hi) {
+        _window = new Window(name, highlight, xi, yi, wi, hi);
+        Handle = NCurses.NewPanel(_window.Handle);
         Name = name;
         x = xi;
         y = yi;
@@ -37,27 +25,22 @@ public class Panel : ISizeProvider, IOffsetProvider {
         h = hi;
     }
 
-    // This will result in a dicongruency between the window x/y and the panel x/y, but this doesn't matter because nothing external should be accessing the window x/y
-    public void Move(int newx, int newy) {
-        NCurses.MovePanel(handle, newx, newy);
-        x = newx;
-        y = newy;
+    public override void Dispose() {
+        NCurses.DeletePanel(Handle);
+        _window.Dispose();
+        GC.SuppressFinalize(this);
     }
 
-    public void Clear() {
-        _window.Clear();
+    public override void HandleTermResize() {
+        /* _window.Clear(); */
+        throw new NotImplementedException();
     }
 
-    public void Delete() {
-        NCurses.DeletePanel(handle);
-        _window.Delete();
+    public override void Move(int newx, int newy) {
+        NCurses.MovePanel(Handle, newy, newx);
     }
 
-    public (int w, int h) GetSize() {
-        return (w, h);
-    }
-
-    public (int x, int y) GetOffset() {
-        return (x, y);
+    public override void Resize(int neww, int newh) {
+        throw new NotImplementedException();
     }
 }

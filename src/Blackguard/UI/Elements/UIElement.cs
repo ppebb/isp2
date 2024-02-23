@@ -21,5 +21,5 @@ public abstract class UIElement : ISizeProvider {
     public virtual void ProcessInput(Game state) { }
 
     // Handle drawing the text in addition to resizing
-    public abstract void Render(nint window, int x, int y, int maxw, int maxh);
+    public abstract void Render(Drawable drawable, int x, int y, int maxw, int maxh);
 }

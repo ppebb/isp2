@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Blackguard.UI.Elements;
-using Mindmagma.Curses;
+using Blackguard.Utilities;
 
 namespace Blackguard.UI.Scenes;
 
@@ -69,7 +69,7 @@ public class CharacterCreationScene : Scene {
     };
 
     public CharacterCreationScene() {
-        CurrentWin = Window.NewFullScreenWindow("Character Selection Menu");
+        CurrentWin = Window.NewFullScreenWindow("Character Selection Menu", Highlight.Text);
 
         UIText racesHeaderText = new(racesHeader);
 
@@ -100,10 +100,10 @@ public class CharacterCreationScene : Scene {
     }
 
     public override void Render(Game state) {
-        container.Render(CurrentWin.handle, 0, 0, CurrentWin.w, CurrentWin.h);
+        container.Render(CurrentWin, 0, 0, CurrentWin.w, CurrentWin.h);
     }
 
     public override void Finish() {
-        NCurses.DeleteWindow(CurrentWin.handle);
+        CurrentWin.Dispose();
     }
 }

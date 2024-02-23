@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +11,16 @@ public class UIContainer : UIElement, ISelectable {
     public bool Selected { get; set; }
 
     public override (int w, int h) GetSize() {
-        return (_elements.Select(e => e.GetSize().w).Max(), _elements.Select(e => e.GetSize().h).Sum());
+        int w = 0;
+        int h = 0;
+
+        foreach (UIElement e in _elements) {
+            (int ew, int eh) = e.GetSize();
+            w = Math.Max(w, ew);
+            h += ew;
+        }
+
+        return (w, h);
     }
 
     public UIContainer(List<UIElement> elements, Alignment alignment) {
@@ -118,28 +128,50 @@ public class UIContainer : UIElement, ISelectable {
         _elements[selected_element].ProcessInput(state);
     }
 
-    public override void Render(nint window, int x, int y, int maxw, int maxh) {
-        int cy = y;
+    public override void Render(Drawable drawable, int x, int y, int maxw, int maxh) {
+        int cy = y; // child y position
 
-        foreach (UIElement child in _elements) {
-            int cx = 0;
-            (int cw, int ch) = child.GetSize();
+        int tg = 0; // total gaps for fill
+        int th = _elements.Select((e, i) => {
+            if (e is not UISpace && i != _elements.Count - 1)
+                tg++;
+            return e.GetSize().h;
+        }).Sum(); // total height of all elements
+
+        int fillGapSize = (maxh - th) / tg;
+
+        for (int i = 0; i < _elements.Count; i++) {
+            UIElement child = _elements[i];
+            bool nextSpace = i < _elements.Count - 1 && _elements[i + 1] is UISpace;
+
+            int cx = 0; // child x
+            (int cw, int ch) = child.GetSize(); // child width, height
 
             if (_alignment.HasFlag(Alignment.Center))
                 cx += (maxw - cw) / 2;
             else if (_alignment.HasFlag(Alignment.Right))
                 cx += maxw - cw;
 
-            child.Render(window, cx, cy, maxw, maxh - cy);
+            if (_alignment.HasFlag(Alignment.Bottom)) {
+                cy = maxh - th;
+                th -= ch;
+            }
+
+            child.Render(drawable, cx, cy, maxw, maxh - cy);
+
             cy += ch;
+
+            // This works, but the gap size may not fill *all* the way if the terminal isn't in perfect increments
+            if (_alignment.HasFlag(Alignment.Fill) && !(nextSpace || child is UISpace))
+                cy += fillGapSize;
         }
     }
 
     public void Select() {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public void Deselect() {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }
