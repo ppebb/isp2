@@ -66,6 +66,9 @@ public class Game {
                 SwitchToQueuedScene();
             }
 
+            if (!Program.CursorHidden)
+                NCurses.WindowMove(scene.CurrentWin.WHandle, 0, 0);
+
             if (!shouldExit)
                 Tick();
 

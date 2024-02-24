@@ -29,6 +29,8 @@ public static class Program {
     // Not useful for now, but may be helpful for later
     public static nint StdScreen { get; private set; }
 
+    public static bool CursorHidden { get; private set; } = true;
+
     static Program() {
         Platform = Platform.GetPlatform();
         Platform.Configure();
@@ -47,7 +49,13 @@ public static class Program {
             Environment.Exit(1);
         }
 
-        NCurses.SetCursor(0); // Hide the cursor
+        try {
+            NCurses.SetCursor(0); // Hide the cursor
+        }
+        catch {
+            CursorHidden = false;
+        }
+
         NCurses.CBreak(); // Makes input immediately available to the terminal instead of performing line buffering
         NCurses.NoEcho(); // Stops input from being printed to the screen automatically
         NCurses.StartColor(); // Starts the color functionality
