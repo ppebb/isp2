@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Blackguard.UI.Menus;
 using Blackguard.UI.Scenes;
+using Blackguard.Utilities;
 using Mindmagma.Curses;
 
 namespace Blackguard;
@@ -44,29 +45,29 @@ public class Game {
 
         while (!shouldExit) {
             gameTimer = Stopwatch.StartNew();
+
+            // If input isn't checked, resizing doesn't work. Don't know why...
             Input.PollInput(scene.CurrentWin.WHandle);
 
-            if ((NCurses.Lines, NCurses.Columns) != oldSize)
-                scene.CurrentWin.HandleTermResize();
+            // Only run anything if a resize is successful
+            if (HandleResize()) {
+                shouldExit = !scene.RunTick(this);
+                scene.Render(this);
 
-            shouldExit = !scene.RunTick(this);
-            scene.Render(this);
+                foreach (Menu menu in menus) {
+                    shouldExit = shouldExit && menu.RunTick(this);
+                    menu.Render(this);
+                }
+                NCurses.UpdatePanels();
 
-            foreach (Menu menu in menus) {
-                shouldExit = shouldExit && menu.RunTick(this);
-                menu.Render(this);
+                MainInputHandler();
+
+                // By switching to the scene at the end, we avoid memory leaks and crashes from killing the scene while it's active.
+                SwitchToQueuedScene();
             }
-            NCurses.UpdatePanels();
-
-            MainInputHandler();
 
             if (!shouldExit)
                 Tick();
-
-            // By switching to the scene at the end, we avoid memory leaks and crashes from killing the scene while it's active.
-            SwitchToQueuedScene();
-
-            oldSize = (NCurses.Lines, NCurses.Columns);
 
             ticks++;
         }
@@ -75,7 +76,45 @@ public class Game {
         scene.Finish();
     }
 
-    // Handles input independent of any scenes (for things like the debug menu, etc). I thought naming it this would be funny
+    private const int MIN_WIDTH = 100;
+    private const int MIN_HEIGHT = 40;
+    private readonly string SIZE_WARNING = $"Minimum screen size is {MIN_WIDTH} x {MIN_HEIGHT}";
+    private bool HandleResize() {
+        if ((NCurses.Lines, NCurses.Columns) != oldSize) {
+            // TODO: Implement resize on a scene-by-scene, menu-by-menu basis in the event they want to control spacing and the like
+            scene.CurrentWin.HandleTermResize();
+        }
+
+        oldSize = (NCurses.Lines, NCurses.Columns);
+
+        if (NCurses.Lines < MIN_HEIGHT || NCurses.Columns < MIN_WIDTH) {
+
+            int starty = (NCurses.Lines / 2) - 3;
+
+            string curWidth = "Width: ";
+            string curHeight = $"Height: ";
+            string width = NCurses.Columns.ToString();
+            string height = NCurses.Lines.ToString();
+            int startx = (NCurses.Columns - (curWidth.Length + curHeight.Length + width.Length + height.Length)) / 2;
+
+            try {
+                scene.CurrentWin.AddLinesWithHighlight(
+                    (Highlight.Text, (NCurses.Columns - SIZE_WARNING.Length) / 2, starty, SIZE_WARNING),
+                    (Highlight.Text, startx, starty + 1, curWidth),
+                    (Highlight.Text, startx += curWidth.Length, starty + 1, width), // Red or green eventually
+                    (Highlight.Text, startx += width.Length + 1, starty + 1, curHeight),
+                    (Highlight.Text, startx += curHeight.Length, starty + 1, height) // Red or green eventually
+                );
+            }
+            catch { }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    // Handles input independent of any scenes (for things like the debug menu, etc).
     private void MainInputHandler() {
         if (Input.KeyPressed(CursesKey.KEY_F(6))) {
             Menu? debugMenu = menus.FirstOrDefault((m) => m?.Panel.Name == "Debug", null);
