@@ -1,4 +1,9 @@
-﻿bin/
+﻿.vs/
+.vscode/
+.idea/
+
+bin/
 obj/
+
 dotnet/
 scripts/run.bat
