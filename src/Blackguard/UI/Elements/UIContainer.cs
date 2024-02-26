@@ -45,7 +45,7 @@ public class UIContainer : UIElement, ISelectable {
 
     public bool Empty() => _elements?.Count == 0;
 
-    private bool SelectFirstSelectable() => SelectNextSelectable(0, true);
+    public bool SelectFirstSelectable() => SelectNextSelectable(0, true);
 
     private bool SelectNextSelectable(int start, bool forwards) {
         for (int i = start; i >= 0 && i < _elements.Count; i += forwards ? 1 : -1) {
@@ -138,7 +138,11 @@ public class UIContainer : UIElement, ISelectable {
             return e.GetSize().h;
         }).Sum(); // total height of all elements
 
-        int fillGapSize = (maxh - th) / tg;
+        int fillGapSize;
+        if (tg > 0) // Avoid dividing by zero
+            fillGapSize = (maxh - th) / tg;
+        else
+            fillGapSize = 0;
 
         for (int i = 0; i < _elements.Count; i++) {
             UIElement child = _elements[i];

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Blackguard.UI.Elements;
-using Blackguard.Utilities;
 
 namespace Blackguard.UI.Scenes;
 
-public class CharacterCreationScene : Scene {
+public class PlayerCreationScene : Scene {
     private static string[] racesHeader = {
         "█▀▀▄   ▄█▄  ▄▀▀▀▄ █▀▀▀▀ ▄▀▀▀▄",
         "█▄▄▀   █ █  █     █▄▄▄  ▀▄▄▄ ",
@@ -68,30 +67,31 @@ public class CharacterCreationScene : Scene {
         "▀▀▀  ▀  ▀ ▀  ▀ ▀▀▀  ▀  ▀ ▀  ▀ ▀▀▀ ▀  ▀ ▀  ▀"
     };
 
-    public CharacterCreationScene() {
-        CurrentWin = Window.NewFullScreenWindow("Character Selection Menu", Highlight.Text);
+    private Player? createdPlayer;
 
+    public PlayerCreationScene() {
         UIText racesHeaderText = new(racesHeader);
+        UIText classesHeaderText = new(classesHeader);
 
-        UIButton humanButton = new(humanRaceText, () => { });
-        UIButton orkButton = new(orkRaceText, () => { });
-        UIButton elfButton = new(elfRaceText, () => { });
-        UIButton dwarfButton = new(dwarfRaceText, () => { });
-        UIButton demonButton = new(demonRaceText, () => { });
-        UIButton gnomeButton = new(gnomeRaceText, () => { });
+        UIButton humanButton = new(humanRaceText, (_) => { });
+        UIButton orkButton = new(orkRaceText, (_) => { });
+        UIButton elfButton = new(elfRaceText, (_) => { });
+        UIButton dwarfButton = new(dwarfRaceText, (_) => { });
+        UIButton demonButton = new(demonRaceText, (_) => { });
+        UIButton gnomeButton = new(gnomeRaceText, (_) => { });
 
-        UIButton knightButton = new(knightClassText, () => { });
-        UIButton archerButton = new(archerClassText, () => { });
-        UIButton mageButton = new(mageClassText, () => { });
-        UIButton barbarianButton = new(barbarianClassText, () => { });
+        UIButton knightButton = new(knightClassText, (_) => { });
+        UIButton archerButton = new(archerClassText, (_) => { });
+        UIButton mageButton = new(mageClassText, (_) => { });
+        UIButton barbarianButton = new(barbarianClassText, (_) => { });
+
+        UIButton finish = new(["Create Player"], (_) => callback?.Invoke(createdPlayer));
 
         List<UIElement> elements = [
-            racesHeaderText, racesHeaderText,
-            humanButton, orkButton, elfButton, dwarfButton, demonButton, gnomeButton,
-            knightButton, archerButton, mageButton, barbarianButton
+            racesHeaderText, classesHeaderText, humanButton, orkButton, elfButton, dwarfButton, demonButton, gnomeButton, knightButton, archerButton, mageButton, barbarianButton, finish
         ];
 
-        container = new UIContainer(elements, Alignment.Left);
+        container = new UIContainer(elements, Alignment.Center);
     }
 
     public override bool RunTick(Game state) {
@@ -100,10 +100,6 @@ public class CharacterCreationScene : Scene {
     }
 
     public override void Render(Game state) {
-        container.Render(CurrentWin, 0, 0, CurrentWin.w, CurrentWin.h);
-    }
-
-    public override void Finish() {
-        CurrentWin.Dispose();
+        container.Render(state.CurrentWin, 0, 0, state.CurrentWin.w, state.CurrentWin.h);
     }
 }

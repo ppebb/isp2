@@ -7,7 +7,7 @@ namespace Blackguard.UI.Elements;
 
 public class UIButton : UIElement, ISelectable {
     private string[] _label;
-    private readonly Action _onPress;
+    private readonly Action<Game> _callback;
 
     public Highlight Norm;
     public Highlight Sel;
@@ -17,10 +17,9 @@ public class UIButton : UIElement, ISelectable {
 
     public bool Selected { get; set; }
 
-    public UIButton(string[] label, Action onPress) {
+    public UIButton(string[] label, Action<Game> callback) {
         _label = label;
-        _onPress = onPress;
-
+        _callback = callback;
         _segments = new (Highlight, int, int, string)[_label.Length];
     }
 
@@ -31,8 +30,8 @@ public class UIButton : UIElement, ISelectable {
 
     public override void ProcessInput(Game state) {
         // Enter, \n, \r, respectively
-        if (state.Input.KeyPressed(CursesKey.ENTER) || state.Input.KeyPressed(10) || state.Input.KeyPressed(13)) {
-            _onPress();
+        if (state.Input.IsEnterPressed()) {
+            _callback(state);
         }
     }
 

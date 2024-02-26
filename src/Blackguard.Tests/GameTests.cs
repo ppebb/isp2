@@ -27,12 +27,10 @@ public class GameTests {
         }
     }
 
-    private Scene scene = new TestScene();
-
     [Test]
     public void TestMainLoop() {
-        Game game = new Game();
-        game.SwitchScene(scene);
+        Game game = new();
+        game.ForwardScene<TestScene>();
 
         Stopwatch stopwatch = Stopwatch.StartNew();
         game.Run();

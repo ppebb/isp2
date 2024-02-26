@@ -16,26 +16,24 @@ public class MainMenuScene : Scene {
     private bool shouldExit = false;
 
     public MainMenuScene() {
-        CurrentWin = Window.NewFullScreenWindow("Main Menu", Highlight.Text);
-
         UISpace topSpace = new(0, 10);
         UIText logoText = new(Logo);
-        UIButton startButton = new("Start".ToLargeText(), () => { }) {
+        UIButton startButton = new("Start".ToLargeText(), (state) => { state.ForwardScene<PlayerSelectionScene>(); }) {
             Norm = Highlight.Text,
             Sel = Highlight.TextSel,
             SelLastLine = Highlight.TextSelUnderline,
         };
-        UIButton settingsButton = new("Settings".ToLargeText(), () => { }) {
+        UIButton settingsButton = new("Settings".ToLargeText(), (_) => { }) {
             Norm = Highlight.Text,
             Sel = Highlight.TextSel,
             SelLastLine = Highlight.TextSelUnderline,
         };
-        UIButton creditsButton = new("Credits".ToLargeText(), () => { }) {
+        UIButton creditsButton = new("Credits".ToLargeText(), (_) => { }) {
             Norm = Highlight.Text,
             Sel = Highlight.TextSel,
             SelLastLine = Highlight.TextSelUnderline,
         };
-        UIButton quitButton = new("Quit".ToLargeText(), () => { shouldExit = true; }) {
+        UIButton quitButton = new("Quit".ToLargeText(), (_) => { shouldExit = true; }) {
             Norm = Highlight.Text,
             Sel = Highlight.TextSel,
             SelLastLine = Highlight.TextSelUnderline,
@@ -51,10 +49,6 @@ public class MainMenuScene : Scene {
     }
 
     public override void Render(Game state) {
-        container.Render(CurrentWin, 0, 0, CurrentWin.w, CurrentWin.h);
-    }
-
-    public override void Finish() {
-        CurrentWin.Dispose();
+        container.Render(state.CurrentWin, 0, 0, state.CurrentWin.w, state.CurrentWin.h);
     }
 }

@@ -1,20 +1,22 @@
+using System;
 using Blackguard.UI.Elements;
 using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
 
 public abstract class Scene {
-    public Window CurrentWin { protected set; get; } = null!;
-
     // Should be defined in the constructor inheriting Scene. Default container for the Scene where elements should be stored
     protected UIContainer container = null!;
+
+    // Perform some arbitrary data upon some arbitrary event. Documented per Scene
+    public Action<object?>? callback;
 
     // Returns false to exit the game
     public abstract bool RunTick(Game state);
 
     public abstract void Render(Game state);
 
-    public abstract void Finish();
+    public virtual void Finish() { }
 
     // Default impl handles navigating various UI Elements. For the game's main view it should not need to use this.
     private const int DEBOUNCETICKS = 10;
