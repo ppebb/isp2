@@ -19,7 +19,7 @@ public abstract class Drawable : IDisposable, ISizeProvider, IOffsetProvider {
 #pragma warning restore IDE1006
 
     public void AddLinesWithHighlight(params (Highlight highlight, int x, int y, string text)[] segments) {
-        CursesUtils.WindowAddLinesWithHighlight(WHandle, segments);
+        Utils.WindowAddLinesWithHighlight(WHandle, segments);
     }
 
     public void ChangeHighlight(Highlight newHighlight) {

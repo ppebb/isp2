@@ -13,34 +13,6 @@ public class MainMenuScene : Scene {
         "╚═════╝░╚══════╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝░╚═════╝░░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░"
     };
 
-    private static readonly string[] Start = {
-        "▄▀▀▀▄ ▀▀█▀▀  ▄█▄  █▀▀▄  ▀▀█▀▀",
-        "▀▄▄▄    █    █ █  █▄▄▀    █  ",
-        "▄   █   █   █▀▀▀█ █  █    █  ",
-        " ▀▀▀    ▀   ▀   ▀ ▀   ▀   ▀  "
-    };
-
-    private static readonly string[] Settings = {
-        "▄▀▀▀▄ █▀▀▀▀ ▀▀█▀▀ ▀▀█▀▀ ▀▀█▀▀ ██  █ ▄▀▀▀▄ ▄▀▀▀▄",
-        "▀▄▄▄  █▄▄▄    █     █     █   █ █ █ █     ▀▄▄▄ ",
-        "▄   █ █       █     █     █   █ ▀▄█ █  ▀█ ▄   █",
-        " ▀▀▀  ▀▀▀▀▀   ▀     ▀   ▀▀▀▀▀ ▀  ▀▀  ▀▀▀   ▀▀▀ "
-    };
-
-    private static readonly string[] Credits = {
-        "▄▀▀▀▄ █▀▀▄  █▀▀▀▀ █▀▀▄  ▀▀█▀▀ ▀▀█▀▀ ▄▀▀▀▄",
-        "█     █▄▄▀  █▄▄▄  █   █   █     █   ▀▄▄▄ ",
-        "█   ▄ █  █  █     █  ▄▀   █     █   ▄   █",
-        " ▀▀▀  ▀   ▀ ▀▀▀▀▀ ▀▀▀   ▀▀▀▀▀   ▀    ▀▀▀ "
-    };
-
-    private static readonly string[] Quit = {
-        "▄▀▀▀▄ █   █ ▀▀█▀▀ ▀▀█▀▀",
-        "█   █ █   █   █     █  ",
-        "█ ▀▄▀ █   █   █     █  ",
-        " ▀▀ ▀  ▀▀▀  ▀▀▀▀▀   ▀  "
-    };
-
     private bool shouldExit = false;
 
     public MainMenuScene() {
@@ -48,10 +20,10 @@ public class MainMenuScene : Scene {
 
         UISpace topSpace = new(0, 10);
         UIText logoText = new(Logo);
-        UIButton startButton = new(Start, () => { });
-        UIButton settingsButton = new(Settings, () => { });
-        UIButton creditsButton = new(Credits, () => { });
-        UIButton quitButton = new(Quit, () => { shouldExit = true; });
+        UIButton startButton = new("Start".ToLargeText(), () => { });
+        UIButton settingsButton = new("Settings".ToLargeText(), () => { });
+        UIButton creditsButton = new("Credits".ToLargeText(), () => { });
+        UIButton quitButton = new("Quit".ToLargeText(), () => { shouldExit = true; });
         UISpace bottomSpace = new(0, 10);
 
         container = new UIContainer(Alignment.Center | Alignment.Fill, topSpace, logoText, startButton, settingsButton, creditsButton, quitButton, bottomSpace) { Selected = true };
