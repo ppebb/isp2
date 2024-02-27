@@ -1,4 +1,4 @@
-﻿[*]
+[*]
 charset = utf-8
 end_of_line = lf
 trim_trailing_whitespace = false
@@ -29,6 +29,10 @@ dotnet_style_null_propagation = true:suggestion
 dotnet_style_explicit_tuple_names = true:suggestion
 csharp_style_prefer_primary_constructors = false:suggestion
 
+[*.csproj]
+indent_style = space
+indent_size = 2
+tab_width = 2
 
 [*.{appxmanifest,asax,ascx,aspx,axaml,build,c,c++,cc,cginc,compute,cp,cpp,cs,cshtml,cu,cuh,cxx,dtd,fs,fsi,fsscript,fsx,fx,fxh,h,hh,hlsl,hlsli,hlslinc,hpp,hxx,inc,inl,ino,ipp,ixx,master,ml,mli,mpp,mq4,mq5,mqh,nuspec,paml,razor,resw,resx,shader,skin,tpp,usf,ush,vb,xaml,xamlx,xoml,xsd}]
 indent_style = space

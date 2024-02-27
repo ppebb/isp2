@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -11,12 +11,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
-    <ItemGroup>
-        <EmbeddedResource Include="Resources/*" />
-    </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources/*" Condition=" '$(OS)' == 'Windows_NT' " />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\dotnet-curses\dotnet-curses\dotnet-curses.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\dotnet-curses\dotnet-curses\dotnet-curses.csproj" />
+  </ItemGroup>
 
 </Project>
