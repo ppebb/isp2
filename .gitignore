@@ -9,3 +9,4 @@ obj/
 
 dotnet/
 scripts/run.bat
+scripts/build.bat

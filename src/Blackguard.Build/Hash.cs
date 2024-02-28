@@ -26,7 +26,7 @@ public class HashTask : Task {
                 hasher.Append(buffer);
             }
 
-            string line = $"{"Blackguard." + file.Replace(Path.DirectorySeparatorChar, '.')} {hasher.GetCurrentHashAsUInt64()}\n";
+            string line = $"{"Blackguard." + file.Replace('\\', '.').Replace('/', '.')} {hasher.GetCurrentHashAsUInt64()}\n";
             output += line;
             hasher.Reset();
         }
