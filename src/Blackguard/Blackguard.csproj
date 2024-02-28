@@ -49,7 +49,9 @@
   <UsingTask TaskName="HashTask" AssemblyFile="../Blackguard.Build/bin/Debug/net8.0/Blackguard.Build.dll" />
 
   <Target Name="HashNativeLibraries" BeforeTargets="BeforeBuild">
+    <Message Text="Hashing libraries in $(ResourceFolder)" Importance="High" />
     <HashTask LibraryDirectory="$(ResourceFolder)" />
+    <Message Text="Finished hashing libraries" Importance="High" />
   </Target>
 
   <ItemGroup>
