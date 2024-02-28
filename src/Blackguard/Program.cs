@@ -12,7 +12,7 @@ public class LibraryNames : CursesLibraryNames {
     public override List<string> NamesLinux => new() { "libncursesw.so" };
 
     // This sucks. fix later because I shouldn't just be filtering these. Make some other better way to extract the right deps
-    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies().Where(s => s.Contains("ncurses")).ToList();
+    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
 }
 
 public class LibraryNames2 : PanelLibraryNames {
@@ -20,7 +20,7 @@ public class LibraryNames2 : PanelLibraryNames {
 
     public override List<string> NamesLinux => new() { "libpanelw.so" };
 
-    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies().Where(s => s.Contains("panel")).ToList();
+    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
 }
 
 public static class Program {
