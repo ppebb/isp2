@@ -95,7 +95,7 @@ public abstract class Platform {
             Dictionary<string, ulong> hashes = new();
 
             // This can be hardcoded because the hashes file should always generate like this
-            foreach (string line in res.Split('\n')) {
+            foreach (string line in res.TrimEnd().Split('\n')) {
                 string[] split = line.Split(' ');
                 hashes.Add(split[0], ulong.Parse(split[1]));
             }
@@ -104,7 +104,8 @@ public abstract class Platform {
                 if (!resource.EndsWith(".dll"))
                     continue;
 
-                string path = Path.Combine(CachePath(), resource.Replace("Blackguard.Resources.", string.Empty));
+                // Hardcoded for windows for now, can be generalized if natives are needed fro any other platform
+                string path = Path.Combine(CachePath(), resource.Replace("Blackguard.Resources.Windows.", string.Empty));
                 if (File.Exists(path)) {
                     byte[] buffer = new byte[8192];
                     using FileStream fs = File.OpenRead(path);
@@ -112,6 +113,8 @@ public abstract class Platform {
                     while (fs.Read(buffer, 0, buffer.Length) > 0) {
                         hasher.Append(buffer);
                     }
+
+                    fs.Close();
 
                     if (hasher.GetCurrentHashAsUInt64() == hashes[resource]) {
                         ret.Add(path);
