@@ -58,16 +58,15 @@ public class Game {
                     shouldExit = shouldExit && menu.RunTick(this);
                     menu.Render(this);
                 }
-                NCurses.UpdatePanels();
+
+                if (menus.Count > 0)
+                    NCurses.UpdatePanels();
 
                 MainInputHandler();
 
                 // By switching to the scene at the end, we avoid memory leaks and crashes from killing the scene while it's active.
                 SwitchToQueuedScene();
             }
-
-            if (!Program.CursorHidden)
-                NCurses.WindowMove(scene.CurrentWin.WHandle, 0, 0);
 
             if (!shouldExit)
                 Tick();
@@ -126,6 +125,7 @@ public class Game {
                 debugMenu.Panel.Clear();
                 debugMenu.Delete();
                 menus.Remove(debugMenu);
+                NCurses.UpdatePanels();
             }
             else
                 menus.Add(new DebugMenu());

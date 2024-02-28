@@ -1,3 +1,6 @@
 [submodule "src/dotnet-curses"]
 	path = src/dotnet-curses
 	url = https://github.com/ppebb/dotnet-curses
+[submodule "src/PDCurses"]
+	path = src/PDCurses
+	url = https://github.com/ppebb/PDCurses

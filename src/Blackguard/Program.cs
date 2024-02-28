@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
 
@@ -11,7 +10,6 @@ public class LibraryNames : CursesLibraryNames {
 
     public override List<string> NamesLinux => new() { "libncursesw.so" };
 
-    // This sucks. fix later because I shouldn't just be filtering these. Make some other better way to extract the right deps
     public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
 }
 
@@ -20,6 +18,7 @@ public class LibraryNames2 : PanelLibraryNames {
 
     public override List<string> NamesLinux => new() { "libpanelw.so" };
 
+    // TODO: On windows with PDCurses there is no longer a separate panel library
     public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
 }
 
@@ -28,8 +27,6 @@ public static class Program {
 
     // Not useful for now, but may be helpful for later
     public static nint StdScreen { get; private set; }
-
-    public static bool CursorHidden { get; private set; } = true;
 
     static Program() {
         Platform = Platform.GetPlatform();
@@ -49,13 +46,7 @@ public static class Program {
             Environment.Exit(1);
         }
 
-        try {
-            NCurses.SetCursor(0); // Hide the cursor
-        }
-        catch {
-            CursorHidden = false;
-        }
-
+        NCurses.SetCursor(0); // Hide the cursor
         NCurses.CBreak(); // Makes input immediately available to the terminal instead of performing line buffering
         NCurses.NoEcho(); // Stops input from being printed to the screen automatically
         NCurses.StartColor(); // Starts the color functionality
