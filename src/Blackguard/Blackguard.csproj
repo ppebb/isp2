@@ -16,6 +16,10 @@
     <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
     <BuildingWindows Condition="$(RuntimeIdentifier.StartsWith('win'))">true</BuildingWindows>
     <BuildingLinux Condition="$(RuntimeIdentifier.StartsWith('linux'))">true</BuildingLinux>
+    <MakeBinary Condition="$(IsWindows)">make</MakeBinary>
+    <MakeBinary Condition="$(IsLinux)">x86_64-w64-mingw32-make</MakeBinary>
+    <MakeCommand Condition="$(IsWindows)">$(MakeBinary)</MakeCommand>
+    <MakeCommand Condition="$(IsLinux)">CFLAGS="-I.." DLL=Y $(MakeBinary) -f Makefile WINDRES=x86_64-w64-mingw32-windres</MakeCommand>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +41,23 @@
   <PropertyGroup Condition="$(BuildingLinux) Or ($(IsLinux) And !$(BuildingWindows))">
     <ResourceFolder>Resources/Linux</ResourceFolder>
   </PropertyGroup>
+
+  <!-- Check make is available before trying to do anything -->
+  <Target Name="CheckMakeBinaryCallable">
+    <Exec Command="$(MakeBinary) -h > NUL" Condition="$(IsWindows)" IgnoreExitCode="True">
+      <Output TaskParameter="ExitCode" PropertyName="MakeExitCode" />
+    </Exec>
+    <Exec Command="$(MakeBinary) --help > /dev/null" Condition="$(IsLinux)" IgnoreExitCode="True">
+      <Output TaskParameter="ExitCode" PropertyName="MakeExitCode" />
+    </Exec>
+  </Target>
+
+  <!-- Compile PDCurses if targeting windows -->
+  <Target Name="Compile PDCurses" BeforeTargets="BeforeBuild" Condition="$(BuildingWindows)" DependsOnTargets="CheckMakeBinaryCallable">
+    <Exec Command="$(MakeCommand)" WorkingDirectory="../PDCurses/wincon" Condition="'$(MakeExitCode)' == '0'" />
+    <Copy SourceFiles="../PDCurses/wincon/pdcurses.dll" DestinationFolder="./Resources/Windows" Condition="'$(MakeExitCode)' == '0'" />
+    <Message Text="Unable to locate $(MakeBinary), not compiling PDCurses" Importance="High" Condition="'$(MakeExitCode)' != '0'" />
+  </Target>
 
   <!-- Force a rebuild of the assembly defining build tasks -->
   <Target Name="CompileBuildTasks" BeforeTargets="BeforeBuild">
