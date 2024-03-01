@@ -53,7 +53,7 @@
   </Target>
 
   <!-- Compile PDCurses if targeting windows -->
-  <Target Name="Compile PDCurses" BeforeTargets="BeforeBuild" Condition="$(BuildingWindows)" DependsOnTargets="CheckMakeBinaryCallable">
+  <Target Name="Compile PDCurses" BeforeTargets="BeforeBuild" Condition="$(BuildingWindows) Or ($(IsWindows) And !$(BuildingLinux))" DependsOnTargets="CheckMakeBinaryCallable">
     <Exec Command="$(MakeCommand)" WorkingDirectory="../PDCurses/wincon" Condition="'$(MakeExitCode)' == '0'" />
     <Copy SourceFiles="../PDCurses/wincon/pdcurses.dll" DestinationFolder="./Resources/Windows" Condition="'$(MakeExitCode)' == '0'" />
     <Message Text="Unable to locate $(MakeBinary), not compiling PDCurses" Importance="High" Condition="'$(MakeExitCode)' != '0'" />
