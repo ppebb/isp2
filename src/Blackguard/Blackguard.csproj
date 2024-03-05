@@ -5,17 +5,40 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+</PropertyGroup>
 
-    <!-- Default values -->
+  <!-- Set OS conditions -->
+  <PropertyGroup>
     <IsWindows>false</IsWindows>
     <IsLinux>false</IsLinux>
-    <BuildingWindows>false</BuildingWindows>
-    <BuildingLinux>false</BuildingLinux>
-    <!-- Redefine if OS is detected -->
+    <RidWindows>false</RidWindows>
+    <RidLinux>false</RidLinux>
     <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
     <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
-    <BuildingWindows Condition="$(RuntimeIdentifier.StartsWith('win'))">true</BuildingWindows>
-    <BuildingLinux Condition="$(RuntimeIdentifier.StartsWith('linux'))">true</BuildingLinux>
+    <RidWindows Condition="$(RuntimeIdentifier.StartsWith('win'))">true</RidWindows>
+    <RidLinux Condition="$(RuntimeIdentifier.StartsWith('linux'))">true</RidLinux>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsWindows)">
+    <MakeBinary>make</MakeBinary>
+    <MakeCommand>$(MakeBinary)</MakeCommand>
+    <SupressOutput>-h > NUL</SupressOutput>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsLinux)">
+    <MakeBinary>x86_64-w64-mingw32-make</MakeBinary>
+    <MakeCommand>CFLAGS="-I.." DLL=Y $(MakeBinary) -f Makefile WINDRES=x86_64-w64-mingw32-windres</MakeCommand>
+    <SupressOutput>--help > /dev/null</SupressOutput>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(RidWindows) Or ($(IsWindows) And !$(RidLinux))">
+    <ResourceFolder>Resources/Windows</ResourceFolder>
+    <CompilePDCurses>true</CompilePDCurses>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(RidLinux) Or ($(IsLinux) And !$(RidWindows))">
+    <ResourceFolder>Resources/Linux</ResourceFolder>
+    <CompilePDCurses>false</CompilePDCurses>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,20 +52,35 @@
 
   <!-- Build Tasks -->
 
-  <!-- Determine proper resources folder -->
-  <PropertyGroup Condition="$(BuildingWindows) Or ($(IsWindows) And !$(BuildingLinux))">
-    <ResourceFolder>Resources/Windows</ResourceFolder>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(BuildingLinux) Or ($(IsLinux) And !$(BuildingWindows))">
-    <ResourceFolder>Resources/Linux</ResourceFolder>
-  </PropertyGroup>
-
   <!-- Force a rebuild of the assembly defining build tasks -->
   <Target Name="CompileBuildTasks" BeforeTargets="BeforeBuild">
     <Message Text="Rebuilding Blackguard.Build" Importance="High" />
     <Exec Command="dotnet build ../Blackguard.Build/Blackguard.Build.csproj" />
     <Message Text="Finished building Blackguard.Build" Importance="High" />
+  </Target>
+
+  <!-- Check make is available before trying to do anything -->
+  <Target Name="CheckMakeBinaryCallable">
+    <Exec Command="$(MakeBinary) $(SupressOutput)" IgnoreExitCode="True">
+      <Output TaskParameter="ExitCode" PropertyName="MakeExitCode" />
+    </Exec>
+  </Target>
+
+  <!-- Define GitCheckTask, to only recompile PDCurses upon a new commit -->
+  <UsingTask TaskName="GitCheckTask" AssemblyFile="../Blackguard.Build/bin/Debug/net8.0/Blackguard.Build.dll" />
+
+  <!-- Only recompile PDCurses if there is a new commit -->
+  <Target Name="CheckGit">
+    <GitCheckTask RootDir="../.." Repos="./src/PDCurses">
+      <Output TaskParameter="ShouldRecompile" PropertyName="ShouldRecompile" />
+    </GitCheckTask>
+  </Target>
+
+  <!-- Compile PDCurses if targeting windows -->
+  <Target Name="Compile PDCurses" BeforeTargets="BeforeBuild" Condition="$(CompilePDCurses)" DependsOnTargets="CheckMakeBinaryCallable;CheckGit">
+    <Exec Command="$(MakeCommand)" WorkingDirectory="../PDCurses/wincon" Condition="'$(MakeExitCode)' == '0' And $(ShouldRecompile)" />
+    <Copy SourceFiles="../PDCurses/wincon/pdcurses.dll" DestinationFolder="./Resources/Windows" Condition="'$(MakeExitCode)' == '0' And $(ShouldRecompile)" />
+    <Message Text="Unable to locate $(MakeBinary), not compiling PDCurses" Importance="High" Condition="'$(MakeExitCode)' != '0'" />
   </Target>
 
   <!-- Define HashTask, which is resolved from another assembly -->

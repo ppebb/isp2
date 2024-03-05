@@ -22,9 +22,8 @@ public class HashTask : Task {
             byte[] buffer = new byte[8192];
             using FileStream fs = File.OpenRead(file);
 
-            while (fs.Read(buffer, 0, buffer.Length) > 0) {
+            while (fs.Read(buffer, 0, buffer.Length) > 0)
                 hasher.Append(buffer);
-            }
 
             string line = $"{"Blackguard." + file.Replace('\\', '.').Replace('/', '.')} {hasher.GetCurrentHashAsUInt64()}\n";
             output += line;
