@@ -16,14 +16,12 @@ public enum ColorPair : uint {
 public enum Highlight {
     Text,
     TextSel,
+    TextSelUnderline,
 }
 
 public static class ColorHandler {
     // Color definitions, aligned with the Colors enum, so the 0th element is the RGB set for Text
     public static readonly short[][] ColorDefs = [
-        //[ 210, 211, 212 ], // TextFg
-        //[ 22,   26,   48   ], // TextBg
-
         [ 209, 215, 227 ],  // textNormal
         [  38,  40,  48 ],  // backgroundMenu
 
@@ -90,8 +88,9 @@ public static class ColorHandler {
     ];
 
     public static readonly Dictionary<Highlight, (ColorPair pair, uint attr)> HighlightDefs = new() {
-        { Highlight.Text,    (ColorPair.Text, 0) },
-        { Highlight.TextSel, (ColorPair.TextSel, CursesAttribute.UNDERLINE) }
+        { Highlight.Text,             (ColorPair.Text,    0) },
+        { Highlight.TextSel,          (ColorPair.TextSel, 0) },
+        { Highlight.TextSelUnderline, (ColorPair.TextSel, CursesAttribute.UNDERLINE) },
     };
 
     // Gets the pair number

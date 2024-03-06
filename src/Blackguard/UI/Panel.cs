@@ -11,10 +11,6 @@ public class Panel : Drawable {
         get => _window.Handle;
     }
 
-    public override Highlight Highlight {
-        get => _window.Highlight;
-    }
-
     public Panel(string name, Highlight highlight, int xi, int yi, int wi, int hi) {
         _window = new Window(name, highlight, xi, yi, wi, hi);
         Handle = NCurses.NewPanel(_window.Handle);

@@ -9,7 +9,15 @@ public abstract class Drawable : IDisposable, ISizeProvider, IOffsetProvider {
     public virtual nint WHandle { get; protected set; } // Window handle
     public virtual nint Handle { get; protected set; } // Handle to the actual thing (pad, panel, etc)
     public string Name { get; set; } = null!;
-    public virtual Highlight Highlight { get; protected set; }
+
+    private Highlight _highlight;
+    public virtual Highlight Highlight {
+        get => _highlight;
+        set {
+            _highlight = value;
+            ChangeHighlight(_highlight);
+        }
+    }
 
 #pragma warning disable IDE1006 // I want lowercase names. Shut up roslyn
     public int x { get; protected set; } // X-pos
@@ -22,9 +30,8 @@ public abstract class Drawable : IDisposable, ISizeProvider, IOffsetProvider {
         Utils.WindowAddLinesWithHighlight(WHandle, segments);
     }
 
-    public void ChangeHighlight(Highlight newHighlight) {
+    protected virtual void ChangeHighlight(Highlight newHighlight) {
         NCurses.WindowBackground(WHandle, newHighlight.AsMixedAttr());
-        Highlight = newHighlight;
     }
 
     public void Clear() {

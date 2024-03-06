@@ -6,6 +6,8 @@ namespace Blackguard.UI.Elements;
 public class UIText : UIElement {
     private string[] _lines;
 
+    public Highlight Highlight;
+
     public UIText(string[] lines, Alignment alignment = Alignment.Left) {
         _alignment = alignment;
         _lines = lines;
@@ -20,6 +22,7 @@ public class UIText : UIElement {
     }
 
     public override void Render(Drawable drawable, int x, int y, int maxy, int maxh) {
-        drawable.AddLinesWithHighlight(_lines.Select((l, i) => (Highlight.Text, x, y + i, l)).ToArray());
+        // TODO: Draw based on alignment?
+        drawable.AddLinesWithHighlight(_lines.Select((l, i) => (Highlight, x, y + i, l)).ToArray());
     }
 }
