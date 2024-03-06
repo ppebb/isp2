@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
@@ -8,8 +8,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackguard.Tests", ".\src\Blackguard.Tests\Blackguard.Tests.csproj", "{40A1DC96-F6EE-404B-AB2B-8E4DDC6E769E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-curses", "src\dotnet-curses\dotnet-curses\dotnet-curses.csproj", "{7517D6D1-6845-4F88-8535-712866A7BA9C}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E0655AFA-291E-40D0-AAB4-165337660B7D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackguard.Build", "src\Blackguard.Build\Blackguard.Build.csproj", "{DA9C31B1-1789-4F53-A328-4025E12BB592}"
 EndProject
@@ -41,8 +39,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CAD05E22-183F-4994-9865-FE13CFC8982A}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{DA9C31B1-1789-4F53-A328-4025E12BB592} = {E0655AFA-291E-40D0-AAB4-165337660B7D}
 	EndGlobalSection
 EndGlobal
