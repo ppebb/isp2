@@ -9,15 +9,24 @@ public class UIButton : UIElement, ISelectable {
     private string[] _label;
     private readonly Action _onPress;
 
+    public Highlight Norm;
+    public Highlight Sel;
+    public Highlight SelLastLine;
+
+    private (Highlight, int, int, string)[] _segments;
+
     public bool Selected { get; set; }
 
     public UIButton(string[] label, Action onPress) {
         _label = label;
         _onPress = onPress;
+
+        _segments = new (Highlight, int, int, string)[_label.Length];
     }
 
     public void ChangeLabel(string[] label) {
         _label = label;
+        _segments = new (Highlight, int, int, string)[_label.Length];
     }
 
     public override void ProcessInput(Game state) {
@@ -32,7 +41,20 @@ public class UIButton : UIElement, ISelectable {
     }
 
     public override void Render(Drawable drawable, int x, int y, int maxy, int maxh) {
-        drawable.AddLinesWithHighlight(_label.Select((line, i) => (i == _label.Length - 1 && Selected ? Highlight.TextSel : Highlight.Text, x, y + i, _label[i])).ToArray());
+        for (int i = 0; i < _label.Length; i++) {
+            Highlight highlight;
+
+            if (!Selected)
+                highlight = Norm;
+            else if (Selected && i < _label.Length - 1)
+                highlight = Sel;
+            else
+                highlight = SelLastLine;
+
+            _segments[i] = (highlight, x, y + i, _label[i]);
+        }
+
+        drawable.AddLinesWithHighlight(_segments);
     }
 
     public void Select() {

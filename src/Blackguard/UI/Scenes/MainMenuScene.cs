@@ -20,10 +20,26 @@ public class MainMenuScene : Scene {
 
         UISpace topSpace = new(0, 10);
         UIText logoText = new(Logo);
-        UIButton startButton = new("Start".ToLargeText(), () => { });
-        UIButton settingsButton = new("Settings".ToLargeText(), () => { });
-        UIButton creditsButton = new("Credits".ToLargeText(), () => { });
-        UIButton quitButton = new("Quit".ToLargeText(), () => { shouldExit = true; });
+        UIButton startButton = new("Start".ToLargeText(), () => { }) {
+            Norm = Highlight.Text,
+            Sel = Highlight.TextSel,
+            SelLastLine = Highlight.TextSelUnderline,
+        };
+        UIButton settingsButton = new("Settings".ToLargeText(), () => { }) {
+            Norm = Highlight.Text,
+            Sel = Highlight.TextSel,
+            SelLastLine = Highlight.TextSelUnderline,
+        };
+        UIButton creditsButton = new("Credits".ToLargeText(), () => { }) {
+            Norm = Highlight.Text,
+            Sel = Highlight.TextSel,
+            SelLastLine = Highlight.TextSelUnderline,
+        };
+        UIButton quitButton = new("Quit".ToLargeText(), () => { shouldExit = true; }) {
+            Norm = Highlight.Text,
+            Sel = Highlight.TextSel,
+            SelLastLine = Highlight.TextSelUnderline,
+        };
         UISpace bottomSpace = new(0, 10);
 
         container = new UIContainer(Alignment.Center | Alignment.Fill, topSpace, logoText, startButton, settingsButton, creditsButton, quitButton, bottomSpace) { Selected = true };
