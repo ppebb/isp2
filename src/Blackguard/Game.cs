@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Blackguard.UI;
 using Blackguard.UI.Menus;
 using Blackguard.UI.Scenes;
 using Blackguard.Utilities;
@@ -12,9 +13,19 @@ namespace Blackguard;
 
 public class Game {
     public static string PlayerPath { get; } = Path.Combine(Program.Platform.DataPath(), "Players");
+    public static string WorldPath { get; } = Path.Combine(Program.Platform.DataPath(), "World");
 
-    private Scene scene = null!;
-    private Scene queuedScene = null!;
+    // These are set by their respective Selection Scenes
+    public Player Player { get; set; } = null!;
+    public World World { get; set; } = null!;
+
+    public Window CurrentWin;
+
+    private readonly List<Scene> scenes = new();
+    private int sceneIdx = 0;
+    private Scene CurrentScene => scenes[sceneIdx];
+    private bool nextQueued = false;
+    private bool backQueued = false;
     private readonly List<Menu> menus = new();
 
     public InputHandler Input { private set; get; }
@@ -35,9 +46,16 @@ public class Game {
     private static readonly TimeSpan maxElapsedTime = TimeSpan.FromMilliseconds(500);
 
     public Game() {
+        InitializeDirectories();
         Input = new InputHandler();
-        scene = new MainMenuScene();
+        CurrentWin = Window.NewFullScreenWindow("Base Window", Highlight.Text);
+        scenes.Add(new MainMenuScene());
         oldSize = (NCurses.Lines, NCurses.Columns);
+    }
+
+    public static void InitializeDirectories() {
+        Directory.CreateDirectory(PlayerPath);
+        Directory.CreateDirectory(WorldPath);
     }
 
     public void Run() {
@@ -47,12 +65,12 @@ public class Game {
             gameTimer = Stopwatch.StartNew();
 
             // If input isn't checked, resizing doesn't work. Don't know why...
-            Input.PollInput(scene.CurrentWin.WHandle);
+            Input.PollInput(CurrentWin.WHandle);
 
             // Only run anything if a resize is successful
             if (HandleResize()) {
-                shouldExit = !scene.RunTick(this);
-                scene.Render(this);
+                shouldExit = !CurrentScene.RunTick(this);
+                CurrentScene.Render(this);
 
                 foreach (Menu menu in menus) {
                     shouldExit = shouldExit && menu.RunTick(this);
@@ -75,7 +93,7 @@ public class Game {
         }
 
         // Exit the game
-        scene.Finish();
+        CurrentScene.Finish();
     }
 
     private const int MIN_WIDTH = 100;
@@ -84,7 +102,7 @@ public class Game {
     private bool HandleResize() {
         if ((NCurses.Lines, NCurses.Columns) != oldSize) {
             // TODO: Implement resize on a scene-by-scene, menu-by-menu basis in the event they want to control spacing and the like
-            scene.CurrentWin.HandleTermResize();
+            CurrentWin.HandleTermResize();
         }
 
         oldSize = (NCurses.Lines, NCurses.Columns);
@@ -100,7 +118,7 @@ public class Game {
             int startx = (NCurses.Columns - (curWidth.Length + curHeight.Length + width.Length + height.Length)) / 2;
 
             try {
-                scene.CurrentWin.AddLinesWithHighlight(
+                CurrentWin.AddLinesWithHighlight(
                     (Highlight.Text, (NCurses.Columns - SIZE_WARNING.Length) / 2, starty, SIZE_WARNING),
                     (Highlight.Text, startx, starty + 1, curWidth),
                     (Highlight.Text, startx += curWidth.Length, starty + 1, width), // Red or green eventually
@@ -198,16 +216,56 @@ public class Game {
         sleepTimeIndex = (sleepTimeIndex + 1) & SLEEP_TIME_MASK;
     }
 
-    public void SwitchScene(Scene nextScene) {
-        queuedScene = nextScene;
+    public void ForwardScene<T>(Action<object?>? callback = null) where T : Scene, new() {
+        if (backQueued) // Make sure there isn't a back and a forward at the same time
+            return;
+
+        nextQueued = true;
+
+        if (sceneIdx < scenes.Count - 1 && scenes[sceneIdx + 1].GetType() == typeof(T)) {
+            scenes[sceneIdx + 1].callback = callback;
+            return;
+        }
+
+        // Initalize the next scene if there isn't already one
+        Scene nextScene = new T();
+
+        for (int i = sceneIdx + 1; i < scenes.Count; i++) {
+            scenes[i].Finish();
+            scenes.RemoveAt(i);
+        }
+
+        nextScene.callback = callback;
+        scenes.Add(nextScene);
+        return;
+    }
+
+    public void PrevScene() {
+        if (nextQueued) // Make sure there isn't a back and a forward at the same time
+            return;
+
+        if (sceneIdx > 0)
+            backQueued = true;
+        else
+            backQueued = false;
     }
 
     private void SwitchToQueuedScene() {
-        if (queuedScene == null)
+        int changeIdx;
+
+        if (nextQueued) {
+            changeIdx = sceneIdx + 1;
+            nextQueued = false;
+        }
+        else if (backQueued) {
+            changeIdx = sceneIdx - 1;
+            backQueued = false;
+        }
+        else
             return;
 
-        scene?.Finish();
-        scene = queuedScene;
+        sceneIdx = changeIdx;
+        CurrentWin.Clear();
     }
 
     public class InputHandler() {
@@ -228,8 +286,10 @@ public class Game {
 
         public IEnumerable<int> Keycodes() => keys;
 
-        public bool HasInputThisTick() => keys?.Count > 0;
+        public bool HasInputThisTick() => keys.Count > 0;
 
-        public bool KeyPressed(int keyCode) => keys?.Contains(keyCode) ?? false;
+        public bool KeyPressed(int keyCode) => keys.Contains(keyCode);
+
+        public bool IsEnterPressed() => keys.Contains(CursesKey.ENTER) || keys.Contains(10) || keys.Contains(13);
     }
 }

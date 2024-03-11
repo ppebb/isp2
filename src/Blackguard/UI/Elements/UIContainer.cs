@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,13 +10,12 @@ public class UIContainer : UIElement, ISelectable {
     public bool Selected { get; set; }
 
     public override (int w, int h) GetSize() {
-        int w = 0;
-        int h = 0;
+        int w = 0, h = 0;
 
-        foreach (UIElement e in _elements) {
-            (int ew, int eh) = e.GetSize();
-            w = Math.Max(w, ew);
-            h += ew;
+        foreach (UIElement element in _elements) {
+            (int cw, int ch) = element.GetSize();
+            w += cw;
+            h += ch;
         }
 
         return (w, h);
@@ -45,17 +43,27 @@ public class UIContainer : UIElement, ISelectable {
 
     public bool Empty() => _elements?.Count == 0;
 
-    private bool SelectFirstSelectable() => SelectNextSelectable(0, true);
+    public bool SelectFirstSelectable() => SelectNextSelectable(0, true);
+
+    public bool SelectLastSelectable() => SelectNextSelectable(_elements.Count - 1, false);
 
     private bool SelectNextSelectable(int start, bool forwards) {
         for (int i = start; i >= 0 && i < _elements.Count; i += forwards ? 1 : -1) {
             if (_elements[i] is ISelectable selectable) {
-                if (i == selected_element) // Don't select the same element
-                    continue;
+                /* if (i == selected_element) // Don't select the same element */
+                /*     continue; */
 
                 (_elements[selected_element] as ISelectable)?.Deselect();
                 selected_element = i;
                 selectable.Select();
+
+                if (selectable is UIContainer c) {
+                    if (forwards)
+                        c.SelectFirstSelectable();
+                    else
+                        c.SelectLastSelectable();
+                }
+
                 return true;
             }
         }
@@ -138,7 +146,11 @@ public class UIContainer : UIElement, ISelectable {
             return e.GetSize().h;
         }).Sum(); // total height of all elements
 
-        int fillGapSize = (maxh - th) / tg;
+        int fillGapSize;
+        if (tg > 0) // Avoid dividing by zero
+            fillGapSize = (maxh - th) / tg;
+        else
+            fillGapSize = 0;
 
         for (int i = 0; i < _elements.Count; i++) {
             UIElement child = _elements[i];
@@ -168,10 +180,12 @@ public class UIContainer : UIElement, ISelectable {
     }
 
     public void Select() {
-        throw new NotImplementedException();
+        Selected = true;
     }
 
     public void Deselect() {
-        throw new NotImplementedException();
+        Selected = false;
+        // Just in case!
+        _elements.ForEach((e) => (e as ISelectable)?.Deselect());
     }
 }

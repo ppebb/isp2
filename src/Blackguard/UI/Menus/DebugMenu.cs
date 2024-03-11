@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Linq;
 using Blackguard.Utilities;
-using Mindmagma.Curses;
 
 namespace Blackguard.UI.Menus;
 
@@ -40,7 +39,7 @@ public class DebugMenu : Menu {
     public override bool RunTick(Game state) => true;
 
     public override void Render(Game state) {
-        RenderBorder(Highlight.Text);
+        Panel.DrawBorder(Highlight.Text);
 
         (Highlight h, int x, int y, string)[] processedSegments = segments.Select((s, i) => (s.h, 1, i + 1, s.f(state))).ToArray();
 

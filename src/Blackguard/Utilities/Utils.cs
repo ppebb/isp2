@@ -8,6 +8,9 @@ namespace Blackguard.Utilities;
 public static class Utils {
     public static void WindowAddLinesWithHighlight(nint window, params (Highlight highlight, int x, int y, string text)[] segments) {
         foreach ((Highlight highlight, int x, int y, string text) in segments) {
+            if (x < 0 || y < 0 || y > NCurses.Lines || x + text.Length > NCurses.Columns)
+                throw new Exception($"Attempted to draw out of bounds! The window is {NCurses.Columns}x{NCurses.Lines}, but a line was printed at {x}x{y}, ending at {x + text.Length}");
+
             try {
                 NCurses.MoveWindowAddString(window, y, x, text);
             }
@@ -21,12 +24,13 @@ public static class Utils {
         NCurses.WindowMove(window, y, x);
         NCurses.WindowChangeAttribute(window, len, attr, pair, nint.Zero);
     }
+#pragma warning restore IDE1006
 
     private static readonly string[] largeTextGlyphs = [
-        " ▄█▄ █▀▀▀▄▄▀▀▀▄█▀▀▄ █▀▀▀▀█▀▀▀▀▄▀▀▀▄█   █▀▀█▀▀  ▀█▀█  ▄▀█    █   █▄▀▀▀▄██  ██▀▀▀▄▄▀▀▀▄█▀▀▄ ▄▀▀▀▄▀▀█▀▀█   ██   ██   ██   ██   █▀▀▀▀█▄▀▀▀▄ ▄█  ▄▀▀▀▄▄▀▀▀▄  ▄█ █▀▀▀▀▄▀▀▀▄▀▀▀▀█▄▀▀▀▄▄▀▀▀▄     ",
-        " █ █ █▄▄▄▀█    █   ██▄▄▄ █▄▄▄ █    █▄▄▄█  █     █ █▄▀  █    ██ ███   ██ █ ██▄▄▄▀█   ██▄▄▀ ▀▄▄▄   █  █   █▀▄ ▄▀█ ▄ █ ▀▄▀  ▀▄▀   ▄▀ █▀▄ █  █     ▄▀  ▄▄▀▄▀ █ ▀▄▄▄ █▄▄▄    █ ▀▄▄▄▀▀▄▄▄█     ",
-        "█▀▀▀██   ██   ▄█  ▄▀█    █    █  ▀██   █  █  ▄  █ █ ▀▄ █    █ █ ██   ██ ▀▄██    █ ▀▄▀█  █ ▄   █  █  █   █ █ █ █ █ █▄▀ ▀▄  █  ▄▀   █  ▀█  █  ▄▀▀  ▄   █▀▀▀█▀▄   ██   █  █  █   █▄   █     ",
-        "▀   ▀▀▀▀▀  ▀▀▀ ▀▀▀  ▀▀▀▀▀▀     ▀▀▀ ▀   ▀▀▀▀▀▀ ▀▀  ▀   ▀▀▀▀▀▀▀ ▀ ▀ ▀▀▀ ▀  ▀▀▀     ▀▀ ▀▀   ▀ ▀▀▀   ▀   ▀▀▀   ▀   ▀ ▀ ▀   ▀  ▀  ▀▀▀▀▀ ▀▀▀ ▀▀▀▀▀▀▀▀▀▀ ▀▀▀    ▀  ▀▀▀  ▀▀▀  ▀    ▀▀▀  ▀▀▀      "
+        " ▄█▄ █▀▀▀▄▄▀▀▀▄█▀▀▄ █▀▀▀▀█▀▀▀▀▄▀▀▀▄█   █▀▀█▀▀  ▀█▀█  ▄▀█    █   ███  █▄▀▀▀▄█▀▀▀▄▄▀▀▀▄█▀▀▄ ▄▀▀▀▄▀▀█▀▀█   ██   ██   ██   ██   █▀▀▀▀█▄▀▀▀▄ ▄█  ▄▀▀▀▄▄▀▀▀▄  ▄█ █▀▀▀▀▄▀▀▀▄▀▀▀▀█▄▀▀▀▄▄▀▀▀▄      ▄▄  ",
+        " █ █ █▄▄▄▀█    █   ██▄▄▄ █▄▄▄ █    █▄▄▄█  █     █ █▄▀  █    ██ ███ █ ██   ██▄▄▄▀█   ██▄▄▀ ▀▄▄▄   █  █   █▀▄ ▄▀█ ▄ █ ▀▄▀  ▀▄▀   ▄▀ █▀▄ █  █     ▄▀  ▄▄▀▄▀ █ ▀▄▄▄ █▄▄▄    █ ▀▄▄▄▀▀▄▄▄█      ▀▀  ",
+        "█▀▀▀██   ██   ▄█  ▄▀█    █    █  ▀██   █  █  ▄  █ █ ▀▄ █    █ █ ██ ▀▄██   ██    █ ▀▄▀█  █ ▄   █  █  █   █ █ █ █ █ █▄▀ ▀▄  █  ▄▀   █  ▀█  █  ▄▀▀  ▄   █▀▀▀█▀▄   ██   █  █  █   █▄   █      ▄▄  ",
+        "▀   ▀▀▀▀▀  ▀▀▀ ▀▀▀  ▀▀▀▀▀▀     ▀▀▀ ▀   ▀▀▀▀▀▀ ▀▀  ▀   ▀▀▀▀▀▀▀ ▀ ▀▀  ▀▀ ▀▀▀ ▀     ▀▀ ▀▀   ▀ ▀▀▀   ▀   ▀▀▀   ▀   ▀ ▀ ▀   ▀  ▀  ▀▀▀▀▀ ▀▀▀ ▀▀▀▀▀▀▀▀▀▀ ▀▀▀    ▀  ▀▀▀  ▀▀▀  ▀    ▀▀▀  ▀▀▀       ▀▀  "
     ];
 
     // WARN: Terrible hardcode. Works well enough.
@@ -47,8 +51,10 @@ public static class Utils {
                 AddGlyph((c - 22) * 5);
             else if (c >= 97 && c <= 127) // a-z
                 AddGlyph((c - 97) * 5);
-            else if (c == 32)
+            else if (c == 32) // space
                 AddGlyph(36 * 5);
+            else if (c == 58) // colon
+                AddGlyph(37 * 5);
         }
 
         // This should work but doesn't. Would be nice to make this method somewhat less ugly.
@@ -84,4 +90,3 @@ public static class Utils {
         ];
     }
 }
-#pragma warning restore IDE1006
