@@ -45,15 +45,25 @@ public class UIContainer : UIElement, ISelectable {
 
     public bool SelectFirstSelectable() => SelectNextSelectable(0, true);
 
+    public bool SelectLastSelectable() => SelectNextSelectable(_elements.Count - 1, false);
+
     private bool SelectNextSelectable(int start, bool forwards) {
         for (int i = start; i >= 0 && i < _elements.Count; i += forwards ? 1 : -1) {
             if (_elements[i] is ISelectable selectable) {
-                if (i == selected_element) // Don't select the same element
-                    continue;
+                /* if (i == selected_element) // Don't select the same element */
+                /*     continue; */
 
                 (_elements[selected_element] as ISelectable)?.Deselect();
                 selected_element = i;
                 selectable.Select();
+
+                if (selectable is UIContainer c) {
+                    if (forwards)
+                        c.SelectFirstSelectable();
+                    else
+                        c.SelectLastSelectable();
+                }
+
                 return true;
             }
         }
@@ -175,5 +185,6 @@ public class UIContainer : UIElement, ISelectable {
 
     public void Deselect() {
         Selected = false;
+        _elements.ForEach((e) => (e as ISelectable)?.Deselect());
     }
 }

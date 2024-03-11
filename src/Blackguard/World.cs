@@ -29,9 +29,9 @@ public class World {
         File.WriteAllText(SavePath, json);
     }
 
-    public static Player? Deserialize(string path) {
+    public static World? Deserialize(string path) {
         string json = File.ReadAllText(path);
 
-        return (Player?)JsonConvert.DeserializeObject(json);
+        return JsonConvert.DeserializeObject<World>(json);
     }
 }

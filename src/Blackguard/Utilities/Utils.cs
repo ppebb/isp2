@@ -8,6 +8,9 @@ namespace Blackguard.Utilities;
 public static class Utils {
     public static void WindowAddLinesWithHighlight(nint window, params (Highlight highlight, int x, int y, string text)[] segments) {
         foreach ((Highlight highlight, int x, int y, string text) in segments) {
+            if (x < 0 || y < 0 || y > NCurses.Lines || x + text.Length > NCurses.Columns)
+                throw new Exception($"Attempted to draw out of bounds! The window is {NCurses.Columns}x{NCurses.Lines}, but a line was printed at {x}x{y}, ending at {x + text.Length}");
+
             try {
                 NCurses.MoveWindowAddString(window, y, x, text);
             }
