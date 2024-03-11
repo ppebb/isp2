@@ -29,13 +29,11 @@ public class UIPlayer : UIElement, ISelectable {
     }
 
     public override (int w, int h) GetSize() {
-        (int w, int h) = _player.GetSize();
-
-        return (w + 40, h + 2);
+        return (82, 6);
     }
 
     public override void Render(Drawable drawable, int x, int y, int maxw, int maxh) {
-        drawable.DrawBorder(Selected ? BorderSel : BorderUnsel, x, y, 20, 20);
+        drawable.DrawBorder(Selected ? BorderSel : BorderUnsel, x, y, 82, 6);
     }
 
     public void Deselect() {

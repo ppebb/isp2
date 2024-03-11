@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Blackguard.Utilities;
-using Mindmagma.Curses;
 
 namespace Blackguard.UI.Elements;
 
@@ -9,9 +8,9 @@ public class UIButton : UIElement, ISelectable {
     private string[] _label;
     private readonly Action<Game> _callback;
 
-    public Highlight Norm;
-    public Highlight Sel;
-    public Highlight SelLastLine;
+    public Highlight Norm = Highlight.Text;
+    public Highlight Sel = Highlight.TextSel;
+    public Highlight SelLastLine = Highlight.TextSelUnderline;
 
     private (Highlight, int, int, string)[] _segments;
 

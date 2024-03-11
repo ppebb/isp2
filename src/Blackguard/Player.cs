@@ -19,6 +19,12 @@ public class Player : ISizeProvider {
     [JsonProperty]
     public TimeSpan Playtime { get; private set; }
 
+    [JsonProperty]
+    public PlayerType PlayerType;
+
+    [JsonProperty]
+    public RaceType Race;
+
     // Other stuff
     public string SavePath => Path.Combine(Game.PlayerPath, Name + ".plr");
     public string Glyph { get; private set; }
@@ -44,10 +50,13 @@ public class Player : ISizeProvider {
     public int Mana;
     public int Speed;
 
-    public Player(string name) {
+    public Player(string name, PlayerType type, RaceType race) {
         Name = name;
         CreationDate = DateTime.Now;
         Playtime = TimeSpan.Zero;
+        PlayerType = type;
+        Race = race;
+        Glyph = "#";
     }
 
     public void Render(Drawable drawable, int x, int y) {
@@ -63,13 +72,27 @@ public class Player : ISizeProvider {
     public static Player? Deserialize(string path) {
         string json = File.ReadAllText(path);
 
-        return (Player?)JsonConvert.DeserializeObject(json);
+        return JsonConvert.DeserializeObject<Player>(json);
     }
 
     public (int w, int h) GetSize() {
         return (1, 1); // May be expanded eventually depending on how the player is rendered
     }
+
 }
 
-public abstract class PlayerType {
+public enum PlayerType {
+    Knight,
+    Archer,
+    Mage,
+    Barbarian,
+}
+
+public enum RaceType {
+    Human,
+    Ork,
+    Elf,
+    Dwarf,
+    Demon,
+    Gnome,
 }

@@ -4,25 +4,21 @@ using Blackguard.Utilities;
 namespace Blackguard.UI.Elements;
 
 public class UIText : UIElement {
-    private string[] _lines;
+    public string[] Lines;
 
     public Highlight Highlight;
 
     public UIText(string[] lines, Alignment alignment = Alignment.Left) {
         _alignment = alignment;
-        _lines = lines;
-    }
-
-    public void ChangeLines(string[] lines) {
-        _lines = lines;
+        Lines = lines;
     }
 
     public override (int w, int h) GetSize() {
-        return (_lines.Select(line => line.Length).Max(), _lines.Length);
+        return (Lines.Select(line => line.Length).Max(), Lines.Length);
     }
 
     public override void Render(Drawable drawable, int x, int y, int maxy, int maxh) {
         // TODO: Draw based on alignment?
-        drawable.AddLinesWithHighlight(_lines.Select((l, i) => (Highlight, x, y + i, l)).ToArray());
+        drawable.AddLinesWithHighlight(Lines.Select((l, i) => (Highlight, x, y + i, l)).ToArray());
     }
 }

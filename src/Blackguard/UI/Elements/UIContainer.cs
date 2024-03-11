@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,13 +10,12 @@ public class UIContainer : UIElement, ISelectable {
     public bool Selected { get; set; }
 
     public override (int w, int h) GetSize() {
-        int w = 0;
-        int h = 0;
+        int w = 0, h = 0;
 
-        foreach (UIElement e in _elements) {
-            (int ew, int eh) = e.GetSize();
-            w = Math.Max(w, ew);
-            h += ew;
+        foreach (UIElement element in _elements) {
+            (int cw, int ch) = element.GetSize();
+            w += cw;
+            h += ch;
         }
 
         return (w, h);
@@ -172,10 +170,10 @@ public class UIContainer : UIElement, ISelectable {
     }
 
     public void Select() {
-        throw new NotImplementedException();
+        Selected = true;
     }
 
     public void Deselect() {
-        throw new NotImplementedException();
+        Selected = false;
     }
 }
