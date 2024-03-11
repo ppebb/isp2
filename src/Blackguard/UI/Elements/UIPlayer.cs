@@ -40,12 +40,4 @@ public class UIPlayer : UIElement, ISelectable {
             (Selected ? TextSel : TextUnsel, x + 5, y + 2, _player.Playtime.ToString())
         );
     }
-
-    public void Deselect() {
-        Selected = true;
-    }
-
-    public void Select() {
-        Selected = false;
-    }
 }

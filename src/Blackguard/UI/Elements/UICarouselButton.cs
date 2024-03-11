@@ -88,12 +88,4 @@ public class UICarouselButton<T> : UIElement, ISelectable {
 
         drawable.AddLinesWithHighlight(_segments);
     }
-
-    public void Select() {
-        Selected = true;
-    }
-
-    public void Deselect() {
-        Selected = false;
-    }
 }

@@ -54,12 +54,4 @@ public class UIButton : UIElement, ISelectable {
 
         drawable.AddLinesWithHighlight(_segments);
     }
-
-    public void Select() {
-        Selected = true;
-    }
-
-    public void Deselect() {
-        Selected = false;
-    }
 }

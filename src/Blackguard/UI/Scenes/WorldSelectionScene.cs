@@ -56,6 +56,7 @@ public class WorldSelectionScene : Scene {
             s.PrevScene();
         }));
 
+        container.Select();
         container.SelectFirstSelectable();
     }
 

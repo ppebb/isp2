@@ -31,10 +31,6 @@ public class UIInput : UIElement, ISelectable {
 
     public string GetStoredText() => storedText;
 
-    public void Deselect() {
-        Selected = false;
-    }
-
     public override (int w, int h) GetSize() => (_maxRenderWidth + 2, _big ? 10 : 4);
 
     private string Pad(string input) {
@@ -75,10 +71,6 @@ public class UIInput : UIElement, ISelectable {
                 (Selected ? TextSel : TextUnsel, x + 1, y + 2, Pad(storedText.Length != 0 ? storedText : _previewText))
             );
         }
-    }
-
-    public void Select() {
-        Selected = true;
     }
 
     public override void ProcessInput(Game state) {

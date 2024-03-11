@@ -40,7 +40,10 @@ public class MainMenuScene : Scene {
         };
         UISpace bottomSpace = new(0, 10);
 
-        container = new UIContainer(Alignment.Center | Alignment.Fill, topSpace, logoText, startButton, settingsButton, creditsButton, quitButton, bottomSpace) { Selected = true };
+        container = new UIContainer(Alignment.Center | Alignment.Fill, topSpace, logoText, startButton, settingsButton, creditsButton, quitButton, bottomSpace);
+
+        container.Select();
+        container.SelectFirstSelectable();
     }
 
     public override bool RunTick(Game state) {

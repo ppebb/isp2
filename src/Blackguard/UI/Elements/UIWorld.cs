@@ -37,12 +37,4 @@ public class UIWorld : UIElement, ISelectable {
             (Selected ? TextSel : TextUnsel, x + 5, y + 2, _world.Playtime.ToString())
         );
     }
-
-    public void Deselect() {
-        Selected = true;
-    }
-
-    public void Select() {
-        Selected = false;
-    }
 }

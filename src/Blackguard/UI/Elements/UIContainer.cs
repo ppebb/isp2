@@ -185,6 +185,7 @@ public class UIContainer : UIElement, ISelectable {
 
     public void Deselect() {
         Selected = false;
+        // Just in case!
         _elements.ForEach((e) => (e as ISelectable)?.Deselect());
     }
 }

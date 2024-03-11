@@ -56,6 +56,7 @@ public class PlayerSelectionScene : Scene {
             s.PrevScene();
         }));
 
+        container.Select();
         container.SelectFirstSelectable();
     }
 
