@@ -1,13 +1,21 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Blackguard.Utilities;
 
 namespace Blackguard.UI.Elements;
 
 public class UIContainer : UIElement, ISelectable {
     private readonly List<UIElement> _elements;
     private int selectedElement = 0;
+    public bool Border;
     public int? Height; // Setting this means the container is scrollable. I think this is very good design.
     private int hOffset = 0; // Used for scrolling. The height worth of elements to skip.
+
+    public Highlight BorderUnsel = Highlight.Text;
+    public Highlight BorderSel = Highlight.TextSel;
+    public Highlight ScrollUnsel = Highlight.Text;
+    public Highlight ScrollSel = Highlight.TextSel;
 
     private IComparer<UIElement>? _backingComparison;
     public IComparer<UIElement>? Comparer {
@@ -29,11 +37,20 @@ public class UIContainer : UIElement, ISelectable {
 
         foreach (UIElement element in _elements) {
             (int cw, int ch) = element.GetSize();
-            w += cw;
+            w = Math.Max(w, cw);
             h += ch;
         }
 
-        return (w, Height ?? h);
+        int hAdd = 0;
+        if (Border) {
+            w += 2;
+            hAdd = 2;
+        }
+
+        if (Height != null && h > Height)
+            return (w + 1, Height.Value + hAdd);
+
+        return (w, h + hAdd);
     }
 
     public UIContainer(List<UIElement> elements, Alignment alignment) {
@@ -178,14 +195,27 @@ public class UIContainer : UIElement, ISelectable {
 
     public override void Render(Drawable drawable, int x, int y, int maxw, int maxh) {
         int realMaxh = Height ?? maxh;
-        int cy = y; // child y position
+        int cy = Border ? y + 1 : y; // child y position
 
         int tg = 0; // total gaps for fill
-        int th = _elements.Select((e, i) => {
-            if (e is not UISpace && i != _elements.Count - 1)
+        int th = 0;
+        int lw = 0;
+        for (int i = 0; i < _elements.Count; i++) {
+            if (_elements[i] is not UISpace && i != _elements.Count - 1)
                 tg++;
-            return e.GetSize().h;
-        }).Sum(); // total height of all elements
+
+            (int cw, int ch) = _elements[i].GetSize();
+            th += ch;
+            lw = Math.Max(lw, cw);
+        }
+
+        bool scroll = Height != null && th > Height;
+
+        if (scroll)
+            lw += 1;
+
+        if (Border)
+            lw += 2;
 
         int fillGapSize;
         if (tg > 0) // Avoid dividing by zero
@@ -201,6 +231,12 @@ public class UIContainer : UIElement, ISelectable {
             int cx = 0; // child x
             (int cw, int ch) = child.GetSize(); // child width, height
 
+            if (scroll)
+                cw += 1;
+
+            if (Border)
+                cw += 2;
+
             j += ch;
             if (j <= hOffset)
                 continue;
@@ -215,16 +251,40 @@ public class UIContainer : UIElement, ISelectable {
                 th -= ch;
             }
 
-            if (cy + ch > y + realMaxh)
-                return;
+            if (cy + ch > y + realMaxh + (Border ? 1 : 0))
+                break;
 
-            child.Render(drawable, cx, cy, maxw, realMaxh - cy);
+            child.Render(drawable, Border ? cx + 1 : cx, cy, maxw, realMaxh - cy);
 
             cy += ch;
 
             // This works, but the gap size may not fill *all* the way if the terminal isn't in perfect increments
             if (_alignment.HasFlag(Alignment.Fill) && !(nextSpace || child is UISpace))
                 cy += fillGapSize;
+        }
+
+        // Render scrollbar
+        if (Height != null && scroll) {
+            int size = (int)Math.Round(Height.Value / (double)th * Height.Value);
+
+            int starty = (int)Math.Round(hOffset / (double)th * Height.Value);
+
+            for (int i = 0; i < Height + 1; i++) {
+                if (i < starty || i > starty + size)
+                    drawable.AddLinesWithHighlight((ScrollUnsel, x + lw - (Border ? 2 : 1), i + y, " "));
+                else
+                    drawable.AddLinesWithHighlight((Selected ? ScrollSel : ScrollUnsel, x + lw - (Border ? 2 : 1), i + y, "b"));
+            }
+        }
+
+        if (Border) {
+            int bh;
+            if (Height != null && th > Height.Value)
+                bh = Height.Value + 2;
+            else
+                bh = th + 2;
+
+            drawable.DrawBorder(Selected ? BorderSel : BorderUnsel, x, y, lw, bh);
         }
     }
 

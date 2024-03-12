@@ -21,7 +21,8 @@ public class PlayerSelectionScene : Scene {
         container = new UIContainer(Alignment.Center);
         playerList = new UIContainer(Alignment.Center) {
             Comparer = Comparer<UIElement>.Default,
-            Height = 30
+            Height = 30,
+            Border = true
         };
 
         container.Add(new UISpace(0, 10));
