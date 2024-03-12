@@ -36,7 +36,7 @@ public class UIPlayer : UIElement, ISelectable, IComparable {
         _player.Render(drawable, x + 2, y + 2);
 
         drawable.AddLinesWithHighlight(
-            (Selected ? TextSel : TextUnsel, x + 5, y + 1, _player.Name),
+            (Selected ? TextSel : TextUnsel, x + 5, y + 1, _player.Name + new string(' ', 76 - _player.Name.Length)),
             (Selected ? TextSel : TextUnsel, x + 5, y + 2, _player.Playtime.ToString())
         );
     }

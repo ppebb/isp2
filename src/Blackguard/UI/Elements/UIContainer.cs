@@ -6,6 +6,8 @@ namespace Blackguard.UI.Elements;
 public class UIContainer : UIElement, ISelectable {
     private readonly List<UIElement> _elements;
     private int selectedElement = 0;
+    public int? Height; // Setting this means the container is scrollable. I think this is very good design.
+    private int hOffset = 0; // Used for scrolling. The height worth of elements to skip.
 
     private IComparer<UIElement>? _backingComparison;
     public IComparer<UIElement>? Comparer {
@@ -31,7 +33,7 @@ public class UIContainer : UIElement, ISelectable {
             h += ch;
         }
 
-        return (w, h);
+        return (w, Height ?? h);
     }
 
     public UIContainer(List<UIElement> elements, Alignment alignment) {
@@ -73,9 +75,6 @@ public class UIContainer : UIElement, ISelectable {
     private bool SelectNextSelectable(int start, bool forwards) {
         for (int i = start; i >= 0 && i < _elements.Count; i += forwards ? 1 : -1) {
             if (_elements[i] is ISelectable selectable) {
-                /* if (i == selected_element) // Don't select the same element */
-                /*     continue; */
-
                 (_elements[selectedElement] as ISelectable)?.Deselect();
                 selectedElement = i;
                 selectable.Select();
@@ -85,6 +84,15 @@ public class UIContainer : UIElement, ISelectable {
                         c.SelectFirstSelectable();
                     else
                         c.SelectLastSelectable();
+                }
+
+                if (Height != null) {
+                    (int hexc, int hinc) = SumHeights(0, i);
+
+                    if (hinc > Height + hOffset)
+                        hOffset = hinc - Height.Value;
+                    else if (hexc < hOffset)
+                        hOffset = hexc;
                 }
 
                 return true;
@@ -159,7 +167,17 @@ public class UIContainer : UIElement, ISelectable {
         _elements[selectedElement].ProcessInput(state);
     }
 
+    private (int exc, int inc) SumHeights(int start = 0, int end = -1) {
+        int h = 0;
+
+        for (int i = start; i <= (end == -1 ? _elements.Count : end); i++)
+            h += _elements[i].GetSize().h;
+
+        return (h - _elements[^1].GetSize().h, h);
+    }
+
     public override void Render(Drawable drawable, int x, int y, int maxw, int maxh) {
+        int realMaxh = Height ?? maxh;
         int cy = y; // child y position
 
         int tg = 0; // total gaps for fill
@@ -171,10 +189,11 @@ public class UIContainer : UIElement, ISelectable {
 
         int fillGapSize;
         if (tg > 0) // Avoid dividing by zero
-            fillGapSize = (maxh - th) / tg;
+            fillGapSize = (realMaxh - th) / tg;
         else
             fillGapSize = 0;
 
+        int j = 0; // Sum of heights looped through
         for (int i = 0; i < _elements.Count; i++) {
             UIElement child = _elements[i];
             bool nextSpace = i < _elements.Count - 1 && _elements[i + 1] is UISpace;
@@ -182,17 +201,24 @@ public class UIContainer : UIElement, ISelectable {
             int cx = 0; // child x
             (int cw, int ch) = child.GetSize(); // child width, height
 
+            j += ch;
+            if (j <= hOffset)
+                continue;
+
             if (_alignment.HasFlag(Alignment.Center))
                 cx += (maxw - cw) / 2;
             else if (_alignment.HasFlag(Alignment.Right))
                 cx += maxw - cw;
 
             if (_alignment.HasFlag(Alignment.Bottom)) {
-                cy = maxh - th;
+                cy = realMaxh - th;
                 th -= ch;
             }
 
-            child.Render(drawable, cx, cy, maxw, maxh - cy);
+            if (cy + ch > y + realMaxh)
+                return;
+
+            child.Render(drawable, cx, cy, maxw, realMaxh - cy);
 
             cy += ch;
 

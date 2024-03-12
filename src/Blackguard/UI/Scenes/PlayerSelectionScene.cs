@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,11 +17,11 @@ public class PlayerSelectionScene : Scene {
         s.ForwardScene<WorldSelectionScene>();
     };
 
-    // TODO: This may require scrolling eventually
     public PlayerSelectionScene() {
         container = new UIContainer(Alignment.Center);
         playerList = new UIContainer(Alignment.Center) {
-            Comparer = Comparer<UIElement>.Default
+            Comparer = Comparer<UIElement>.Default,
+            Height = 30
         };
 
         container.Add(new UISpace(0, 10));
