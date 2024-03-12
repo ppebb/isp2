@@ -3,7 +3,7 @@ using Blackguard.Utilities;
 
 namespace Blackguard.UI.Elements;
 
-public class UIWorld : UIElement, ISelectable {
+public class UIWorld : UIElement, ISelectable, IComparable {
     private readonly World _world;
     private readonly Action<Game, World> _callback;
 
@@ -36,5 +36,12 @@ public class UIWorld : UIElement, ISelectable {
             (Selected ? TextSel : TextUnsel, x + 5, y + 1, _world.Name),
             (Selected ? TextSel : TextUnsel, x + 5, y + 2, _world.Playtime.ToString())
         );
+    }
+
+    public int CompareTo(object? obj) {
+        if (obj is not UIWorld b)
+            return 0;
+        else
+            return _world.Name.CompareTo(b._world.Name);
     }
 }

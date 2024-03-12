@@ -17,10 +17,13 @@ public class WorldSelectionScene : Scene {
         s.ForwardScene<GameScene>();
     };
 
-    // TODO: This may require scrolling eventually
     public WorldSelectionScene() {
         container = new UIContainer(Alignment.Center);
-        worldList = new UIContainer(Alignment.Center);
+        worldList = new UIContainer(Alignment.Center) {
+            Comparer = Comparer<UIElement>.Default,
+            Height = 30,
+            Border = true
+        };
 
         container.Add(new UISpace(0, 10));
         container.Add(new UIText("Select a World".ToLargeText()));

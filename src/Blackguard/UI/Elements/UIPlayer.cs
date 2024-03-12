@@ -4,7 +4,7 @@ using Blackguard.Utilities;
 namespace Blackguard.UI.Elements;
 
 // Class meant for drawing a character and selecting it from a menu
-public class UIPlayer : UIElement, ISelectable {
+public class UIPlayer : UIElement, ISelectable, IComparable {
     private readonly Player _player;
     private readonly Action<Game, Player> _callback;
 
@@ -36,8 +36,15 @@ public class UIPlayer : UIElement, ISelectable {
         _player.Render(drawable, x + 2, y + 2);
 
         drawable.AddLinesWithHighlight(
-            (Selected ? TextSel : TextUnsel, x + 5, y + 1, _player.Name),
+            (Selected ? TextSel : TextUnsel, x + 5, y + 1, _player.Name + new string(' ', 76 - _player.Name.Length)),
             (Selected ? TextSel : TextUnsel, x + 5, y + 2, _player.Playtime.ToString())
         );
+    }
+
+    public int CompareTo(object? obj) {
+        if (obj is not UIPlayer b)
+            return 0;
+        else
+            return _player.Name.CompareTo(b._player.Name);
     }
 }

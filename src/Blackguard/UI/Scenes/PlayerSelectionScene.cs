@@ -17,10 +17,13 @@ public class PlayerSelectionScene : Scene {
         s.ForwardScene<WorldSelectionScene>();
     };
 
-    // TODO: This may require scrolling eventually
     public PlayerSelectionScene() {
         container = new UIContainer(Alignment.Center);
-        playerList = new UIContainer(Alignment.Center);
+        playerList = new UIContainer(Alignment.Center) {
+            Comparer = Comparer<UIElement>.Default,
+            Height = 30,
+            Border = true
+        };
 
         container.Add(new UISpace(0, 10));
         container.Add(new UIText("Select a Player".ToLargeText()));
