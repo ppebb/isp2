@@ -5,7 +5,7 @@ namespace Blackguard.UI.Elements;
 
 public class UIContainer : UIElement, ISelectable {
     private readonly List<UIElement> _elements;
-    private int selected_element = 0;
+    private int selectedElement = 0;
 
     public bool Selected { get; set; }
 
@@ -53,8 +53,8 @@ public class UIContainer : UIElement, ISelectable {
                 /* if (i == selected_element) // Don't select the same element */
                 /*     continue; */
 
-                (_elements[selected_element] as ISelectable)?.Deselect();
-                selected_element = i;
+                (_elements[selectedElement] as ISelectable)?.Deselect();
+                selectedElement = i;
                 selectable.Select();
 
                 if (selectable is UIContainer c) {
@@ -76,12 +76,12 @@ public class UIContainer : UIElement, ISelectable {
         if (Empty())
             return false;
 
-        if (_elements[selected_element] is UIContainer container)
+        if (_elements[selectedElement] is UIContainer container)
             if (container.Next(false)) // If we can move to the next element in the child container, then we're done
                 return true;
 
         // Otherwise, deselect the current element and look for the next one. If we can't find one return false and the parent will handle it!
-        if (SelectNextSelectable(selected_element + 1, true))
+        if (SelectNextSelectable(selectedElement + 1, true))
             return true;
         else if (wrap)
             return SelectNextSelectable(0, true);
@@ -93,12 +93,12 @@ public class UIContainer : UIElement, ISelectable {
         if (Empty())
             return false;
 
-        if (_elements[selected_element] is UIContainer container)
+        if (_elements[selectedElement] is UIContainer container)
             if (container.Prev(false)) // If we can move to the previous element in the child container, then we're done
                 return true;
 
         // Otherwise, deselect the current element and look for the previous one. If we can't find one return false and the parent will handle it!
-        if (SelectNextSelectable(selected_element - 1, false))
+        if (SelectNextSelectable(selectedElement - 1, false))
             return true;
         else if (wrap)
             return SelectNextSelectable(_elements.Count - 1, false);
@@ -107,18 +107,18 @@ public class UIContainer : UIElement, ISelectable {
     }
 
     public bool Top() {
-        bool top = selected_element == _elements.Count - 1;
+        bool top = selectedElement == _elements.Count - 1;
 
-        if (_elements[selected_element] is UIContainer container)
+        if (_elements[selectedElement] is UIContainer container)
             return top && container.Top();
 
         return top;
     }
 
     public bool Bottom() {
-        bool bottom = selected_element == _elements.Count - 1;
+        bool bottom = selectedElement == _elements.Count - 1;
 
-        if (_elements[selected_element] is UIContainer container)
+        if (_elements[selectedElement] is UIContainer container)
             return bottom && container.Bottom();
 
         return bottom;
@@ -133,7 +133,7 @@ public class UIContainer : UIElement, ISelectable {
         if (Empty())
             return;
 
-        _elements[selected_element].ProcessInput(state);
+        _elements[selectedElement].ProcessInput(state);
     }
 
     public override void Render(Drawable drawable, int x, int y, int maxw, int maxh) {
