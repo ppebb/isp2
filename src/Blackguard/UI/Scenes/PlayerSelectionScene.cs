@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,9 @@ public class PlayerSelectionScene : Scene {
     // TODO: This may require scrolling eventually
     public PlayerSelectionScene() {
         container = new UIContainer(Alignment.Center);
-        playerList = new UIContainer(Alignment.Center);
+        playerList = new UIContainer(Alignment.Center) {
+            Comparer = Comparer<UIElement>.Default
+        };
 
         container.Add(new UISpace(0, 10));
         container.Add(new UIText("Select a Player".ToLargeText()));

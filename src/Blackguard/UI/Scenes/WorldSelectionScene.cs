@@ -20,7 +20,9 @@ public class WorldSelectionScene : Scene {
     // TODO: This may require scrolling eventually
     public WorldSelectionScene() {
         container = new UIContainer(Alignment.Center);
-        worldList = new UIContainer(Alignment.Center);
+        worldList = new UIContainer(Alignment.Center) {
+            Comparer = Comparer<UIElement>.Default
+        };
 
         container.Add(new UISpace(0, 10));
         container.Add(new UIText("Select a World".ToLargeText()));

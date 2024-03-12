@@ -7,6 +7,19 @@ public class UIContainer : UIElement, ISelectable {
     private readonly List<UIElement> _elements;
     private int selectedElement = 0;
 
+    private IComparer<UIElement>? _backingComparison;
+    public IComparer<UIElement>? Comparer {
+        get {
+            return _backingComparison;
+        }
+        set {
+            if (value != null) {
+                _backingComparison = value;
+                _elements.Sort(_backingComparison);
+            }
+        }
+    }
+
     public bool Selected { get; set; }
 
     public override (int w, int h) GetSize() {
@@ -37,7 +50,17 @@ public class UIContainer : UIElement, ISelectable {
         _elements = new List<UIElement>();
     }
 
-    public void Add(UIElement element) => _elements.Add(element);
+    public void Add(UIElement element) {
+        if (Comparer != null) {
+            int idx = _elements.BinarySearch(element, Comparer);
+            if (idx < 0)
+                idx = ~idx;
+
+            _elements.Insert(idx, element);
+        }
+        else
+            _elements.Add(element);
+    }
 
     public void Remove(UIElement element) => _elements.Remove(element);
 
