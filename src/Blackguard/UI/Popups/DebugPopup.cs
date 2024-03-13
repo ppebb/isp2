@@ -3,9 +3,9 @@ using System.Collections;
 using System.Linq;
 using Blackguard.Utilities;
 
-namespace Blackguard.UI.Menus;
+namespace Blackguard.UI.Popups;
 
-public class DebugMenu : Menu {
+public class DebugPopup : Popup {
     private const int WIDTH = 40;
 
     private static string FormatIEnumerable(string start, bool cond, IEnumerable objects) {
@@ -34,7 +34,7 @@ public class DebugMenu : Menu {
         (Highlight.Text, (state) => FormatIEnumerable("Keynames: ", state.Input.HasInputThisTick(), state.Input.Keynames())),
     ];
 
-    public DebugMenu() : base("Debug", Highlight.Text, 2, 2, WIDTH, segments.Length + 2) { }
+    public DebugPopup() : base("Debug", Highlight.Text, 2, 2, WIDTH, segments.Length + 2) { }
 
     public override bool RunTick(Game state) => true;
 

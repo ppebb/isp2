@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Blackguard.UI;
-using Blackguard.UI.Menus;
+using Blackguard.UI.Popups;
 using Blackguard.UI.Scenes;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
@@ -26,7 +26,7 @@ public class Game {
     private Scene CurrentScene => scenes[sceneIdx];
     private bool nextQueued = false;
     private bool backQueued = false;
-    private readonly List<Menu> menus = new();
+    private readonly List<Popup> popups = new();
 
     public InputHandler Input { private set; get; }
 
@@ -72,12 +72,12 @@ public class Game {
                 shouldExit = !CurrentScene.RunTick(this);
                 CurrentScene.Render(this);
 
-                foreach (Menu menu in menus) {
-                    shouldExit = shouldExit && menu.RunTick(this);
-                    menu.Render(this);
+                foreach (Popup popup in popups) {
+                    shouldExit = shouldExit && popup.RunTick(this);
+                    popup.Render(this);
                 }
 
-                if (menus.Count > 0)
+                if (popups.Count > 0)
                     NCurses.UpdatePanels();
 
                 MainInputHandler();
@@ -101,7 +101,7 @@ public class Game {
     private readonly string SIZE_WARNING = $"Minimum screen size is {MIN_WIDTH} x {MIN_HEIGHT}";
     private bool HandleResize() {
         if ((NCurses.Lines, NCurses.Columns) != oldSize) {
-            // TODO: Implement resize on a scene-by-scene, menu-by-menu basis in the event they want to control spacing and the like
+            // TODO: Implement resize on a scene-by-scene, popup-by-popup basis in the event they want to control spacing and the like
             CurrentWin.HandleTermResize();
         }
 
@@ -134,19 +134,19 @@ public class Game {
         return true;
     }
 
-    // Handles input independent of any scenes (for things like the debug menu, etc).
+    // Handles input independent of any scenes (for things like the debug popup, etc).
     private void MainInputHandler() {
         if (Input.KeyPressed(CursesKey.KEY_F(6))) {
-            Menu? debugMenu = menus.FirstOrDefault((m) => m?.Panel.Name == "Debug", null);
+            Popup? debugPopup = popups.FirstOrDefault((m) => m?.Panel.Name == "Debug", null);
 
-            if (debugMenu != null) {
-                debugMenu.Panel.Clear();
-                debugMenu.Delete();
-                menus.Remove(debugMenu);
+            if (debugPopup != null) {
+                debugPopup.Panel.Clear();
+                debugPopup.Delete();
+                popups.Remove(debugPopup);
                 NCurses.UpdatePanels();
             }
             else
-                menus.Add(new DebugMenu());
+                popups.Add(new DebugPopup());
         }
     }
 

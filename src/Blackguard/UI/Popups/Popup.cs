@@ -1,11 +1,11 @@
 using Blackguard.Utilities;
 
-namespace Blackguard.UI.Menus;
+namespace Blackguard.UI.Popups;
 
-public abstract class Menu : ISizeProvider, IOffsetProvider {
+public abstract class Popup : ISizeProvider, IOffsetProvider {
     public Panel Panel { get; protected set; }
 
-    public Menu(string name, Highlight background, int x, int y, int w, int h) {
+    public Popup(string name, Highlight background, int x, int y, int w, int h) {
         Panel = new Panel(name, background, x, y, w, h);
     }
 
