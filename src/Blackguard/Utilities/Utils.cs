@@ -89,4 +89,11 @@ public static class Utils {
             ret[3].ToString()
         ];
     }
+
+    public static string[] Wrap(this string str, int lines) {
+        throw new NotImplementedException();
+        /* string[] ret = new string[lines]; */
+
+        /* string[] split = str.Split(' '); */
+    }
 }
