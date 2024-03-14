@@ -68,5 +68,9 @@ public abstract class Drawable : IDisposable, ISizeProvider, IOffsetProvider {
 
     public abstract void Move(int newx, int newy);
 
+    public void ReapplyHighlight() {
+        ChangeHighlight(Highlight);
+    }
+
     public abstract void Resize(int neww, int newh);
 }

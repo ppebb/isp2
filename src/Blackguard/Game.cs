@@ -27,6 +27,7 @@ public class Game {
     private bool nextQueued = false;
     private bool backQueued = false;
     private readonly List<Popup> popups = new();
+    private readonly List<(Popup, bool)> pendingOpen = new();
 
     public InputHandler Input { private set; get; }
 
@@ -72,9 +73,14 @@ public class Game {
                 shouldExit = !CurrentScene.RunTick(this);
                 CurrentScene.Render(this);
 
-                foreach (Popup popup in popups) {
-                    shouldExit = shouldExit && popup.RunTick(this);
-                    popup.Render(this);
+                for (int i = 0; i < popups.Count; i++) {
+                    Popup popup = popups[i];
+
+                    shouldExit = !popup.RunTick(this) || shouldExit;
+                    if (!popup.Closed)
+                        popup.Render(this);
+                    else
+                        i--;
                 }
 
                 if (popups.Count > 0)
@@ -83,6 +89,7 @@ public class Game {
                 MainInputHandler();
 
                 // By switching to the scene at the end, we avoid memory leaks and crashes from killing the scene while it's active.
+                ProcessPendingPopups();
                 SwitchToQueuedScene();
             }
 
@@ -137,16 +144,10 @@ public class Game {
     // Handles input independent of any scenes (for things like the debug popup, etc).
     private void MainInputHandler() {
         if (Input.KeyPressed(CursesKey.KEY_F(6))) {
-            Popup? debugPopup = popups.FirstOrDefault((m) => m?.Panel.Name == "Debug", null);
-
-            if (debugPopup != null) {
-                debugPopup.Panel.Clear();
-                debugPopup.Delete();
-                popups.Remove(debugPopup);
-                NCurses.UpdatePanels();
-            }
+            if (IsPopupOpenByType<DebugPopup>())
+                ClosePopupsByType<DebugPopup>();
             else
-                popups.Add(new DebugPopup());
+                OpenPopup(new DebugPopup());
         }
     }
 
@@ -266,6 +267,71 @@ public class Game {
 
         sceneIdx = changeIdx;
         CurrentWin.Clear();
+    }
+
+    public void OpenPopup(Popup popup, bool focus = false) {
+        pendingOpen.Add(item: (popup, focus));
+    }
+
+    // I would prefer to queue this, but something goes terribly wrong if I try to delay closing a popup...
+    public void ClosePopup(Popup popup) {
+        popup.Panel.Clear();
+        popup.Delete();
+        popups.Remove(popup);
+        popup.Closed = true;
+
+        NCurses.UpdatePanels();
+
+        if (popup.Focused)
+            CurrentScene.Focused = true;
+
+        CurrentWin.Clear();
+    }
+
+    public void ClosePopupsByType<T>() where T : Popup {
+        for (int i = 0; i < popups.Count; i++) {
+            if (popups[i] is T t) {
+                ClosePopup(t);
+                i--;
+            }
+        }
+    }
+
+    public bool IsPopupOpen(Popup popup) {
+        return popups.Contains(popup);
+    }
+
+    public bool IsPopupOpenByType<T>() where T : Popup {
+        foreach (Popup popup in popups) {
+            if (popup is T)
+                return true;
+        }
+
+        return false;
+    }
+
+    public void TogglePopup(Popup popup) {
+        if (IsPopupOpen(popup))
+            ClosePopup(popup);
+        else
+            OpenPopup(popup);
+    }
+
+    private void ProcessPendingPopups() {
+        if (pendingOpen.Count > 0) {
+            foreach ((Popup popup, bool focus) in pendingOpen) {
+                popups.Add(popup);
+
+                if (focus) {
+                    popup.Focused = true;
+                    CurrentScene.Focused = false;
+                }
+            }
+
+            pendingOpen.Clear();
+            CurrentWin.Clear();
+        }
+
     }
 
     public class InputHandler() {

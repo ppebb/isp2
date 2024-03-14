@@ -1,5 +1,6 @@
 using System.IO;
 using Blackguard.UI.Elements;
+using Blackguard.UI.Popups;
 using Blackguard.Utilities;
 
 namespace Blackguard.UI.Scenes;
@@ -49,13 +50,13 @@ public class PlayerCreationScene : Scene {
         UIButton finish = new("Create Player".ToLargeText(), (state) => {
             string storedText = _nameInput.GetStoredText();
 
-            if (storedText.Length < 0) {
-                // TODO: Create some error popup system
+            if (storedText.Length == 0) {
+                state.OpenPopup(new InfoPopup("NameTooShortWarning", InfoType.Warning, ["A name must be choosen to continue!"]), true);
                 return;
             }
 
             if (File.Exists(Path.Combine(Game.PlayerPath, storedText + ".plr"))) {
-                // TODO: Create some error popup system
+                state.OpenPopup(new InfoPopup("PlayerExistsWarning", InfoType.Warning, [$"A player with the name {storedText} already exists!"]), true);
                 return;
             }
 
