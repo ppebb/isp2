@@ -34,4 +34,8 @@ public class World {
 
         return JsonConvert.DeserializeObject<World>(json);
     }
+
+    public void Delete() {
+        File.Delete(SavePath);
+    }
 }

@@ -4,7 +4,7 @@ using Blackguard.Utilities;
 namespace Blackguard.UI.Elements;
 
 public class UIWorld : UIElement, ISelectable, IComparable {
-    private readonly World _world;
+    public readonly World World;
     private readonly Action<Game, World> _callback;
 
     public bool Selected { get; set; }
@@ -15,14 +15,14 @@ public class UIWorld : UIElement, ISelectable, IComparable {
     public Highlight BorderUnsel = Highlight.Text;
 
     public UIWorld(World world, Action<Game, World> callback) {
-        _world = world;
+        World = world;
         _callback = callback;
     }
 
     public override void ProcessInput(Game state) {
         // Enter, \n, \r, respectively
         if (state.Input.IsEnterPressed())
-            _callback(state, _world);
+            _callback(state, World);
     }
 
     public override (int w, int h) GetSize() {
@@ -33,8 +33,8 @@ public class UIWorld : UIElement, ISelectable, IComparable {
         drawable.DrawBorder(Selected ? BorderSel : BorderUnsel, x, y, 82, 5);
 
         drawable.AddLinesWithHighlight(
-            (Selected ? TextSel : TextUnsel, x + 5, y + 1, _world.Name),
-            (Selected ? TextSel : TextUnsel, x + 5, y + 2, _world.Playtime.ToString())
+            (Selected ? TextSel : TextUnsel, x + 5, y + 1, World.Name),
+            (Selected ? TextSel : TextUnsel, x + 5, y + 2, World.Playtime.ToString())
         );
     }
 
@@ -42,6 +42,6 @@ public class UIWorld : UIElement, ISelectable, IComparable {
         if (obj is not UIWorld b)
             return 0;
         else
-            return _world.Name.CompareTo(b._world.Name);
+            return World.Name.CompareTo(b.World.Name);
     }
 }

@@ -17,15 +17,15 @@ public class UIContainer : UIElement, ISelectable {
     public Highlight ScrollUnsel = Highlight.Text;
     public Highlight ScrollSel = Highlight.TextSel;
 
-    private IComparer<UIElement>? _backingComparison;
+    private IComparer<UIElement>? _backingComparer;
     public IComparer<UIElement>? Comparer {
         get {
-            return _backingComparison;
+            return _backingComparer;
         }
         set {
             if (value != null) {
-                _backingComparison = value;
-                _elements.Sort(_backingComparison);
+                _backingComparer = value;
+                _elements.Sort(_backingComparer);
             }
         }
     }
@@ -33,6 +33,9 @@ public class UIContainer : UIElement, ISelectable {
     public bool Selected { get; set; }
 
     public override (int w, int h) GetSize() {
+        if (Empty())
+            return (0, 0);
+
         int w = 0, h = 0;
 
         foreach (UIElement element in _elements) {
@@ -92,16 +95,23 @@ public class UIContainer : UIElement, ISelectable {
     private bool SelectNextSelectable(int start, bool forwards) {
         for (int i = start; i >= 0 && i < _elements.Count; i += forwards ? 1 : -1) {
             if (_elements[i] is ISelectable selectable) {
+                if (selectable is UIContainer c) {
+                    if (c.Empty())
+                        continue;
+
+                    if (forwards) {
+                        if (!c.SelectFirstSelectable())
+                            return false;
+                    }
+                    else {
+                        if (!c.SelectLastSelectable())
+                            return false;
+                    }
+                }
+
                 (_elements[selectedElement] as ISelectable)?.Deselect();
                 selectedElement = i;
                 selectable.Select();
-
-                if (selectable is UIContainer c) {
-                    if (forwards)
-                        c.SelectFirstSelectable();
-                    else
-                        c.SelectLastSelectable();
-                }
 
                 if (Height != null) {
                     (int hexc, int hinc) = SumHeights(0, i);
@@ -194,6 +204,9 @@ public class UIContainer : UIElement, ISelectable {
     }
 
     public override void Render(Drawable drawable, int x, int y, int maxw, int maxh) {
+        if (Empty())
+            return;
+
         int realMaxh = Height ?? maxh;
         int cy = Border ? y + 1 : y; // child y position
 
@@ -296,5 +309,9 @@ public class UIContainer : UIElement, ISelectable {
         Selected = false;
         // Just in case!
         _elements.ForEach((e) => (e as ISelectable)?.Deselect());
+    }
+
+    public UIElement GetSelectedElement() {
+        return _elements[selectedElement];
     }
 }
