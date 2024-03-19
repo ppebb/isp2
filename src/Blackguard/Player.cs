@@ -75,6 +75,10 @@ public class Player : ISizeProvider {
         return JsonConvert.DeserializeObject<Player>(json);
     }
 
+    public void Delete() {
+        File.Delete(SavePath);
+    }
+
     public (int w, int h) GetSize() {
         return (1, 1); // May be expanded eventually depending on how the player is rendered
     }

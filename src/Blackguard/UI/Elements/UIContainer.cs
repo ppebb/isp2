@@ -310,4 +310,8 @@ public class UIContainer : UIElement, ISelectable {
         // Just in case!
         _elements.ForEach((e) => (e as ISelectable)?.Deselect());
     }
+
+    public UIElement GetSelectedElement() {
+        return _elements[selectedElement];
+    }
 }

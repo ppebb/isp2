@@ -331,7 +331,6 @@ public class Game {
             pendingOpen.Clear();
             CurrentWin.Clear();
         }
-
     }
 
     public class InputHandler() {

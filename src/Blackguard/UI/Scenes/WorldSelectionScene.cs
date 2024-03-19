@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Blackguard.UI.Elements;
+using Blackguard.UI.Popups;
 using Blackguard.Utilities;
+using Mindmagma.Curses;
 
 namespace Blackguard.UI.Scenes;
 
@@ -65,7 +67,31 @@ public class WorldSelectionScene : Scene {
 
     public override bool RunTick(Game state) {
         ProcessInput(state);
+
         return true;
+    }
+
+    public override void ProcessInput(Game state) {
+        base.ProcessInput(state);
+
+        if (state.Input.KeyPressed(CursesKey.DELETEKEY) && container.GetSelectedElement() is UIContainer) {
+            UIWorld w = (UIWorld)worldList.GetSelectedElement();
+            state.OpenPopup(
+                new ConfirmationPopup(
+                    "DeletePlayerConfirmation",
+                    [$"Are you sure you want to delete the player {w.World.Name}"],
+                    null,
+                    (_) => {
+                        w.World.Delete();
+                        worldList.Remove(w);
+
+                        if (!worldList.SelectFirstSelectable())
+                            container.SelectFirstSelectable();
+
+                    }
+            ),
+                true);
+        }
     }
 
     public override void Render(Game state) {
