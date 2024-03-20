@@ -68,6 +68,9 @@ public enum ColorPair : uint {
     TextSel,
     Warning,
     Error,
+    Grass,
+    Dirt,
+    Stone,
 }
 
 public enum Highlight {
@@ -76,6 +79,9 @@ public enum Highlight {
     TextSelUnderline,
     TextWarning,
     TextError,
+    Grass,
+    Dirt,
+    Stone,
 }
 
 public static class ColorHandler {
@@ -142,10 +148,13 @@ public static class ColorHandler {
     ];
 
     public static readonly Color[][] ColorPairDefs = [
-        [ Color.TextFg, Color.TextBg ], // Text
-        [ Color.TextBg, Color.TextFg ], // TextSel
-        [ Color.Yellow, Color.TextBg ], // Error
-        [ Color.Red,    Color.TextBg ]  // Warning
+        [ Color.TextFg,     Color.TextBg     ], // Text
+        [ Color.TextBg,     Color.TextFg     ], // TextSel
+        [ Color.Yellow,     Color.TextBg     ], // Error
+        [ Color.Red,        Color.TextBg     ], // Warning
+        [ Color.LightGreen, Color.LightGreen ], // Grass
+        [ Color.DarkRed,    Color.DarkRed    ], // Dirt
+        [ Color.Gray50,     Color.Gray50     ]  // Stone
     ];
 
     public static readonly Dictionary<Highlight, (ColorPair pair, uint attr)> HighlightDefs = new() {
@@ -153,7 +162,10 @@ public static class ColorHandler {
         { Highlight.TextSel,          (ColorPair.TextSel, 0) },
         { Highlight.TextSelUnderline, (ColorPair.TextSel, CursesAttribute.UNDERLINE) },
         { Highlight.TextWarning,      (ColorPair.Warning, 0)},
-        { Highlight.TextError,        (ColorPair.Error,   0)}
+        { Highlight.TextError,        (ColorPair.Error,   0)},
+        { Highlight.Grass,            (ColorPair.Grass,   0)},
+        { Highlight.Dirt,             (ColorPair.Dirt,    0)},
+        { Highlight.Stone,            (ColorPair.Stone,   0)}
     };
 
     // Gets the pair number

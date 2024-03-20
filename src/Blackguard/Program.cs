@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Blackguard.Tiles;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
 
@@ -46,11 +47,14 @@ public static class Program {
             Environment.Exit(1);
         }
 
+        Console.Title = "Blackguard";
+
         NCurses.SetCursor(0); // Hide the cursor
         NCurses.CBreak(); // Makes input immediately available to the terminal instead of performing line buffering
         NCurses.NoEcho(); // Stops input from being printed to the screen automatically
         NCurses.StartColor(); // Starts the color functionality
         ColorHandler.Init(); // Initialize all of our color pairs and highlights
+        TileDefinition.InitializeTileDefs(); // Initialize Tile definitions
 
         Console.CancelKeyPress += SIGINT; // Register this so that NCurses can uninitialize if ctrl-c is pressed
 

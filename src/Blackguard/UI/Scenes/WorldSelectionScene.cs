@@ -16,6 +16,7 @@ public class WorldSelectionScene : Scene {
 
     private readonly Action<Game, World> selectCallback = (s, w) => {
         s.World = w;
+        s.World.Initialize(s);
         s.ForwardScene<GameScene>();
     };
 
@@ -31,11 +32,11 @@ public class WorldSelectionScene : Scene {
         container.Add(new UIText("Select a World".ToLargeText()));
         container.Add(worldList);
 
-        IEnumerable<string> files = Directory.GetFiles(Game.WorldPath).Where((f) => Path.GetExtension(f) == ".wld");
+        IEnumerable<string> directories = Directory.GetDirectories(Game.WorldsPath);
 
-        if (files.Any()) {
-            foreach (string file in files) {
-                World? world = World.Deserialize(file);
+        if (directories.Any()) {
+            foreach (string directory in directories) {
+                World? world = World.Deserialize(Path.Combine(directory, "meta"));
                 if (world == null)
                     continue;
 
@@ -49,7 +50,6 @@ public class WorldSelectionScene : Scene {
         container.Add(new UIButton("Create New World".ToLargeText(), (s) => s.ForwardScene<WorldCreationScene>((data) => {
             if (data != null) {
                 World created = (World)data;
-                created.Serialize();
                 worldList.Add(new UIWorld(created, selectCallback));
                 container.Remove(noneFound);
             }

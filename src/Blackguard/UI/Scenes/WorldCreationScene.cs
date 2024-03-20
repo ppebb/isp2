@@ -25,12 +25,12 @@ public class WorldCreationScene : Scene {
                 return;
             }
 
-            if (File.Exists(Path.Combine(Game.WorldPath, storedText + ".wld"))) {
+            if (Directory.Exists(Path.Combine(Game.WorldsPath, storedText))) {
                 state.OpenPopup(new InfoPopup("WorldExistsWarning", InfoType.Warning, [$"A world with the name {storedText} already exists!"]), true);
                 return;
             }
 
-            callback?.Invoke(new World(_nameInput.GetStoredText()));
+            callback?.Invoke(World.CreateNew(state, _nameInput.GetStoredText()));
 
             state.PrevScene();
         });
