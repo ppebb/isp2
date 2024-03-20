@@ -1,30 +1,63 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Mindmagma.Curses;
 
 namespace Blackguard.Utilities;
 
 public static class Utils {
-    public static void WindowAddLinesWithHighlight(nint window, params (Highlight highlight, int x, int y, string text)[] segments) {
-        foreach ((Highlight highlight, int x, int y, string text) in segments) {
-            if (x < 0 || y < 0 || y > NCurses.Lines || x + text.Length > NCurses.Columns)
-                throw new Exception($"Attempted to draw out of bounds! The window is {NCurses.Columns}x{NCurses.Lines}, but a line was printed at {x}x{y}, ending at {x + text.Length}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ThrowIfOutOfBounds(int x, int y, int w, int h) {
+        if (x < 0 || y < 0 || y + h > NCurses.Lines || x + w > NCurses.Columns)
+            throw new Exception($"Attempted to draw out of bounds! The window is {NCurses.Columns}x{NCurses.Lines}, but a line was printed at {x}x{y}, ending at {x + w}");
+    }
 
-            try {
-                NCurses.MoveWindowAddString(window, y, x, text);
-            }
-            catch { } // If you try to draw to the bottom right corner of the window with scrollok() off, it throws. A check to only catch when this occurs would be better than catching *everything*, but I don't care
-            mvwchgat(window, x, y, text.Length, highlight.GetAttr(), highlight.GetPair());
+    // Return values are signed in accordance to the behavior of the skip argument for rendering partial chunks, so they are negated
+    public static bool CheckOutOfBounds(int x, int y, int w, int h, int maxw, int maxh, out int byX, out int byY) {
+        bool ret = false;
+
+        if (x < 0) {
+            byX = -x;
+            ret = true;
         }
+        else if (x + w > maxw) {
+            byX = maxw - (x + w);
+            ret = true;
+        }
+        else
+            byX = 0;
+
+        if (y < 0) {
+            byY = -y;
+            ret = true;
+        }
+        else if (y + h > maxh) {
+            byY = maxh - (y + h);
+            ret = true;
+        }
+        else
+            byY = 0;
+
+        return ret;
     }
 
 #pragma warning disable IDE1006 // Shut up naming violation
-    private static void mvwchgat(nint window, int x, int y, int len, uint attr, short pair) {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void mvwchgat(nint window, int x, int y, int len, uint attr, short pair) {
         NCurses.WindowMove(window, y, x);
         NCurses.WindowChangeAttribute(window, len, attr, pair, nint.Zero);
     }
 #pragma warning restore IDE1006
+
+    /// <summary>
+    /// Returns the NOT BOUNDS CHECKED position relative to the top left of the screen
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 ToScreenPos(Vector2 topLeft, Vector2 pos) {
+        return pos - topLeft;
+    }
 
     private static readonly string[] largeTextGlyphs = [
         " ▄█▄ █▀▀▀▄▄▀▀▀▄█▀▀▄ █▀▀▀▀█▀▀▀▀▄▀▀▀▄█   █▀▀█▀▀  ▀█▀█  ▄▀█    █   ███  █▄▀▀▀▄█▀▀▀▄▄▀▀▀▄█▀▀▄ ▄▀▀▀▄▀▀█▀▀█   ██   ██   ██   ██   █▀▀▀▀█▄▀▀▀▄ ▄█  ▄▀▀▀▄▄▀▀▀▄  ▄█ █▀▀▀▀▄▀▀▀▄▀▀▀▀█▄▀▀▀▄▄▀▀▀▄      ▄▄  ",

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using Blackguard.UI;
 using Blackguard.UI.Popups;
 using Blackguard.UI.Scenes;
@@ -12,14 +13,16 @@ using Mindmagma.Curses;
 namespace Blackguard;
 
 public class Game {
-    public static string PlayerPath { get; } = Path.Combine(Program.Platform.DataPath(), "Players");
-    public static string WorldPath { get; } = Path.Combine(Program.Platform.DataPath(), "World");
+    public static string PlayersPath { get; } = Path.Combine(Program.Platform.DataPath(), "Players");
+    public static string WorldsPath { get; } = Path.Combine(Program.Platform.DataPath(), "Worlds");
 
     // These are set by their respective Selection Scenes
     public Player Player { get; set; } = null!;
     public World World { get; set; } = null!;
 
     public Window CurrentWin;
+    public Vector2 ViewOrigin;
+    public bool drawChunkOutline = false;
 
     private readonly List<Scene> scenes = new();
     private int sceneIdx = 0;
@@ -55,8 +58,8 @@ public class Game {
     }
 
     public static void InitializeDirectories() {
-        Directory.CreateDirectory(PlayerPath);
-        Directory.CreateDirectory(WorldPath);
+        Directory.CreateDirectory(PlayersPath);
+        Directory.CreateDirectory(WorldsPath);
     }
 
     public void Run() {
@@ -144,10 +147,14 @@ public class Game {
     // Handles input independent of any scenes (for things like the debug popup, etc).
     private void MainInputHandler() {
         if (Input.KeyPressed(CursesKey.KEY_F(6))) {
-            if (IsPopupOpenByType<DebugPopup>())
+            if (IsPopupOpenByType<DebugPopup>()) {
                 ClosePopupsByType<DebugPopup>();
-            else
+                drawChunkOutline = false;
+            }
+            else {
                 OpenPopup(new DebugPopup());
+                drawChunkOutline = true;
+            }
         }
     }
 

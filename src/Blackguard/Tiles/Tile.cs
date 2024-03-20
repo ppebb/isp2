@@ -1,25 +1,12 @@
-using System;
-using System.Drawing;
-
 namespace Blackguard.Tiles;
 
-public abstract class Tile {
+public struct Tile {
+    public TileDefinition Type { get; private set; }
 
-    public abstract class Foreground {
-        public struct Color {
-            public byte R;
-            public byte G;
-            public byte B;
-        }
+    public bool Foreground;
 
-    }
-
-    public abstract class Background {
-            public struct Color {
-                public byte R;
-                public byte G;
-                public byte B;
-        }
-
+    public Tile(TileDefinition type, bool foreground = true) {
+        Type = type;
+        Foreground = foreground;
     }
 }

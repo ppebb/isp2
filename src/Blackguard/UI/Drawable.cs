@@ -1,7 +1,9 @@
 using System;
 using Blackguard.Utilities;
 using static Blackguard.UI.CharacterDefs;
+using static Blackguard.Utilities.Utils;
 using Mindmagma.Curses;
+using System.Runtime.CompilerServices;
 
 namespace Blackguard.UI;
 
@@ -27,8 +29,38 @@ public abstract class Drawable : IDisposable, ISizeProvider, IOffsetProvider {
     public int h { get; protected set; } // Height
 #pragma warning restore IDE1006
 
-    public void AddLinesWithHighlight(params (Highlight highlight, int x, int y, string text)[] segments) {
-        Utils.WindowAddLinesWithHighlight(WHandle, segments);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddLineWithHighlight(Highlight highlight, int x, int y, string line) {
+        ThrowIfOutOfBounds(x, y, 1, 1);
+
+        try {
+            NCurses.MoveWindowAddString(WHandle, y, x, line);
+        }
+        catch { } // If you try to draw to the bottom right corner of the window with scrollok() off, it throws. A check to only catch when this occurs would be better than catching *everything*, but I don't care
+        mvwchgat(WHandle, x, y, line.Length, highlight.GetAttr(), highlight.GetPair());
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddCharWithHighlight(Highlight highlight, int x, int y, char glyph) {
+        ThrowIfOutOfBounds(x, y, 1, 1);
+
+        try {
+            NCurses.MoveWindowAddChar(WHandle, y, x, glyph);
+        }
+        catch { } // If you try to draw to the bottom right corner of the window with scrollok() off, it throws. A check to only catch when this occurs would be better than catching *everything*, but I don't care
+        mvwchgat(WHandle, x, y, 1, highlight.GetAttr(), highlight.GetPair());
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddLinesWithHighlight(params (Highlight highlight, int x, int y, string line)[] segments) {
+        foreach ((Highlight highlight, int x, int y, string line) in segments)
+            AddLineWithHighlight(highlight, x, y, line);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddCharsWithHighlight(params (Highlight highlight, int x, int y, char glyph)[] segments) {
+        foreach ((Highlight highlight, int x, int y, char glyph) in segments)
+            AddCharWithHighlight(highlight, x, y, glyph);
     }
 
     protected virtual void ChangeHighlight(Highlight newHighlight) {

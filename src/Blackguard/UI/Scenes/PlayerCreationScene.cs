@@ -55,12 +55,12 @@ public class PlayerCreationScene : Scene {
                 return;
             }
 
-            if (File.Exists(Path.Combine(Game.PlayerPath, storedText + ".plr"))) {
+            if (File.Exists(Path.Combine(Game.PlayersPath, storedText + ".plr"))) {
                 state.OpenPopup(new InfoPopup("PlayerExistsWarning", InfoType.Warning, [$"A player with the name {storedText} already exists!"]), true);
                 return;
             }
 
-            callback?.Invoke(new Player(storedText, _selectedType, _selectedRace));
+            callback?.Invoke(Player.CreateNew(storedText, _selectedType, _selectedRace));
 
             state.PrevScene();
         });

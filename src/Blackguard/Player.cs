@@ -3,7 +3,9 @@ using System.IO;
 using System.Numerics;
 using Blackguard.UI;
 using Blackguard.Utilities;
+using Mindmagma.Curses;
 using Newtonsoft.Json;
+using static Blackguard.Game;
 
 namespace Blackguard;
 
@@ -25,11 +27,14 @@ public class Player : ISizeProvider {
     [JsonProperty]
     public RaceType Race;
 
+    [JsonProperty]
+    public Vector2 Position;
+
     // Other stuff
-    public string SavePath => Path.Combine(Game.PlayerPath, Name + ".plr");
+    public string SavePath => Path.Combine(PlayersPath, Name + ".plr");
     public string Glyph { get; private set; }
-    public Vector2 Position { get; private set; }
     public Highlight Highlight { get; private set; }
+    public Vector2 ChunkPosition => new((int)(Position.X / 20), (int)(Position.Y / 20));
 
     // Stats
     public int MaxMana;
@@ -57,6 +62,49 @@ public class Player : ISizeProvider {
         PlayerType = type;
         Race = race;
         Glyph = "#";
+    }
+
+    public static Player CreateNew(string name, PlayerType type, RaceType race) {
+        Player player = new(name, type, race);
+
+        player.Serialize();
+
+        return player;
+    }
+
+    public void Initialize(Game state) {
+        state.ViewOrigin = new Vector2(
+            (int)(Position.X - NCurses.Columns / 2),
+            (int)(Position.Y - NCurses.Lines / 2)
+        );
+    }
+
+    public void RunTick(Game state) {
+        ProcessInput(state);
+    }
+
+    private void ProcessInput(Game state) {
+        InputHandler input = state.Input;
+
+        if (input.KeyPressed('w')) {
+            Position.Y--;
+            state.ViewOrigin.Y--;
+        }
+
+        if (input.KeyPressed('a')) {
+            Position.X--;
+            state.ViewOrigin.X--;
+        }
+
+        if (input.KeyPressed('s')) {
+            Position.Y++;
+            state.ViewOrigin.Y++;
+        }
+
+        if (input.KeyPressed('d')) {
+            Position.X++;
+            state.ViewOrigin.X++;
+        }
     }
 
     public void Render(Drawable drawable, int x, int y) {

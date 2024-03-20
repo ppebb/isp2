@@ -16,6 +16,7 @@ public class PlayerSelectionScene : Scene {
 
     private readonly Action<Game, Player> selectCallback = (s, p) => {
         s.Player = p;
+        s.Player.Initialize(s);
         s.ForwardScene<WorldSelectionScene>();
     };
 
@@ -31,7 +32,7 @@ public class PlayerSelectionScene : Scene {
         container.Add(new UIText("Select a Player".ToLargeText()));
         container.Add(playerList);
 
-        IEnumerable<string> files = Directory.GetFiles(Game.PlayerPath).Where((f) => Path.GetExtension(f) == ".plr");
+        IEnumerable<string> files = Directory.GetFiles(Game.PlayersPath).Where((f) => Path.GetExtension(f) == ".plr");
 
         if (files.Any()) {
             foreach (string file in files) {
@@ -49,7 +50,6 @@ public class PlayerSelectionScene : Scene {
         container.Add(new UIButton("Create New Player".ToLargeText(), (s) => s.ForwardScene<PlayerCreationScene>((data) => {
             if (data != null) {
                 Player created = (Player)data;
-                created.Serialize();
                 playerList.Add(new UIPlayer(created, selectCallback));
                 container.Remove(noneFound);
             }
