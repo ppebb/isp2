@@ -29,12 +29,8 @@ public class Chunk {
             }
         }
 
-        if (border) {
-            try {
-                drawable.DrawBorder(Highlight.TextError, x, y, CHUNKSIZE, CHUNKSIZE);
-            }
-            catch { }
-        }
+        if (border)
+            drawable.DrawBorder(Highlight.TextError, x, y, CHUNKSIZE, CHUNKSIZE, skipx, skipy);
     }
 
     public void Serialize(string basePath) {

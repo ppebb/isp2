@@ -4,6 +4,7 @@ using static Blackguard.UI.CharacterDefs;
 using static Blackguard.Utilities.Utils;
 using Mindmagma.Curses;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Blackguard.UI;
 
@@ -73,21 +74,49 @@ public abstract class Drawable : IDisposable, ISizeProvider, IOffsetProvider {
 
     public abstract void Dispose();
 
-    public void DrawBorder(Highlight highlight, int x = 0, int y = 0, int w = -1, int h = -1) {
+    public void DrawBorder(Highlight highlight, int x = 0, int y = 0, int w = -1, int h = -1, int skipx = 0, int skipy = 0) {
         // This is good design I swear
         w = w == -1 ? this.w : w;
         h = h == -1 ? this.h : h;
 
-        AddLinesWithHighlight(
-            (highlight, x, y, B_LCT + new string(B_T, w - 2) + B_RCT),
-            (highlight, x, y + h - 1, B_LCB + new string(B_B, w - 2) + B_RCB)
-        );
+        string ConstructHLine(char glyphL, char glyphH, char glyphR) {
+            int cap = w - Math.Abs(skipx);
+            StringBuilder b = new(cap);
 
-        for (int i = 1; i < h - 1; i++) {
-            AddLinesWithHighlight(
-                (highlight, x, y + i, new string(B_L, 1)),
-                (highlight, x + w - 1, y + i, new string(B_R, 1))
-            );
+            int hlen; // Length excluding corners
+            if (skipx != 0) // If anything is being skipped, then one corner is not being drawn
+                hlen = cap - 1;
+            else
+                hlen = cap - 2;
+
+            if (skipx < 1)
+                b.Append(glyphL);
+
+            b.Append(new string(glyphH, hlen));
+
+            if (skipx > -1)
+                b.Append(glyphR);
+
+            return b.ToString();
+        }
+
+        int startx = skipx > 0 ? x + skipx : x;
+        if (skipy < 1)
+            AddLineWithHighlight(highlight, startx, y, ConstructHLine(B_LCT, B_T, B_RCT));
+
+        if (skipy > -1)
+            AddLineWithHighlight(highlight, startx, y + h - 1, ConstructHLine(B_LCB, B_B, B_RCB));
+
+        int startj = skipy > 0 ? skipy : 1;
+        int endj = skipy < 0 ? h + skipy : h - 1;
+        bool drawL = skipx < 1;
+        bool drawR = skipx > -1;
+        for (int j = startj; j < endj; j++) {
+            if (drawL)
+                AddLineWithHighlight(highlight, x, y + j, new string(B_L, 1));
+
+            if (drawR)
+                AddLineWithHighlight(highlight, x + w - 1, y + j, new string(B_R, 1));
         }
 
     }
