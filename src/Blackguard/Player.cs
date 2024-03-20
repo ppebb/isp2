@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Numerics;
+using Blackguard.Tiles;
 using Blackguard.UI;
 using Blackguard.Utilities;
 using Mindmagma.Curses;
@@ -34,7 +35,7 @@ public class Player : ISizeProvider {
     public string SavePath => Path.Combine(PlayersPath, Name + ".plr");
     public string Glyph { get; private set; }
     public Highlight Highlight { get; private set; }
-    public Vector2 ChunkPosition => new((int)(Position.X / 20), (int)(Position.Y / 20));
+    public Vector2 ChunkPosition => new((int)(Position.X / Chunk.CHUNKSIZE), (int)(Position.Y / Chunk.CHUNKSIZE));
 
     // Stats
     public int MaxMana;
@@ -86,24 +87,32 @@ public class Player : ISizeProvider {
     private void ProcessInput(Game state) {
         InputHandler input = state.Input;
 
-        if (input.KeyPressed('w')) {
-            Position.Y--;
-            state.ViewOrigin.Y--;
-        }
+        int changeX = 0;
+        int changeY = 0;
 
-        if (input.KeyPressed('a')) {
-            Position.X--;
-            state.ViewOrigin.X--;
-        }
+        if (input.KeyPressed('w'))
+            changeY--;
 
-        if (input.KeyPressed('s')) {
-            Position.Y++;
-            state.ViewOrigin.Y++;
-        }
+        if (input.KeyPressed('a'))
+            changeX--;
 
-        if (input.KeyPressed('d')) {
-            Position.X++;
-            state.ViewOrigin.X++;
+        if (input.KeyPressed('s'))
+            changeY++;
+
+        if (input.KeyPressed('d'))
+            changeX++;
+
+        if (changeX != 0 || changeY != 0) {
+            int nPosX = (int)Position.X + changeX;
+            int nPosY = (int)Position.Y + changeY;
+
+            Tile? next = state.World.GetTile(new Vector2(nPosX, nPosY));
+            if (next is not null && !next.Value.Foreground) {
+                Position.X = nPosX;
+                Position.Y = nPosY;
+                state.ViewOrigin.X += changeX;
+                state.ViewOrigin.Y += changeY;
+            }
         }
     }
 

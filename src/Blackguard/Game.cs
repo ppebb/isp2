@@ -328,6 +328,7 @@ public class Game {
         if (pendingOpen.Count > 0) {
             foreach ((Popup popup, bool focus) in pendingOpen) {
                 popups.Add(popup);
+                NCurses.TopPanel(popup.Panel.Handle);
 
                 if (focus) {
                     popup.Focused = true;

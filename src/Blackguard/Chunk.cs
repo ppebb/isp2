@@ -1,4 +1,5 @@
 using System.IO;
+using System.IO.Compression;
 using System.Numerics;
 using Blackguard.Tiles;
 using Blackguard.UI;
@@ -7,38 +8,39 @@ using Blackguard.Utilities;
 namespace Blackguard;
 
 public class Chunk {
+    public const int CHUNKSIZE = 20;
     public readonly Vector2 Position;
-    private static Vector2 Twenty = new(20, 20);
-    public Vector2 WorldPosition => Position * Twenty;
+    public Vector2 WorldPosition => Position * CHUNKSIZE;
 
-    public Tile[,] Tiles = new Tile[20, 20];
+    public Tile[,] Tiles = new Tile[CHUNKSIZE, CHUNKSIZE];
 
     public Chunk(Vector2 position) {
         Position = position;
     }
 
     public void Render(Drawable drawable, int x, int y, int skipx = 0, int skipy = 0, bool border = false) {
-        int endi = skipx < 0 ? 20 + skipx : 20;
-        int endj = skipy < 0 ? 20 + skipy : 20;
+        int endi = skipx < 0 ? CHUNKSIZE + skipx : CHUNKSIZE;
+        int endj = skipy < 0 ? CHUNKSIZE + skipy : CHUNKSIZE;
 
         for (int i = skipx > 0 ? skipx : 0; i < endi; i++) {
             for (int j = skipy > 0 ? skipy : 0; j < endj; j++) {
-                Tile t = Tiles[i, j];
+                Tile t = Tiles[i, j]; // This is flipped for some reason?
                 drawable.AddCharWithHighlight(t.Type.Highlight, x + i, y + j, t.Type.Glyph);
             }
         }
 
         if (border) {
             try {
-                drawable.DrawBorder(Highlight.TextError, x, y, 20, 20);
+                drawable.DrawBorder(Highlight.TextError, x, y, CHUNKSIZE, CHUNKSIZE);
             }
             catch { }
         }
     }
 
     public void Serialize(string basePath) {
-        using FileStream fs = new(Path.Combine(basePath, $"{Position.X}:{Position.Y}.chunk"), FileMode.OpenOrCreate);
-        using BinaryWriter w = new(fs);
+        using FileStream uncompressed = new(Path.Combine(basePath, $"{Position.X}:{Position.Y}.chunk"), FileMode.OpenOrCreate);
+        using DeflateStream compressor = new(uncompressed, CompressionLevel.Optimal);
+        using BinaryWriter w = new(compressor);
 
         foreach (Tile t in Tiles) {
             w.Write(t.Foreground);
@@ -51,13 +53,14 @@ public class Chunk {
         if (!File.Exists(path))
             return null;
 
-        using FileStream fs = new(path, FileMode.Open);
-        using BinaryReader r = new(fs);
+        using FileStream compressed = new(path, FileMode.Open);
+        using DeflateStream decompressor = new(compressed, CompressionMode.Decompress);
+        using BinaryReader r = new(decompressor);
 
         Chunk chunk = new(position);
 
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
+        for (int i = 0; i < CHUNKSIZE; i++) {
+            for (int j = 0; j < CHUNKSIZE; j++) {
                 bool fg = r.ReadBoolean();
                 string id = r.ReadString();
 

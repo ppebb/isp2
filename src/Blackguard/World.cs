@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using Blackguard.Tiles;
 using Blackguard.UI;
 using Blackguard.Utilities;
 using Newtonsoft.Json;
@@ -19,6 +20,10 @@ public class World {
     [JsonProperty]
     public TimeSpan Playtime { get; private set; }
 
+    [JsonProperty]
+    public int Seed { get; private set; }
+
+    private WorldGen gen = null!;
     public string BaseSavePath => Path.Combine(Game.WorldsPath, Name);
     public string MetaSavePath => Path.Combine(BaseSavePath, "meta");
     public string ChunksPath => Path.Combine(BaseSavePath, "Chunks");
@@ -32,11 +37,13 @@ public class World {
         ChunksByPosition = new();
     }
 
-    public static World CreateNew(string name) {
-        World world = new(name);
+    public static World CreateNew(Game state, string name) {
+        World world = new(name) {
+            Seed = (int)DateTime.Now.Ticks // I sure hope this doesn't truncate
+        };
 
         world.Serialize();
-        world.LoadChunks(Vector2.Zero);
+        world.Initialize(state);
 
         return world;
     }
@@ -50,12 +57,14 @@ public class World {
                 Vector2 position = new(center.X + i, center.Y + j);
 
                 if (!ChunksByPosition.ContainsKey(position))
-                    ChunksByPosition.Add(position, Chunk.Deserialize(ChunksPath, position) ?? WorldGen.GenChunk(ChunksPath, position));
+                    ChunksByPosition.Add(position, Chunk.Deserialize(ChunksPath, position) ?? gen.GenChunk(ChunksPath, position));
             }
         }
     }
 
     public void Initialize(Game state) {
+        gen = new WorldGen(Seed);
+
         LoadChunks(state.Player.ChunkPosition);
     }
 
@@ -71,16 +80,37 @@ public class World {
         LoadChunks(state.Player.ChunkPosition);
     }
 
-    public void Render(Drawable drawable, Game state, int x, int y, int maxw, int maxh) {
+    public void Render(Drawable drawable, Game state, int maxw, int maxh) {
         foreach ((_, Chunk chunk) in ChunksByPosition) {
             Vector2 sp = Utils.ToScreenPos(state.ViewOrigin, chunk.WorldPosition);
             int rx = (int)sp.X;
             int ry = (int)sp.Y;
-            if (!Utils.CheckOutOfBounds(rx, ry, 20, 20, maxw, maxh, out int byX, out int byY))
+            if (!Utils.CheckOutOfBounds(rx, ry, Chunk.CHUNKSIZE, Chunk.CHUNKSIZE, maxw, maxh, out int byX, out int byY))
                 chunk.Render(drawable, rx, ry, 0, 0, state.drawChunkOutline);
-            else if (Math.Abs(byX) < 20 && Math.Abs(byY) < 20)
+            else if (Math.Abs(byX) < Chunk.CHUNKSIZE && Math.Abs(byY) < Chunk.CHUNKSIZE)
                 chunk.Render(drawable, rx, ry, byX, byY, state.drawChunkOutline);
         }
+    }
+
+    public Tile? GetTile(Vector2 position) {
+        Vector2 chunkPosition = new((float)Math.Floor(position.X / 20), (float)Math.Floor(position.Y / 20));
+
+        if (!ChunksByPosition.TryGetValue(chunkPosition, out Chunk? value))
+            return null;
+
+        int cx;
+        if (position.X < 0)
+            cx = (Chunk.CHUNKSIZE + (int)position.X) % Chunk.CHUNKSIZE;
+        else
+            cx = (int)position.X % Chunk.CHUNKSIZE;
+
+        int cy;
+        if (position.Y < 0)
+            cy = (Chunk.CHUNKSIZE + (int)position.Y) % Chunk.CHUNKSIZE;
+        else
+            cy = (int)position.Y % Chunk.CHUNKSIZE;
+
+        return value.Tiles[cx, cy];
     }
 
     public void Serialize() {

@@ -30,7 +30,7 @@ public class WorldCreationScene : Scene {
                 return;
             }
 
-            callback?.Invoke(World.CreateNew(_nameInput.GetStoredText()));
+            callback?.Invoke(World.CreateNew(state, _nameInput.GetStoredText()));
 
             state.PrevScene();
         });
