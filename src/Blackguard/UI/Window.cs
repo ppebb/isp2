@@ -23,18 +23,9 @@ public class Window : Drawable {
         h = hi;
     }
 
-    public static Window NewFullScreenWindow(string name, Highlight highlight) {
-        return new Window(name, highlight, 0, 0, NCurses.Columns, NCurses.Lines);
-    }
-
     public override void Dispose() {
         NCurses.DeleteWindow(Handle);
         GC.SuppressFinalize(this);
-    }
-
-    public override void HandleTermResize() {
-        Resize(NCurses.Columns, NCurses.Lines);
-        Clear();
     }
 
     public override void Move(int newx, int newy) {

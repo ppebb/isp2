@@ -18,8 +18,8 @@ public class GameScene : Scene {
         Player player = state.Player;
         Vector2 screenPos = Utils.ToScreenPos(state.ViewOrigin, player.Position);
 
-        state.World.Render(state.CurrentWin, state, state.CurrentWin.w, state.CurrentWin.h);
+        state.World.Render(state.CurrentPanel, state, state.CurrentPanel.w, state.CurrentPanel.h);
 
-        state.Player.Render(state.CurrentWin, (int)screenPos.X, (int)screenPos.Y);
+        state.Player.Render(state.CurrentPanel, (int)screenPos.X, (int)screenPos.Y);
     }
 }

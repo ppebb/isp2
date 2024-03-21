@@ -22,7 +22,6 @@ public class DebugPopup : Popup {
             line += new string(' ', wNoBorder - line.Length);
 
         return line;
-
     }
 
     private static readonly (Highlight h, Func<Game, string> f)[] segments = [
@@ -37,6 +36,8 @@ public class DebugPopup : Popup {
     ];
 
     public DebugPopup() : base("Debug", Highlight.Text, 2, 2, WIDTH, segments.Length + 2) { }
+
+    public override void HandleTermResize() { } // Do nothing. It's in the top left of the screen, hopefully nothing bad will happen.
 
     public override bool RunTick(Game state) => true;
 

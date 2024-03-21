@@ -13,6 +13,8 @@ public abstract class Scene {
     // Perform some arbitrary data upon some arbitrary event. Documented per Scene
     public Action<object?>? callback;
 
+    public virtual void HandleTermResize() { }
+
     // Returns false to exit the game
     public abstract bool RunTick(Game state);
 

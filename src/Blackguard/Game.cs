@@ -20,7 +20,7 @@ public class Game {
     public Player Player { get; set; } = null!;
     public World World { get; set; } = null!;
 
-    public Window CurrentWin;
+    public Panel CurrentPanel; // Shared panel used by the current scene
     public Vector2 ViewOrigin;
     public bool drawChunkOutline = false;
 
@@ -52,7 +52,7 @@ public class Game {
     public Game() {
         InitializeDirectories();
         Input = new InputHandler();
-        CurrentWin = Window.NewFullScreenWindow("Base Window", Highlight.Text);
+        CurrentPanel = Panel.NewFullScreenPanel("Base Panel", Highlight.Text);
         scenes.Add(new MainMenuScene());
         oldSize = (NCurses.Lines, NCurses.Columns);
     }
@@ -69,7 +69,7 @@ public class Game {
             gameTimer = Stopwatch.StartNew();
 
             // If input isn't checked, resizing doesn't work. Don't know why...
-            Input.PollInput(CurrentWin.WHandle);
+            Input.PollInput(CurrentPanel.WHandle);
 
             // Only run anything if a resize is successful
             if (HandleResize()) {
@@ -86,8 +86,8 @@ public class Game {
                         i--;
                 }
 
-                if (popups.Count > 0)
-                    NCurses.UpdatePanels();
+                NCurses.UpdatePanels();
+                NCurses.DoUpdate();
 
                 MainInputHandler();
 
@@ -111,8 +111,12 @@ public class Game {
     private readonly string SIZE_WARNING = $"Minimum screen size is {MIN_WIDTH} x {MIN_HEIGHT}";
     private bool HandleResize() {
         if ((NCurses.Lines, NCurses.Columns) != oldSize) {
-            // TODO: Implement resize on a scene-by-scene, popup-by-popup basis in the event they want to control spacing and the like
-            CurrentWin.HandleTermResize();
+            CurrentPanel.Resize(NCurses.Columns, NCurses.Lines);
+
+            CurrentScene.HandleTermResize();
+
+            foreach (Popup popup in popups)
+                popup.HandleTermResize();
         }
 
         oldSize = (NCurses.Lines, NCurses.Columns);
@@ -128,7 +132,7 @@ public class Game {
             int startx = (NCurses.Columns - (curWidth.Length + curHeight.Length + width.Length + height.Length)) / 2;
 
             try {
-                CurrentWin.AddLinesWithHighlight(
+                CurrentPanel.AddLinesWithHighlight(
                     (Highlight.Text, (NCurses.Columns - SIZE_WARNING.Length) / 2, starty, SIZE_WARNING),
                     (Highlight.Text, startx, starty + 1, curWidth),
                     (Highlight.Text, startx += curWidth.Length, starty + 1, width), // Red or green eventually
@@ -273,7 +277,7 @@ public class Game {
             return;
 
         sceneIdx = changeIdx;
-        CurrentWin.Clear();
+        CurrentPanel.Clear();
     }
 
     public void OpenPopup(Popup popup, bool focus = false) {
@@ -291,8 +295,6 @@ public class Game {
 
         if (popup.Focused)
             CurrentScene.Focused = true;
-
-        CurrentWin.Clear();
     }
 
     public void ClosePopupsByType<T>() where T : Popup {
@@ -337,7 +339,6 @@ public class Game {
             }
 
             pendingOpen.Clear();
-            CurrentWin.Clear();
         }
     }
 

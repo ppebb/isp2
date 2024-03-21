@@ -52,6 +52,6 @@ public class MainMenuScene : Scene {
     }
 
     public override void Render(Game state) {
-        container.Render(state.CurrentWin, 0, 0, state.CurrentWin.w, state.CurrentWin.h);
+        container.Render(state.CurrentPanel, 0, 0, state.CurrentPanel.w, state.CurrentPanel.h);
     }
 }

@@ -17,6 +17,8 @@ public abstract class Popup : ISizeProvider, IOffsetProvider {
         Panel = new Panel(name, background, (NCurses.Columns - w) / 2, (NCurses.Lines - h) / 2, w, h);
     }
 
+    public abstract void HandleTermResize();
+
     public abstract bool RunTick(Game state);
 
     public abstract void Render(Game state);
@@ -31,5 +33,9 @@ public abstract class Popup : ISizeProvider, IOffsetProvider {
 
     public (int x, int y) GetOffset() {
         return (Panel.x, Panel.y);
+    }
+
+    protected void CenterPopup() {
+        Panel.Move((NCurses.Columns - Panel.w) / 2, (NCurses.Lines - Panel.h) / 2);
     }
 }

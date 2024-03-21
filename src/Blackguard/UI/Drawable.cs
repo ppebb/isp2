@@ -125,8 +125,6 @@ public abstract class Drawable : IDisposable, ISizeProvider, IOffsetProvider {
 
     public (int w, int h) GetSize() => (w, h);
 
-    public abstract void HandleTermResize();
-
     public abstract void Move(int newx, int newy);
 
     public void ReapplyHighlight() {

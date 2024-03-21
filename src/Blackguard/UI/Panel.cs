@@ -21,15 +21,14 @@ public class Panel : Drawable {
         h = hi;
     }
 
+    public static Panel NewFullScreenPanel(string name, Highlight highlight) {
+        return new Panel(name, highlight, 0, 0, NCurses.Columns, NCurses.Lines);
+    }
+
     public override void Dispose() {
         NCurses.DeletePanel(Handle);
         _window.Dispose();
         GC.SuppressFinalize(this);
-    }
-
-    public override void HandleTermResize() {
-        /* _window.Clear(); */
-        throw new NotImplementedException();
     }
 
     public override void Move(int newx, int newy) {
@@ -37,6 +36,15 @@ public class Panel : Drawable {
     }
 
     public override void Resize(int neww, int newh) {
-        throw new NotImplementedException();
+        Window temp = new(_window.Name, _window.Highlight, x, y, neww, newh);
+        NCurses.ReplacePanel(Handle, temp.WHandle);
+
+        _window.Clear();
+        _window.Dispose();
+
+        _window = temp;
+
+        w = neww;
+        h = newh;
     }
 }

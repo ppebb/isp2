@@ -37,6 +37,8 @@ public class InfoPopup : Popup {
         container.SelectFirstSelectable();
     }
 
+    public override void HandleTermResize() => CenterPopup();
+
     public override void Render(Game state) {
         container.Render(Panel, 0, 0, Panel.w, Panel.h);
     }
