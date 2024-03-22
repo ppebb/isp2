@@ -99,24 +99,7 @@ public class World {
         if (!ChunksByPosition.TryGetValue(chunkPosition, out Chunk? value))
             return null;
 
-        int cx;
-        if (position.X < 0)
-            cx = Chunk.CHUNKSIZE + ((int)position.X % Chunk.CHUNKSIZE);
-        else
-            cx = (int)position.X % Chunk.CHUNKSIZE;
-
-        int cy;
-        if (position.Y < 0)
-            cy = Chunk.CHUNKSIZE + ((int)position.Y % Chunk.CHUNKSIZE);
-        else
-            cy = (int)position.Y % Chunk.CHUNKSIZE;
-
-        if (cx == Chunk.CHUNKSIZE)
-            cx = 0;
-        if (cy == Chunk.CHUNKSIZE)
-            cy = 0;
-
-        return value.Tiles[cx, cy];
+        return value.Tiles[(int)(position.X - value.Position.X * Chunk.CHUNKSIZE), (int)(position.Y - value.Position.Y * Chunk.CHUNKSIZE)];
     }
 
     public void Serialize() {
