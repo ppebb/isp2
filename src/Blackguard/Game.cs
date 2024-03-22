@@ -22,6 +22,7 @@ public class Game {
 
     public Panel CurrentPanel; // Shared panel used by the current scene
     public Vector2 ViewOrigin;
+    public bool inGame = false;
     public bool drawChunkOutline = false;
 
     private readonly List<Scene> scenes = new();
@@ -117,6 +118,11 @@ public class Game {
 
             foreach (Popup popup in popups)
                 popup.HandleTermResize();
+
+            if (inGame) {
+                Player.HandleTermResize(this);
+                World.HandleTermResize();
+            }
         }
 
         oldSize = (NCurses.Lines, NCurses.Columns);

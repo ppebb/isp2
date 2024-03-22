@@ -5,6 +5,7 @@ using System.Numerics;
 using Blackguard.Tiles;
 using Blackguard.UI;
 using Blackguard.Utilities;
+using Mindmagma.Curses;
 using Newtonsoft.Json;
 
 namespace Blackguard;
@@ -30,6 +31,8 @@ public class World {
 
     public Dictionary<Vector2, Chunk> ChunksByPosition;
 
+    public Vector2 simulationDistance; // Number of chunks to simulate on all four sides of the player
+
     public World(string name) {
         Name = name;
         CreationDate = DateTime.Now;
@@ -41,7 +44,6 @@ public class World {
         World world = new(name) {
             Seed = (int)DateTime.Now.Ticks // I sure hope this doesn't truncate
         };
-
         world.Serialize();
         world.Initialize(state);
 
@@ -49,11 +51,8 @@ public class World {
     }
 
     private void LoadChunks(Vector2 center) {
-        // TODO: Determine simulation distance based on screen size
-
-        // Load 5 chunks on all sides of the player
-        for (int i = -5; i <= 5; i++) {
-            for (int j = -5; j <= 5; j++) {
+        for (int i = (int)-simulationDistance.X; i <= (int)simulationDistance.X; i++) {
+            for (int j = (int)-simulationDistance.Y; j <= (int)simulationDistance.Y; j++) {
                 Vector2 position = new(center.X + i, center.Y + j);
 
                 if (!ChunksByPosition.ContainsKey(position))
@@ -65,13 +64,15 @@ public class World {
     public void Initialize(Game state) {
         gen = new WorldGen(Seed);
 
+        HandleTermResize();
+
         LoadChunks(state.Player.ChunkPosition);
     }
 
     public void RunTick(Game state) {
         // Remove faraway chunks
         foreach ((Vector2 position, Chunk chunk) in ChunksByPosition) {
-            if (Math.Abs(position.X - state.Player.ChunkPosition.X) > 5 || Math.Abs(position.Y - state.Player.ChunkPosition.Y) > 5) {
+            if (Math.Abs(position.X - state.Player.ChunkPosition.Y) > (int)simulationDistance.X || Math.Abs(position.Y - state.Player.ChunkPosition.Y) > simulationDistance.Y) {
                 ChunksByPosition.Remove(key: position);
                 chunk.Serialize(ChunksPath);
             }
@@ -93,22 +94,27 @@ public class World {
     }
 
     public Tile? GetTile(Vector2 position) {
-        Vector2 chunkPosition = new((float)Math.Floor(position.X / 20), (float)Math.Floor(position.Y / 20));
+        Vector2 chunkPosition = new((float)Math.Floor(position.X / Chunk.CHUNKSIZE), (float)Math.Floor(position.Y / Chunk.CHUNKSIZE));
 
         if (!ChunksByPosition.TryGetValue(chunkPosition, out Chunk? value))
             return null;
 
         int cx;
         if (position.X < 0)
-            cx = (Chunk.CHUNKSIZE + (int)position.X) % Chunk.CHUNKSIZE;
+            cx = Chunk.CHUNKSIZE + ((int)position.X % Chunk.CHUNKSIZE);
         else
             cx = (int)position.X % Chunk.CHUNKSIZE;
 
         int cy;
         if (position.Y < 0)
-            cy = (Chunk.CHUNKSIZE + (int)position.Y) % Chunk.CHUNKSIZE;
+            cy = Chunk.CHUNKSIZE + ((int)position.Y % Chunk.CHUNKSIZE);
         else
             cy = (int)position.Y % Chunk.CHUNKSIZE;
+
+        if (cx == Chunk.CHUNKSIZE)
+            cx = 0;
+        if (cy == Chunk.CHUNKSIZE)
+            cy = 0;
 
         return value.Tiles[cx, cy];
     }
@@ -130,5 +136,10 @@ public class World {
 
     public void Delete() {
         Directory.Delete(BaseSavePath, true);
+    }
+
+    public void HandleTermResize() {
+        simulationDistance.X = NCurses.Columns / Chunk.CHUNKSIZE * 2;
+        simulationDistance.Y = NCurses.Lines / Chunk.CHUNKSIZE * 2;
     }
 }

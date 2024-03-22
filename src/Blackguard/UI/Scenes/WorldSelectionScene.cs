@@ -17,6 +17,7 @@ public class WorldSelectionScene : Scene {
     private readonly Action<Game, World> selectCallback = (s, w) => {
         s.World = w;
         s.World.Initialize(s);
+        s.inGame = true;
         s.ForwardScene<GameScene>();
     };
 

@@ -35,7 +35,7 @@ public class Player : ISizeProvider {
     public string SavePath => Path.Combine(PlayersPath, Name + ".plr");
     public string Glyph { get; private set; }
     public Highlight Highlight { get; private set; }
-    public Vector2 ChunkPosition => new((int)(Position.X / Chunk.CHUNKSIZE), (int)(Position.Y / Chunk.CHUNKSIZE));
+    public Vector2 ChunkPosition => new((float)Math.Floor(Position.X / Chunk.CHUNKSIZE), (float)Math.Floor(Position.Y / Chunk.CHUNKSIZE));
 
     // Stats
     public int MaxMana;
@@ -74,10 +74,7 @@ public class Player : ISizeProvider {
     }
 
     public void Initialize(Game state) {
-        state.ViewOrigin = new Vector2(
-            (int)(Position.X - NCurses.Columns / 2),
-            (int)(Position.Y - NCurses.Lines / 2)
-        );
+        HandleTermResize(state);
     }
 
     public void RunTick(Game state) {
@@ -138,6 +135,13 @@ public class Player : ISizeProvider {
 
     public (int w, int h) GetSize() {
         return (1, 1); // May be expanded eventually depending on how the player is rendered
+    }
+
+    public void HandleTermResize(Game state) {
+        state.ViewOrigin = new Vector2(
+            (int)(Position.X - NCurses.Columns / 2),
+            (int)(Position.Y - NCurses.Lines / 2)
+        );
     }
 
 }
