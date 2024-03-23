@@ -128,7 +128,7 @@ public class Windows : Platform {
         // This can be hardcoded because the hashes file should always generate like this
         foreach (string line in res.TrimEnd().Split('\n')) {
             string[] split = line.Split(' ');
-            hashes.Add(string.Join(null, split[..^1]), ulong.Parse(split[^1]));
+            hashes.Add(string.Join(' ', split[..^1]), ulong.Parse(split[^1]));
         }
 
         foreach (string resource in resourceNames) {
