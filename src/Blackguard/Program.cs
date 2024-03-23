@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Blackguard.Tiles;
 using Blackguard.Utilities;
+using Blackguard.Utilities.Platform;
 using Mindmagma.Curses;
 
 namespace Blackguard;
@@ -11,7 +13,7 @@ public class LibraryNames : CursesLibraryNames {
 
     public override List<string> NamesLinux => new() { "libncursesw.so" };
 
-    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
+    public override List<string> NamesWindows => [Program.Platform.ExtractEmbeddedResources().FirstOrDefault(n => n.Contains("pdcurses"))];
 }
 
 public class LibraryNames2 : PanelLibraryNames {
@@ -20,7 +22,8 @@ public class LibraryNames2 : PanelLibraryNames {
     public override List<string> NamesLinux => new() { "libpanelw.so" };
 
     // TODO: On windows with PDCurses there is no longer a separate panel library
-    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
+    // TODO: Don't do some weird linq stuff to get the right resource
+    public override List<string> NamesWindows => [Program.Platform.ExtractEmbeddedResources().FirstOrDefault(n => n.Contains("pdcurses"))];
 }
 
 public static class Program {
@@ -31,6 +34,7 @@ public static class Program {
 
     static Program() {
         Platform = Platform.GetPlatform();
+        Platform.ExtractEmbeddedResources();
         Platform.Configure();
     }
 
