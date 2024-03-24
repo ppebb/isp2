@@ -34,6 +34,7 @@ public class Game {
     private readonly List<(Popup, bool)> pendingOpen = new();
 
     public InputHandler Input { private set; get; }
+    public Config Config { private set; get; }
 
     private (int, int) oldSize = (0, 0);
     public uint ticks = 0;
@@ -53,6 +54,7 @@ public class Game {
     public Game() {
         InitializeDirectories();
         Input = new InputHandler();
+        Config = Config.Deserialize() ?? new();
         CurrentPanel = Panel.NewFullScreenPanel("Base Panel", Highlight.Text);
         scenes.Add(new MainMenuScene());
         oldSize = (NCurses.Lines, NCurses.Columns);

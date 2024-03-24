@@ -48,6 +48,8 @@ public class Windows : Platform {
     }
 
     public override unsafe void Configure() {
+        Config c = Config.Deserialize() ?? new();
+
         // https://github.com/dotnet/docs/blob/f2eadd634efab2b303185730c640f95b4c557088/docs/fundamentals/runtime-libraries/snippets/System/Console/Overview/csharp/setfont1.cs#L17
         string fontName = "MesloLGS NF";
 
@@ -62,16 +64,11 @@ public class Windows : Platform {
         if (!GetCurrentConsoleFontEx(hnd, false, ref info))
             throw new Exception("Unable to get current ConsoleFontEx!");
 
-        string faceName = new(info.FaceName, 0, LF_FACESIZE);
+        if (c.SetFontAuto || !PromptYN($"The default Windows terminal font may cause issues, would you like to switch to the font bundled with the game? [y/N] "))
+            goto CheckRemember;
 
-        if (faceName == "Meslo LGS NF")
-            return;
-
-        if (!PromptYN($"Current console font is {faceName}, would you like to switch to the font bundled with the game? [y/n] "))
-            return;
-
-        if (!IsElevated() && !PromptYN("An elevated executable must be spawned to install the font, continue? [y/n] "))
-            return;
+        if (c.SetFontAuto || (!IsElevated() && !PromptYN("An elevated executable must be spawned to install the font, continue? [y/N] ")))
+            goto CheckRemember;
 
         Console.WriteLine("Copying Melso LGS NF fonts using FontReg.exe");
 
@@ -79,6 +76,7 @@ public class Windows : Platform {
             StartInfo = new ProcessStartInfo {
                 Verb = "runas",
                 FileName = Path.Combine(CachePath(), "FontReg.exe"),
+                WorkingDirectory = CachePath(),
                 Arguments = "/copy",
                 UseShellExecute = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
@@ -99,6 +97,12 @@ public class Windows : Platform {
         SetCurrentConsoleFontEx(hnd, false, mesloInfo);
 
         Console.WriteLine("Set console font to Meslo LGS NF");
+
+    CheckRemember:
+        if (!c.SetFontAuto && PromptYN("Set font automatically on subsequent runs? [y/N] ")) {
+            c.SetFontAuto = true;
+            c.Serialize();
+        }
     }
 
     public override string DataPath() {
