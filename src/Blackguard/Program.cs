@@ -54,7 +54,7 @@ public static class Program {
         NCurses.NoEcho(); // Stops input from being printed to the screen automatically
         NCurses.StartColor(); // Starts the color functionality
         ColorHandler.Init(); // Initialize all of our color pairs and highlights
-        TileDefinition.InitializeTileDefs(); // Initialize Tile definitions
+        Registry.InitializeDefinitionType<TileDefinition>(); // Initialize Tile definitions
 
         Console.CancelKeyPress += SIGINT; // Register this so that NCurses can uninitialize if ctrl-c is pressed
 

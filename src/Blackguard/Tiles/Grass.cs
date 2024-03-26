@@ -4,7 +4,7 @@ namespace Blackguard.Tiles;
 
 public class Grass : TileDefinition {
     public Grass() {
-        Id = "Grass";
+        Name = "Grass";
         Glyph = '#';
         Highlight = Highlight.Grass;
     }

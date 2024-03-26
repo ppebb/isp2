@@ -58,9 +58,9 @@ public class Chunk {
         for (int i = 0; i < CHUNKSIZE; i++) {
             for (int j = 0; j < CHUNKSIZE; j++) {
                 bool fg = r.ReadBoolean();
-                string id = r.ReadString();
+                int id = r.ReadInt32();
 
-                chunk.Tiles[i, j] = new Tile(TileDefinition.GetTileDefinition(id), fg);
+                chunk.Tiles[i, j] = new Tile(Registry.GetDefinition<TileDefinition>(id), fg);
             }
         }
 
