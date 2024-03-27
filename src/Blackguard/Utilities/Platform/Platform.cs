@@ -28,6 +28,4 @@ public abstract class Platform {
     public abstract void Configure();
 
     public abstract List<string> ExtractEmbeddedResources();
-
-    public abstract bool IsElevated();
 }

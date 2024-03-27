@@ -9,9 +9,6 @@ public class Linux : Platform {
     [DllImport("libc", SetLastError = true, CharSet = CharSet.Unicode)]
     private static extern void setlocale(int category, string locale);
 
-    [DllImport("libc")]
-    private static extern uint geteuid();
-
     private const int LC_ALL = 6;
 
     public override string CachePath() {
@@ -38,9 +35,5 @@ public class Linux : Platform {
 
     public override List<string> ExtractEmbeddedResources() {
         return new List<string>();
-    }
-
-    public override bool IsElevated() {
-        return geteuid() == 0;
     }
 }

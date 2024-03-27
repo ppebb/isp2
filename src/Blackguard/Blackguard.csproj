@@ -22,13 +22,13 @@
 
   <PropertyGroup Condition="$(IsWindows)">
     <MakeBinary>make</MakeBinary>
-    <MakeCommand>$(MakeBinary)</MakeCommand>
+    <MakeCommand>WIDE=Y DLL=Y $(MakeBinary)</MakeCommand>
     <SupressOutput>-h > NUL</SupressOutput>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(IsLinux)">
     <MakeBinary>x86_64-w64-mingw32-make</MakeBinary>
-    <MakeCommand>CFLAGS="-I.." DLL=Y $(MakeBinary) -f Makefile WINDRES=x86_64-w64-mingw32-windres</MakeCommand>
+    <MakeCommand>CFLAGS="-I.." OS=Windows_NT WIDE=Y DLL=Y $(MakeBinary) -f Makefile WINDRES=x86_64-w64-mingw32-windres</MakeCommand>
     <SupressOutput>--help > /dev/null</SupressOutput>
   </PropertyGroup>
 
@@ -79,9 +79,9 @@
 
   <!-- Compile PDCurses if targeting windows -->
   <Target Name="Compile PDCurses" BeforeTargets="BeforeBuild" Condition="$(CompilePDCurses)" DependsOnTargets="CheckMakeBinaryCallable;CheckGit">
-    <Exec Command="$(MakeBinary) clean" WorkingDirectory="../PDCurses/wincon" Condition="'$(MakeExitCode)' == '0' And $(ShouldRecompile)" />
-    <Exec Command="$(MakeCommand)" WorkingDirectory="../PDCurses/wincon" Condition="'$(MakeExitCode)' == '0' And $(ShouldRecompile)" />
-    <Copy SourceFiles="../PDCurses/wincon/pdcurses.dll" DestinationFolder="./Resources/Windows" Condition="'$(MakeExitCode)' == '0' And $(ShouldRecompile)" />
+    <Exec Command="$(MakeBinary) clean" WorkingDirectory="../PDCurses/sdl2" Condition="'$(MakeExitCode)' == '0' And $(ShouldRecompile)" />
+    <Exec Command="$(MakeCommand)" WorkingDirectory="../PDCurses/sdl2" Condition="'$(MakeExitCode)' == '0' And $(ShouldRecompile)" />
+    <Copy SourceFiles="../PDCurses/sdl2/pdcurses.dll" DestinationFolder="./Resources/Windows" Condition="'$(MakeExitCode)' == '0' And $(ShouldRecompile)" />
     <Message Text="Unable to locate $(MakeBinary), not compiling PDCurses" Importance="High" Condition="'$(MakeExitCode)' != '0'" />
   </Target>
 

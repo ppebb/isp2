@@ -38,7 +38,6 @@ public static class Program {
 
     static Program() {
         Platform = Platform.GetPlatform();
-        // Preferrably would be gotten in the game object, but it's needed by some stuff here. Oh well.
         Platform.ExtractEmbeddedResources();
         Platform.Configure();
     }

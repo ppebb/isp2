@@ -1,108 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Hashing;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
 
 namespace Blackguard.Utilities.Platform;
 
 public class Windows : Platform {
-    [DllImport("kernel32.dll", SetLastError = true)]
-    static extern IntPtr GetStdHandle(int nStdHandle);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    static extern bool GetCurrentConsoleFontEx(
-        IntPtr consoleOutput,
-        bool maximumWindow,
-        ref CONSOLE_FONT_INFO_EX lpConsoleCurrentFontEx
-    );
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    static extern bool SetCurrentConsoleFontEx(
-        IntPtr consoleOutput,
-        bool maximumWindow,
-        CONSOLE_FONT_INFO_EX consoleCurrentFontEx
-    );
-
-    private const int STD_OUTPUT_HANDLE = -11;
-    private const int TMPF_TRUETYPE = 4;
-    private const int LF_FACESIZE = 32;
-    private static readonly IntPtr INVALID_HANDLE_VALUE = new(-1);
-
     public override string CachePath() {
         return Path.Combine(DataPath(), "cache");
     }
 
-    private static bool PromptYN(string prompt) {
-        Console.Write(prompt);
-
-        bool ret = char.ToLowerInvariant(Console.ReadKey().KeyChar) == 'y';
-
-        Console.WriteLine();
-
-        return ret;
-    }
-
-    public override unsafe void Configure() {
-        Config c = Config.Deserialize() ?? new();
-
-        // https://github.com/dotnet/docs/blob/f2eadd634efab2b303185730c640f95b4c557088/docs/fundamentals/runtime-libraries/snippets/System/Console/Overview/csharp/setfont1.cs#L17
-        string fontName = "MesloLGS NF";
-
-        nint hnd = GetStdHandle(STD_OUTPUT_HANDLE);
-
-        if (hnd == INVALID_HANDLE_VALUE)
-            throw new Exception("Unable to get Console handle!");
-
-        CONSOLE_FONT_INFO_EX info = new();
-        info.cbSize = (uint)Marshal.SizeOf(info);
-
-        if (!GetCurrentConsoleFontEx(hnd, false, ref info))
-            throw new Exception("Unable to get current ConsoleFontEx!");
-
-        if (c.SetFontAuto || !PromptYN($"The default Windows terminal font may cause issues, would you like to switch to the font bundled with the game? [y/N] "))
-            goto CheckRemember;
-
-        if (c.SetFontAuto || (!IsElevated() && !PromptYN("An elevated executable must be spawned to install the font, continue? [y/N] ")))
-            goto CheckRemember;
-
-        Console.WriteLine("Copying Melso LGS NF fonts using FontReg.exe");
-
-        Process proc = new() {
-            StartInfo = new ProcessStartInfo {
-                Verb = "runas",
-                FileName = Path.Combine(CachePath(), "FontReg.exe"),
-                WorkingDirectory = CachePath(),
-                Arguments = "/copy",
-                UseShellExecute = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-            }
-        };
-
-        proc.Start();
-        proc.WaitForExit();
-
-        CONSOLE_FONT_INFO_EX mesloInfo = new();
-        mesloInfo.cbSize = (uint)Marshal.SizeOf(mesloInfo);
-        mesloInfo.FontFamily = TMPF_TRUETYPE;
-        nint ptr = new(mesloInfo.FaceName);
-        Marshal.Copy(fontName.ToCharArray(), 0, ptr, fontName.Length);
-        mesloInfo.dwFontSize = new COORD(info.dwFontSize.X, info.dwFontSize.Y);
-        mesloInfo.FontWeight = info.FontWeight;
-
-        SetCurrentConsoleFontEx(hnd, false, mesloInfo);
-
-        Console.WriteLine("Set console font to Meslo LGS NF");
-
-    CheckRemember:
-        if (!c.SetFontAuto && PromptYN("Set font automatically on subsequent runs? [y/N] ")) {
-            c.SetFontAuto = true;
-            c.Serialize();
-        }
+    public override void Configure() {
+        return; // Nothing to configure
     }
 
     public override string DataPath() {
@@ -172,35 +83,5 @@ public class Windows : Platform {
         cached = ret;
 
         return ret;
-    }
-
-#pragma warning disable CA1416 // It's lying. This isn't reachable on all platforms
-    public override bool IsElevated() {
-        // https://github.com/dotnet/sdk/blob/v6.0.100/src/Cli/dotnet/Installer/Windows/WindowsUtils.cs#L38
-        using WindowsIdentity identity = WindowsIdentity.GetCurrent();
-        WindowsPrincipal principal = new(identity);
-        return principal.IsInRole(WindowsBuiltInRole.Administrator);
-    }
-#pragma warning restore CA1416
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct COORD {
-        internal short X;
-        internal short Y;
-
-        internal COORD(short x, short y) {
-            X = x;
-            Y = y;
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct CONSOLE_FONT_INFO_EX {
-        internal uint cbSize;
-        internal uint nFont;
-        internal COORD dwFontSize;
-        internal int FontFamily;
-        internal int FontWeight;
-        internal fixed char FaceName[LF_FACESIZE];
     }
 }
