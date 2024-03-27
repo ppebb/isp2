@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Blackguard.Tiles;
 using Blackguard.Utilities;
+using Blackguard.Utilities.Platform;
 using Mindmagma.Curses;
 
 namespace Blackguard;
@@ -11,7 +13,9 @@ public class LibraryNames : CursesLibraryNames {
 
     public override List<string> NamesLinux => new() { "libncursesw.so" };
 
-    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
+    public override bool ReplaceWindowsDefaults => true;
+
+    public override List<string> NamesWindows => [Program.Platform.ExtractEmbeddedResources().FirstOrDefault(n => n.Contains("pdcurses"))];
 }
 
 public class LibraryNames2 : PanelLibraryNames {
@@ -19,8 +23,11 @@ public class LibraryNames2 : PanelLibraryNames {
 
     public override List<string> NamesLinux => new() { "libpanelw.so" };
 
+    public override bool ReplaceWindowsDefaults => true;
+
     // TODO: On windows with PDCurses there is no longer a separate panel library
-    public override List<string> NamesWindows => Program.Platform.ExtractNativeDependencies();
+    // TODO: Don't do some weird linq stuff to get the right resource
+    public override List<string> NamesWindows => [Program.Platform.ExtractEmbeddedResources().FirstOrDefault(n => n.Contains("pdcurses"))];
 }
 
 public static class Program {
@@ -31,6 +38,7 @@ public static class Program {
 
     static Program() {
         Platform = Platform.GetPlatform();
+        Platform.ExtractEmbeddedResources();
         Platform.Configure();
     }
 
@@ -39,7 +47,7 @@ public static class Program {
 
         StdScreen = NCurses.InitScreen();
 
-        if (!NCurses.HasColors() /*|| !NCurses.CanChangeColor()*/) { // Can change color is seemingly returning false on windows. We can decide if it's neccessary later
+        if (!NCurses.HasColors() || !NCurses.CanChangeColor()) {
             NCurses.EndWin();
 
             Console.WriteLine("Terminal does not support colors. Please use a terminal that supports colors.");
@@ -49,12 +57,18 @@ public static class Program {
 
         Console.Title = "Blackguard";
 
-        NCurses.SetCursor(0); // Hide the cursor
-        NCurses.CBreak(); // Makes input immediately available to the terminal instead of performing line buffering
-        NCurses.NoEcho(); // Stops input from being printed to the screen automatically
-        NCurses.StartColor(); // Starts the color functionality
-        ColorHandler.Init(); // Initialize all of our color pairs and highlights
-        Registry.InitializeDefinitionType<TileDefinition>(); // Initialize Tile definitions
+        // Some of these break randomly. Don't know why. Works on Landon's setup.
+        try {
+            NCurses.SetCursor(0); // Hide the cursor
+            NCurses.CBreak(); // Makes input immediately available to the terminal instead of performing line buffering
+            NCurses.NoEcho(); // Stops input from being printed to the screen automatically
+            NCurses.StartColor(); // Starts the color functionality
+            ColorHandler.Init(); // Initialize all of our color pairs and highlights
+            Registry.InitializeDefinitionType<TileDefinition>(); // Initialize Tile definitions
+        }
+        catch {
+            //TODO: Add logging or some kind of warning if any of these fail
+        }
 
         Console.CancelKeyPress += SIGINT; // Register this so that NCurses can uninitialize if ctrl-c is pressed
 
